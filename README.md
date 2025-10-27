@@ -4,10 +4,10 @@
 
 Members:
 
-Nathaniel
-Maher
-Martin
-Thomas
+<br>Nathaniel
+<br>Maher
+<br>Martin
+<br>Thomas
 
 ## Project description
 
