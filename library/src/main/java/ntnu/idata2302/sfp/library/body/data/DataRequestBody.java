@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import ntnu.idata2302.sfp.library.body.Body;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
+import ntnu.idata2302.sfp.library.helpers.CborCodec;
 
 import java.util.List;
 
@@ -17,21 +18,11 @@ public record DataRequestBody(
 
   @Override
   public byte[] toCbor() {
-    try {
-      ObjectMapper mapper = new ObjectMapper(new CBORFactory());
-      return mapper.writeValueAsBytes(this);
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to serialize DataRequestBody to CBOR", e);
-    }
+    return CborCodec.encode(this);
   }
 
   public static DataRequestBody fromCbor(byte[] cbor) {
-    try {
-      ObjectMapper mapper = new ObjectMapper(new CBORFactory());
-      return mapper.readValue(cbor, DataRequestBody.class);
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to deserialize CBOR to DataRequestBody", e);
-    }
+    return CborCodec.decode(cbor, DataRequestBody.class);
   }
 
   // =====================================================================

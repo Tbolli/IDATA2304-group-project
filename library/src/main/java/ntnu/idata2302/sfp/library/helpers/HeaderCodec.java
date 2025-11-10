@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.UUID;
 
-public class ByteHelper{
+public class HeaderCodec {
 
   public static byte[] encodeHeader(Header h) {
     ByteBuffer buffer = ByteBuffer.allocate(Header.HEADER_SIZE);
