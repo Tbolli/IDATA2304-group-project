@@ -1,6 +1,6 @@
 package ntnu.idata2302.sfp.library.helpers;
 
-import ntnu.idata2302.sfp.library.classes.Header;
+import ntnu.idata2302.sfp.library.header.Header;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

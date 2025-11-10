@@ -1,6 +1,6 @@
 package ntnu.idata2302.sfp.library;
 
-import ntnu.idata2302.sfp.library.classes.Header;
+import ntnu.idata2302.sfp.library.header.Header;
 
 
 public class SmartFarmingProtocol {

@@ -1,8 +1,9 @@
 package ntnu.idata2302.sfp.library;
 
-import ntnu.idata2302.sfp.library.classes.Header;
-import ntnu.idata2302.sfp.library.helpers.ByteHelper;
+import ntnu.idata2302.sfp.library.body.data.DataReportBody;
+import ntnu.idata2302.sfp.library.header.Header;
 
+import java.util.List;
 import java.util.UUID;
 
 public class Main {
@@ -19,19 +20,36 @@ public class Main {
       UUID.randomUUID()
     );
 
-    SmartFarmingProtocol protocol = new SmartFarmingProtocol(header);
+    DataReportBody body = new DataReportBody(
+      "SN_TEST_001",
+      "2025-01-01T12:00:00Z",
+      List.of(
+        new DataReportBody.SensorReading("temperature", 22.5, "C", "2025-01-01T11:59:59Z"),
+        new DataReportBody.SensorReading("humidity", 55.1, "%", "2025-01-01T11:59:59Z")
+      ),
+      List.of(
+        new DataReportBody.ActuatorState("pump1", "ON",  "2025-01-01T11:59:50Z"),
+        new DataReportBody.ActuatorState("pump2", "OFF", "2025-01-01T11:59:50Z")
+      ),
+      List.of(
+        new DataReportBody.AggregateValue("temperature", "1h", 20.0, 25.0, 22.5),
+        new DataReportBody.AggregateValue("humidity",    "24h", 40.0, 80.0, 55.0)
+      )
+    );
 
-    System.out.println("Header created: " + header.getMessageId());
-    System.out.println("SmartFarmingProtocol initialized.");
+    byte[] bodyBytes = body.toCbor();
+    System.out.println(toHex(bodyBytes));
 
-    byte[] vals = ByteHelper.encodeHeader(header);
-    System.out.println(vals.length);
+    DataReportBody dd2 = DataReportBody.fromCbor(bodyBytes);
+    System.out.println(bodyBytes.length);
 
-    for (byte i : vals){
-      System.out.print(i);
+  }
+
+  private static String toHex(byte[] bytes) {
+    StringBuilder sb = new StringBuilder();
+    for (byte b : bytes) {
+      sb.append(String.format("%02X ", b));
     }
-
-    Header h1 = ByteHelper.decodeHeader(vals);
-
+    return sb.toString();
   }
 }

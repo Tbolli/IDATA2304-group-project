@@ -1,7 +1,5 @@
-package ntnu.idata2302.sfp.library.classes;
+package ntnu.idata2302.sfp.library.header;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.UUID;
 
 public class Header {
