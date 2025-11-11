@@ -11,7 +11,7 @@ import ntnu.idata2302.sfp.library.helpers.CborCodec;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record DataReportBody(
-  String sourceId,
+  String requestId,
   String timestamp,
   List<SensorReading> sensors,
   List<ActuatorState> actuators,
