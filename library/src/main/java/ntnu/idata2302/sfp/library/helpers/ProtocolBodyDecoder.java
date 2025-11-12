@@ -16,34 +16,33 @@ import ntnu.idata2302.sfp.library.body.subscribe.SubscribeAckBody;
 import ntnu.idata2302.sfp.library.body.subscribe.SubscribeBody;
 import ntnu.idata2302.sfp.library.body.subscribe.UnsubscribeAckBody;
 import ntnu.idata2302.sfp.library.body.subscribe.UnsubscribeBody;
+import ntnu.idata2302.sfp.library.header.MessageTypes;
 
 public class ProtocolBodyDecoder {
 
-  public static Body decode(byte msgType, byte[] body) {
+  public static Body decode(MessageTypes msgType, byte[] body) {
     return switch (msgType) {
-      case 0x01 -> DataReportBody.fromCbor(body);
-      case 0x02 -> DataRequestBody.fromCbor(body);
+      case DATA_REPORT -> DataReportBody.fromCbor(body);
+      case DATA_REQUEST -> DataRequestBody.fromCbor(body);
 
-      case 0x12 -> CommandBody.fromCbor(body);
-      case 0x13 -> CommandAckBody.fromCbor(body);
+      case COMMAND -> CommandBody.fromCbor(body);
+      case COMMAND_ACK -> CommandAckBody.fromCbor(body);
 
-      case 0x0B -> SubscribeBody.fromCbor(body);
-      case 0x0C -> UnsubscribeBody.fromCbor(body);
-      case 0x0D -> SubscribeAckBody.fromCbor(body);
-      case 0x0E -> UnsubscribeAckBody.fromCbor(body);
+      case SUBSCRIBE -> SubscribeBody.fromCbor(body);
+      case UNSUBSCRIBE -> UnsubscribeBody.fromCbor(body);
+      case SUBSCRIBE_ACK -> SubscribeAckBody.fromCbor(body);
+      case UNSUBSCRIBE_ACK -> UnsubscribeAckBody.fromCbor(body);
 
-      case 0x21 -> CapabilitiesQueryBody.fromCbor(body);
-      case 0x22 -> CapabilitiesAnnounceBody.fromCbor(body);
+      case CAPABILITIES_QUERY -> CapabilitiesQueryBody.fromCbor(body);
+      case CAPABILITIES_ANNOUNCE -> CapabilitiesAnnounceBody.fromCbor(body);
 
-      case 0x1E -> IdentificationAckBody.fromCbor(body);
+      case IDENTIFICATION_ACK -> IdentificationAckBody.fromCbor(body);
 
-      case 0x08 -> ImageMetadataBody.fromCbor(body);
-      case 0x09 -> ImageChunkBody.fromCbor(body);
-      case 0x0A -> ImageTransferAckBody.fromCbor(body);
+      case IMAGE_METADATA -> ImageMetadataBody.fromCbor(body);
+      case IMAGE_CHUNK -> ImageChunkBody.fromCbor(body);
+      case IMAGE_TRANSFER_ACK -> ImageTransferAckBody.fromCbor(body);
 
-      case (byte)0xFE -> ErrorBody.fromCbor(body);
-
-      default -> throw new RuntimeException("Unknown message type: " + msgType);
+      case ERROR -> ErrorBody.fromCbor(body);
     };
   }
 }

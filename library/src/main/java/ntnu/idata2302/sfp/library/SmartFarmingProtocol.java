@@ -51,7 +51,6 @@ public class SmartFarmingProtocol {
   // ============================================================
 
   public static SmartFarmingProtocol fromBytes(byte[] packet) {
-
     // 1. Decode header
     Header header = HeaderCodec.decodeHeader(packet);
 
@@ -67,6 +66,19 @@ public class SmartFarmingProtocol {
     System.arraycopy(packet, headerSize, bodyBytes, 0, bodyLength);
 
     // 3. Decode body based on messageType
+    Body body = ProtocolBodyDecoder.decode(header.getMessageType(), bodyBytes);
+
+    return new SmartFarmingProtocol(header, body);
+  }
+
+  public static SmartFarmingProtocol fromBytes(Header header, byte[] bodyBytes) {
+    int bodyLength = header.getPayloadLength();
+
+    if (bodyBytes.length < bodyLength)
+      throw new RuntimeException("Incomplete packet: expected "
+        + (bodyLength) + " bytes but got " + bodyBytes.length);
+
+    // Decode body based on messageType
     Body body = ProtocolBodyDecoder.decode(header.getMessageType(), bodyBytes);
 
     return new SmartFarmingProtocol(header, body);

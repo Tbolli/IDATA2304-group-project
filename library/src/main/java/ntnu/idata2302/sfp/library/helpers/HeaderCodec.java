@@ -1,6 +1,7 @@
 package ntnu.idata2302.sfp.library.helpers;
 
 import ntnu.idata2302.sfp.library.header.Header;
+import ntnu.idata2302.sfp.library.header.MessageTypes;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -14,7 +15,7 @@ public class HeaderCodec {
 
     buffer.put(h.getProtocolName());          // 3 bytes
     buffer.put(h.getVersion());               // 1 byte
-    buffer.put(h.getMessageType());           // 1 byte
+    buffer.put(h.getMessageType().getCode()); // 1 byte
     buffer.putInt(h.getSourceId());           // 4 bytes
     buffer.putInt(h.getTargetId());           // 4 bytes
     buffer.putInt(h.getPayloadLength());      // 4 bytes
@@ -48,7 +49,7 @@ public class HeaderCodec {
     UUID messageId = new UUID(msb, lsb);
 
     return new Header(protocol, version,
-      messageType, sourceId, targetId,
+      MessageTypes.fromCode(messageType), sourceId, targetId,
       payloadLength, messageId
     );
   }

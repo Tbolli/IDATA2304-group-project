@@ -12,6 +12,7 @@
     <modules>
         <module>library</module>
         <module>server</module>
+        <module>clientExample</module>
     </modules>
 
 </project>

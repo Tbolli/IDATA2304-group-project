@@ -1,5 +1,7 @@
 package ntnu.idata2302.sfp.library.header;
 
+import ntnu.idata2302.sfp.library.helpers.HeaderCodec;
+
 import java.util.UUID;
 
 public class Header {
@@ -8,7 +10,7 @@ public class Header {
 
   private final byte[] protocolName;  // 3 bytes (fixed)
   private final byte version;         // 1 byte
-  private final byte messageType;     // 1 byte
+  private final MessageTypes messageType;     // 1 byte
   private final int sourceId;         // 4 bytes
   private final int targetId;         // 4 bytes
   private int payloadLength;    // 4 bytes
@@ -16,7 +18,7 @@ public class Header {
 
   public Header(byte[] protocolName,
                 byte version,
-                byte messageType,
+                MessageTypes messageType,
                 int sourceId,
                 int targetId,
                 int payloadLength,
@@ -24,6 +26,9 @@ public class Header {
 
     if (protocolName.length != 3)
       throw new IllegalArgumentException("Protocol name must be 3 bytes");
+    if (protocolName[0] != 0x53 || protocolName[1] != 0x46 || protocolName[2] != 0x50) {
+      throw new IllegalArgumentException("Invalid protocol prefix");
+    }
 
     this.protocolName = protocolName;
     this.version = version;
@@ -34,6 +39,14 @@ public class Header {
     this.messageId = messageId;
   }
 
+  public byte[] toBytes(){
+    return HeaderCodec.encodeHeader(this);
+  }
+
+  public static Header fromBytes(byte[] bytes){
+    return HeaderCodec.decodeHeader(bytes);
+  }
+
   public byte[] getProtocolName() {
     return protocolName;
   }
@@ -42,7 +55,7 @@ public class Header {
     return version;
   }
 
-  public byte getMessageType() {
+  public MessageTypes getMessageType() {
     return messageType;
   }
 
