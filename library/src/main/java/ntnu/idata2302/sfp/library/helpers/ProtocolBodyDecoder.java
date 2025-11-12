@@ -9,6 +9,7 @@ import ntnu.idata2302.sfp.library.body.data.DataReportBody;
 import ntnu.idata2302.sfp.library.body.data.DataRequestBody;
 import ntnu.idata2302.sfp.library.body.error.ErrorBody;
 import ntnu.idata2302.sfp.library.body.identification.IdentificationAckBody;
+import ntnu.idata2302.sfp.library.body.identification.IdentificationBody;
 import ntnu.idata2302.sfp.library.body.image.ImageChunkBody;
 import ntnu.idata2302.sfp.library.body.image.ImageMetadataBody;
 import ntnu.idata2302.sfp.library.body.image.ImageTransferAckBody;
@@ -36,6 +37,7 @@ public class ProtocolBodyDecoder {
       case CAPABILITIES_QUERY -> CapabilitiesQueryBody.fromCbor(body);
       case CAPABILITIES_ANNOUNCE -> CapabilitiesAnnounceBody.fromCbor(body);
 
+      case IDENTIFICATION -> IdentificationBody.fromCbor(body);
       case IDENTIFICATION_ACK -> IdentificationAckBody.fromCbor(body);
 
       case IMAGE_METADATA -> ImageMetadataBody.fromCbor(body);
