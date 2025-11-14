@@ -37,6 +37,7 @@ public record DataReportBody(
   public record ActuatorState(
     String id,
     String state,
+    String unit,
     String timestamp
   ) {}
 
