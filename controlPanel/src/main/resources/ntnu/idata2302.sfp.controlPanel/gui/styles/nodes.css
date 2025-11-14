@@ -1,0 +1,122 @@
+/* ===== Base Page ===== */
+.page-title {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1B4332;
+}
+
+.section-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1B4332;
+}
+
+/* ===== Sidebar ===== */
+.sidebar-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #1B4332;
+    -fx-font-weight: 600;
+    -fx-font-size: 14px;
+    -fx-pref-width: 150;
+    -fx-pref-height: 45;
+}
+
+.sidebar-btn:hover {
+    -fx-background-color: #57CC99;
+    -fx-cursor: hand;
+}
+
+.sidebar-btn-active {
+    -fx-background-color: #57CC99;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+}
+
+/* ===== Table ===== */
+.nodes-table {
+    -fx-background-color: #D8F3DC;
+    -fx-border-color: #3E6151;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.table-view .column-header {
+    -fx-background-color: #80ED99;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #1B4332;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-table-cell-border-color: transparent;
+}
+
+.table-row-cell:filled:selected {
+    -fx-background-color: #B7E4C7;
+}
+
+/* ===== Details Box ===== */
+.details-box {
+    -fx-background-color: white;
+    -fx-border-color: #3E6151;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 16;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 8, 0, 0, 2);
+}
+
+.details-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1B4332;
+}
+
+.details-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #2B4854;
+}
+
+/* ===== Toggles ===== */
+.toggle-on {
+    -fx-background-color: #00C851;
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-font-weight: bold;
+    -fx-pref-width: 60;
+}
+
+.toggle-off {
+    -fx-background-color: #CC0000;
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-font-weight: bold;
+    -fx-pref-width: 60;
+}
+
+/* ===== Refresh Button ===== */
+.refresh-btn {
+    -fx-background-color: #A66B6B;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 15;
+    -fx-pref-width: 150;
+    -fx-pref-height: 35;
+}
+
+.refresh-btn:hover {
+    -fx-background-color: #863434;
+}
+
+/* ===== Scrollbars and Focus ===== */
+.table-view .scroll-bar:horizontal,
+.table-view .scroll-bar:vertical {
+    -fx-opacity: 0;
+}
+
+.table-view:focused {
+    -fx-border-color: transparent;
+}
