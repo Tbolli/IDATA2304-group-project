@@ -13,6 +13,7 @@
         <module>library</module>
         <module>server</module>
         <module>clientExample</module>
+        <module>sensorNode</module>
     </modules>
 
 </project>
