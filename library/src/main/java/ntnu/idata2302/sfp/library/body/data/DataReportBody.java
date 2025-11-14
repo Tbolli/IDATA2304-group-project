@@ -7,10 +7,11 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
+import ntnu.idata2302.sfp.library.helpers.CborCodec;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record DataReportBody(
-  String sourceId,
+  String requestId,
   String timestamp,
   List<SensorReading> sensors,
   List<ActuatorState> actuators,
@@ -19,21 +20,11 @@ public record DataReportBody(
 
   @Override
   public byte[] toCbor() {
-    try {
-      ObjectMapper mapper = new ObjectMapper(new CBORFactory());
-      return mapper.writeValueAsBytes(this);
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to serialize DataReportBody to CBOR", e);
-    }
+    return CborCodec.encode(this);
   }
 
   public static DataReportBody fromCbor(byte[] cbor) {
-    try {
-      ObjectMapper mapper = new ObjectMapper(new CBORFactory());
-      return mapper.readValue(cbor, DataReportBody.class);
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to deserialize CBOR to DataReportBody", e);
-    }
+    return CborCodec.decode(cbor, DataReportBody.class);
   }
 
   // ================================================================

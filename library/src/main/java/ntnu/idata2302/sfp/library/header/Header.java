@@ -11,7 +11,7 @@ public class Header {
   private final byte messageType;     // 1 byte
   private final int sourceId;         // 4 bytes
   private final int targetId;         // 4 bytes
-  private final int payloadLength;    // 4 bytes
+  private int payloadLength;    // 4 bytes
   private final UUID messageId;       // 16 bytes
 
   public Header(byte[] protocolName,
@@ -60,6 +60,10 @@ public class Header {
 
   public UUID getMessageId() {
     return messageId;
+  }
+
+  public void setPayloadLength(int payloadLength) {
+    this.payloadLength = payloadLength;
   }
 
 }
