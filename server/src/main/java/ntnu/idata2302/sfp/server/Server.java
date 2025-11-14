@@ -3,13 +3,13 @@ package ntnu.idata2302.sfp.server;
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
+import ntnu.idata2302.sfp.server.handlers.AnnounceHandler;
 import ntnu.idata2302.sfp.server.handlers.DataReportHandler;
 import ntnu.idata2302.sfp.server.handlers.DataRequestHandler;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -23,6 +23,7 @@ public class Server {
   static {
     dispatcher.registerHandler(MessageTypes.DATA_REPORT, new DataReportHandler());
     dispatcher.registerHandler(MessageTypes.DATA_REQUEST, new DataRequestHandler());
+    dispatcher.registerHandler(MessageTypes.ANNOUNCE, new AnnounceHandler());
   }
 
   public static void main(String[] args) {
@@ -44,12 +45,11 @@ public class Server {
     System.out.println("New connection from " + socket.getInetAddress().getHostAddress() + ":" + socket.getPort());
 
     try (DataInputStream dis = new DataInputStream(socket.getInputStream())) {
-
       while (true) {
         // Read full header
         byte[] headerBytes = dis.readNBytes(Header.HEADER_SIZE);
         if (headerBytes.length < Header.HEADER_SIZE) {
-          System.out.println("Client closed connection or incomplete header.");
+          System.out.println("Incomplete header.");
           break;
         }
 
@@ -57,8 +57,7 @@ public class Server {
         Header header = Header.fromBytes(headerBytes);
 
         // Validate protocol prefix (0x53 0x46 0x50)
-        byte[] protocol = header.getProtocolName();
-        if (protocol[0] != 0x53 || protocol[1] != 0x46 || protocol[2] != 0x50) {
+        if (!Header.validateHeader(header)) {
           System.out.println("Invalid protocol prefix from client.");
           continue;
         }
@@ -69,6 +68,7 @@ public class Server {
 
         // Parse full SFP message
         SmartFarmingProtocol packet = SmartFarmingProtocol.fromBytes(header, bodyBytes);
+
         // dispatch the packet
         dispatcher.dispatch(packet, socket, context);
       }

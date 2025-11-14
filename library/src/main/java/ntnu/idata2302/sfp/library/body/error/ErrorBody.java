@@ -3,7 +3,7 @@ package ntnu.idata2302.sfp.library.body.error;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import ntnu.idata2302.sfp.library.body.Body;
-import ntnu.idata2302.sfp.library.helpers.CborCodec;
+import ntnu.idata2302.sfp.library.codec.CborCodec;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ErrorBody(

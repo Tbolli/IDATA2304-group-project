@@ -2,9 +2,7 @@ package ntnu.idata2302.sfp.library.body.data;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import ntnu.idata2302.sfp.library.body.Body;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
-import ntnu.idata2302.sfp.library.helpers.CborCodec;
+import ntnu.idata2302.sfp.library.codec.CborCodec;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package ntnu.idata2302.sfp.library.header;
 
-import ntnu.idata2302.sfp.library.helpers.HeaderCodec;
+import ntnu.idata2302.sfp.library.codec.HeaderCodec;
 
 import java.util.UUID;
 
@@ -37,6 +37,11 @@ public class Header {
     this.targetId = targetId;
     this.payloadLength = payloadLength;
     this.messageId = messageId;
+  }
+
+  public static boolean validateHeader(Header header) {
+    byte[] protocol = header.getProtocolName();
+    return protocol[0] == 0x53 && protocol[1] == 0x46 && protocol[2] == 0x50;
   }
 
   public byte[] toBytes(){

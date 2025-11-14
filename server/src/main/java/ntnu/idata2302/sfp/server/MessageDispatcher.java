@@ -16,13 +16,13 @@ public class MessageDispatcher {
     handlers.put(type, handler);
   }
 
-  public void dispatch(SmartFarmingProtocol msg, Socket client, ServerContext context) {
-    MessageTypes type = msg.getHeader().getMessageType();
+  public void dispatch(SmartFarmingProtocol packet, Socket client, ServerContext context) {
+    MessageTypes type = packet.getHeader().getMessageType();
     MessageHandler handler = handlers.get(type);
 
     if (handler != null) {
       try {
-        handler.handle(msg, client, context);
+        handler.handle(packet, client, context);
       } catch (Exception e) {
         System.err.println("Error handling message type " + type + ": " + e.getMessage());
         e.printStackTrace();

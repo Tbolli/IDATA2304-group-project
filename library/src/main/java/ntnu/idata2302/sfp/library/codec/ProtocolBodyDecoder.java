@@ -1,15 +1,15 @@
-package ntnu.idata2302.sfp.library.helpers;
+package ntnu.idata2302.sfp.library.codec;
 
 import ntnu.idata2302.sfp.library.body.Body;
-import ntnu.idata2302.sfp.library.body.capabilities.CapabilitiesAnnounceBody;
+import ntnu.idata2302.sfp.library.body.announce.AnnounceAckBody;
+import ntnu.idata2302.sfp.library.body.announce.AnnounceBody;
+import ntnu.idata2302.sfp.library.body.capabilities.CapabilitiesListBody;
 import ntnu.idata2302.sfp.library.body.capabilities.CapabilitiesQueryBody;
 import ntnu.idata2302.sfp.library.body.command.CommandAckBody;
 import ntnu.idata2302.sfp.library.body.command.CommandBody;
 import ntnu.idata2302.sfp.library.body.data.DataReportBody;
 import ntnu.idata2302.sfp.library.body.data.DataRequestBody;
 import ntnu.idata2302.sfp.library.body.error.ErrorBody;
-import ntnu.idata2302.sfp.library.body.identification.IdentificationAckBody;
-import ntnu.idata2302.sfp.library.body.identification.IdentificationBody;
 import ntnu.idata2302.sfp.library.body.image.ImageChunkBody;
 import ntnu.idata2302.sfp.library.body.image.ImageMetadataBody;
 import ntnu.idata2302.sfp.library.body.image.ImageTransferAckBody;
@@ -35,10 +35,10 @@ public class ProtocolBodyDecoder {
       case UNSUBSCRIBE_ACK -> UnsubscribeAckBody.fromCbor(body);
 
       case CAPABILITIES_QUERY -> CapabilitiesQueryBody.fromCbor(body);
-      case CAPABILITIES_ANNOUNCE -> CapabilitiesAnnounceBody.fromCbor(body);
+      case CAPABILITIES_LIST -> CapabilitiesListBody.fromCbor(body);
 
-      case IDENTIFICATION -> IdentificationBody.fromCbor(body);
-      case IDENTIFICATION_ACK -> IdentificationAckBody.fromCbor(body);
+      case ANNOUNCE -> AnnounceBody.fromCbor(body);
+      case ANNOUNCE_ACK -> AnnounceAckBody.fromCbor(body);
 
       case IMAGE_METADATA -> ImageMetadataBody.fromCbor(body);
       case IMAGE_CHUNK -> ImageChunkBody.fromCbor(body);

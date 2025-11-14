@@ -1,8 +1,7 @@
 package ntnu.idata2302.sfp.library.body.command;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import ntnu.idata2302.sfp.library.body.Body;
-import ntnu.idata2302.sfp.library.helpers.CborCodec;
+import ntnu.idata2302.sfp.library.codec.CborCodec;
 
 public record CommandBody(
   String commandId,

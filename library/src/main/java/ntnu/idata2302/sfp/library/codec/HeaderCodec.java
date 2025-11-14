@@ -1,4 +1,4 @@
-package ntnu.idata2302.sfp.library.helpers;
+package ntnu.idata2302.sfp.library.codec;
 
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.header.MessageTypes;

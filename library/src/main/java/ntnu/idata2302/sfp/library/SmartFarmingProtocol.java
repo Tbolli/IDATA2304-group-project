@@ -2,8 +2,8 @@ package ntnu.idata2302.sfp.library;
 
 import ntnu.idata2302.sfp.library.body.Body;
 import ntnu.idata2302.sfp.library.header.Header;
-import ntnu.idata2302.sfp.library.helpers.HeaderCodec;
-import ntnu.idata2302.sfp.library.helpers.ProtocolBodyDecoder;
+import ntnu.idata2302.sfp.library.codec.HeaderCodec;
+import ntnu.idata2302.sfp.library.codec.ProtocolBodyDecoder;
 
 
 public class SmartFarmingProtocol {

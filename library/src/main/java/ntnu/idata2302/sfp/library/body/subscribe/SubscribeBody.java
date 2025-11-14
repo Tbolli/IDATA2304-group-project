@@ -2,7 +2,7 @@ package ntnu.idata2302.sfp.library.body.subscribe;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import ntnu.idata2302.sfp.library.body.Body;
-import ntnu.idata2302.sfp.library.helpers.CborCodec;
+import ntnu.idata2302.sfp.library.codec.CborCodec;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package ntnu.idata2302.sfp.library.helpers;
+package ntnu.idata2302.sfp.library.codec;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.cbor.CBORFactory;

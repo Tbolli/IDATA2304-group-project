@@ -1,10 +1,10 @@
 package ntnu.idata2302.sfp.library.body.capabilities;
 
 import ntnu.idata2302.sfp.library.body.Body;
-import ntnu.idata2302.sfp.library.helpers.CborCodec;
+import ntnu.idata2302.sfp.library.codec.CborCodec;
 
 public record CapabilitiesQueryBody(
-  String requestId
+  int requestId
 ) implements Body {
 
   @Override

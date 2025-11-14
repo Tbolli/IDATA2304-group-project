@@ -5,9 +5,7 @@ import ntnu.idata2302.sfp.library.body.Body;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
-import ntnu.idata2302.sfp.library.helpers.CborCodec;
+import ntnu.idata2302.sfp.library.codec.CborCodec;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record DataReportBody(
