@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>library</module>
+        <module>library-temp</module>
         <module>client</module>
         <module>server</module>
     </modules>
