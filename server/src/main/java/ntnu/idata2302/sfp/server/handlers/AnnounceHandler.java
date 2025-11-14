@@ -5,14 +5,12 @@ import ntnu.idata2302.sfp.library.body.announce.AnnounceAckBody;
 import ntnu.idata2302.sfp.library.body.announce.AnnounceBody;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
-import ntnu.idata2302.sfp.library.node.NodeIds;
-import ntnu.idata2302.sfp.server.ServerContext;
+import ntnu.idata2302.sfp.server.net.ServerContext;
 import ntnu.idata2302.sfp.server.factory.HeaderFactory;
-import ntnu.idata2302.sfp.server.helpers.IdAllocator;
+import ntnu.idata2302.sfp.server.util.IdAllocator;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.UUID;
 
 public class AnnounceHandler implements MessageHandler{
 

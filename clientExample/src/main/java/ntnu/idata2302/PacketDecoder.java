@@ -67,8 +67,6 @@ public class PacketDecoder {
 
       case DATA_REPORT:
         DataReportBody rep = (DataReportBody) body;
-        System.out.println("requestId = " + rep.requestId());
-        System.out.println("timestamp = " + rep.timestamp());
         System.out.println("sensors:");
         if (rep.sensors() != null)
           rep.sensors().forEach(s -> System.out.println("  - " + s));
@@ -83,7 +81,6 @@ public class PacketDecoder {
       // 🔹 Commands
       case COMMAND:
         CommandBody cmd = (CommandBody) body;
-        System.out.println("commandId = " + cmd.commandId());
         System.out.println("actuator  = " + cmd.actuator());
         System.out.println("action    = " + cmd.action());
         System.out.println("timestamp = " + cmd.timestamp());

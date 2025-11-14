@@ -1,8 +1,7 @@
-package ntnu.idata2302.sfp.server;
+package ntnu.idata2302.sfp.server.net;
 
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
-import ntnu.idata2302.sfp.server.ServerContext;
 import ntnu.idata2302.sfp.server.handlers.MessageHandler;
 
 import java.net.Socket;

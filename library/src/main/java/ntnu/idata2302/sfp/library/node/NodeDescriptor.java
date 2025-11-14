@@ -11,5 +11,5 @@ public record NodeDescriptor(
   Boolean supportsAggregates
 ) {
   public record SensorDescriptor (String id, String unit) {}
-  public record ActuatorDescriptor (String id, List<String> actions) {}
+  public record ActuatorDescriptor (String id, double value, Double minValue, Double maxValue, String unit) {}
 }

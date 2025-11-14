@@ -27,16 +27,22 @@ public record DataReportBody(
   // Nested Records
   // ================================================================
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   public record SensorReading(
     String id,
     Double value,
+    Double minValue,
+    Double maxValue,
     String unit,
     String timestamp
   ) {}
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   public record ActuatorState(
     String id,
-    String state,
+    Double value,
+    Double minValue,
+    Double maxValue,
     String unit,
     String timestamp
   ) {}

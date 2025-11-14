@@ -1,4 +1,4 @@
-package ntnu.idata2302.sfp.server.helpers;
+package ntnu.idata2302.sfp.server.util;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;

@@ -1,9 +1,7 @@
 package ntnu.idata2302.sfp.server.handlers;
 
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
-import ntnu.idata2302.sfp.library.body.data.DataRequestBody;
-import ntnu.idata2302.sfp.library.header.Header;
-import ntnu.idata2302.sfp.server.ServerContext;
+import ntnu.idata2302.sfp.server.net.ServerContext;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -14,6 +12,7 @@ public class DataReportHandler implements MessageHandler {
   public void handle(SmartFarmingProtocol message, Socket client, ServerContext context) throws IOException {
     // Direct message to all subscribers of the node
     context.sendToSubscribers(message);
+    System.out.println("GOT IT");
   }
 
 }

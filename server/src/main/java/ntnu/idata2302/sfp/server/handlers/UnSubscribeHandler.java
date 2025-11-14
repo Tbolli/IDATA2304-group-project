@@ -1,21 +1,16 @@
 package ntnu.idata2302.sfp.server.handlers;
 
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
-import ntnu.idata2302.sfp.library.body.announce.AnnounceAckBody;
 import ntnu.idata2302.sfp.library.body.subscribe.SubscribeAckBody;
-import ntnu.idata2302.sfp.library.body.subscribe.SubscribeBody;
 import ntnu.idata2302.sfp.library.body.subscribe.UnsubscribeBody;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
-import ntnu.idata2302.sfp.library.node.NodeIds;
-import ntnu.idata2302.sfp.server.ServerContext;
+import ntnu.idata2302.sfp.server.net.ServerContext;
 import ntnu.idata2302.sfp.server.factory.HeaderFactory;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Handler;
 
 public class UnSubscribeHandler implements MessageHandler{
   private final AtomicInteger counter = new AtomicInteger(1);
