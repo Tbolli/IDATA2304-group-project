@@ -9,8 +9,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record SubscribeBody(
   int requestId,
-  SensorSection sensors,
-  ActuatorSection actuators
+  List<NodeSubscription> nodes
 ) implements Body {
 
   @Override
@@ -22,11 +21,11 @@ public record SubscribeBody(
     return CborCodec.decode(bytes, SubscribeBody.class);
   }
 
-  public record SensorSection(
-    List<String> metrics
-  ) {}
-
-  public record ActuatorSection(
-    List<String> actuators
+  //  Per-node subscription
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  public record NodeSubscription(
+    int sensorNodeId,
+    List<String> metrics,      // e.g. ["temperature", "humidity"]
+    List<String> actuators    // e.g. ["valve1", "pump"]
   ) {}
 }

@@ -2,6 +2,7 @@ package ntnu.idata2302.sfp.server;
 
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
 import ntnu.idata2302.sfp.library.node.NodeDescriptor;
+import ntnu.idata2302.sfp.library.body.subscribe.SubscribeBody;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -12,11 +13,14 @@ import java.util.stream.Collectors;
 
 public class ServerContext {
   // Each connected node (Sensor or Control Panel | LogicalId, Socket)
-  private Map<Integer, Socket> socketRegistry = new ConcurrentHashMap<>();
-  private Map<Integer, NodeDescriptor> nodeRsegistry = new ConcurrentHashMap<>();
+  private final Map<Integer, Socket> socketRegistry = new ConcurrentHashMap<>();
+  private final Map<Integer, NodeDescriptor> nodeRegistry = new ConcurrentHashMap<>();
+
+  // For each control-panel nodeId → list of per-SN subscriptions
+  private final Map<Integer, List<SubscribeBody.NodeSubscription>> subscriptions = new ConcurrentHashMap<>();
 
   public void registerNode(int nodeId, NodeDescriptor node, Socket socket) {
-    nodeRsegistry.put(nodeId,node);
+    nodeRegistry.put(nodeId,node);
     socketRegistry.put(nodeId,socket);
     System.out.println("Registered node " + nodeId + " (" + socket.getInetAddress() + ")");
   }
@@ -51,8 +55,16 @@ public class ServerContext {
     socket.getOutputStream().flush();
   }
 
+  public void setSubscriptions(int subId, List<SubscribeBody.NodeSubscription> subs) {
+    subscriptions.put(subId, subs);
+  }
+
+  public void removeSubscriptions(int subId) {
+    subscriptions.remove(subId);
+  }
+
   public List<NodeDescriptor> getServerNodeDescriptors() {
-    return nodeRsegistry.values()
+    return nodeRegistry.values()
       .stream()
       .filter(desc -> desc != null && desc.nodeType() == 1)
       .collect(Collectors.toList());

@@ -3,10 +3,7 @@ package ntnu.idata2302.sfp.server;
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
-import ntnu.idata2302.sfp.server.handlers.AnnounceHandler;
-import ntnu.idata2302.sfp.server.handlers.CapabilitiesHandler;
-import ntnu.idata2302.sfp.server.handlers.DataReportHandler;
-import ntnu.idata2302.sfp.server.handlers.DataRequestHandler;
+import ntnu.idata2302.sfp.server.handlers.*;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -26,6 +23,7 @@ public class Server {
     dispatcher.registerHandler(MessageTypes.DATA_REQUEST, new DataRequestHandler());
     dispatcher.registerHandler(MessageTypes.ANNOUNCE, new AnnounceHandler());
     dispatcher.registerHandler(MessageTypes.CAPABILITIES_QUERY, new CapabilitiesHandler());
+    dispatcher.registerHandler(MessageTypes.SUBSCRIBE, new SubscribeHandler());
   }
 
   public static void main(String[] args) {

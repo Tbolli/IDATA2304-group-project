@@ -2,43 +2,46 @@ package ntnu.idata2302.sfp.server.handlers;
 
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
 import ntnu.idata2302.sfp.library.body.announce.AnnounceAckBody;
-import ntnu.idata2302.sfp.library.body.announce.AnnounceBody;
+import ntnu.idata2302.sfp.library.body.subscribe.SubscribeAckBody;
+import ntnu.idata2302.sfp.library.body.subscribe.SubscribeBody;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
 import ntnu.idata2302.sfp.library.node.NodeIds;
 import ntnu.idata2302.sfp.server.ServerContext;
 import ntnu.idata2302.sfp.server.factory.HeaderFactory;
-import ntnu.idata2302.sfp.server.helpers.IdAllocator;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Handler;
 
-public class AnnounceHandler implements MessageHandler{
+public class SubscribeHandler implements MessageHandler{
+  private final AtomicInteger counter = new AtomicInteger(1);
 
   @Override
   public void handle(SmartFarmingProtocol message, Socket client, ServerContext context) throws IOException {
-    AnnounceBody reqBody = (AnnounceBody) message.getBody();
+    Header reqHeader = message.getHeader();
+    SubscribeBody reqBody = (SubscribeBody) message.getBody();
+    int subId = counter.getAndIncrement();
 
-    // Register node
-    int givenId = IdAllocator.allocate();
-    context.registerNode(
-      givenId,
-      reqBody.descriptor(),
-      client
-    );
+    // Set subscriptions
+    context.setSubscriptions(subId, reqBody.nodes());
 
     // Response - Header
-    Header resHeader = HeaderFactory.serverHeader(MessageTypes.ANNOUNCE_ACK,givenId);
+    Header resHeader = HeaderFactory.serverHeader(MessageTypes.SUBSCRIBE_ACK,reqHeader.getSourceId());
 
     // Response - Body
-    AnnounceAckBody resBody = new AnnounceAckBody(
+    SubscribeAckBody resBody = new SubscribeAckBody(
       reqBody.requestId(),
+      subId,
       1
     );
 
+    // Send to client
     context.sendTo(
       client, new SmartFarmingProtocol(resHeader, resBody)
     );
+
   }
 }

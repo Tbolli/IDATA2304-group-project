@@ -1,0 +1,47 @@
+package ntnu.idata2302.sfp.server.handlers;
+
+import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
+import ntnu.idata2302.sfp.library.body.announce.AnnounceAckBody;
+import ntnu.idata2302.sfp.library.body.subscribe.SubscribeAckBody;
+import ntnu.idata2302.sfp.library.body.subscribe.SubscribeBody;
+import ntnu.idata2302.sfp.library.body.subscribe.UnsubscribeBody;
+import ntnu.idata2302.sfp.library.header.Header;
+import ntnu.idata2302.sfp.library.header.MessageTypes;
+import ntnu.idata2302.sfp.library.node.NodeIds;
+import ntnu.idata2302.sfp.server.ServerContext;
+import ntnu.idata2302.sfp.server.factory.HeaderFactory;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Handler;
+
+public class UnSubscribeHandler implements MessageHandler{
+  private final AtomicInteger counter = new AtomicInteger(1);
+
+  @Override
+  public void handle(SmartFarmingProtocol message, Socket client, ServerContext context) throws IOException {
+    Header reqHeader = message.getHeader();
+    UnsubscribeBody reqBody = (UnsubscribeBody) message.getBody();
+
+    // Remove subscriptions
+    context.removeSubscriptions(reqBody.subscriptionId());
+
+    // Response - Header
+    Header resHeader = HeaderFactory.serverHeader(MessageTypes.UNSUBSCRIBE_ACK,reqHeader.getSourceId());
+
+    // Response - Body
+    SubscribeAckBody resBody = new SubscribeAckBody(
+      reqBody.requestId(),
+      counter.getAndIncrement(),
+      1
+    );
+
+    // Send to client
+    context.sendTo(
+      client, new SmartFarmingProtocol(resHeader, resBody)
+    );
+
+  }
+}

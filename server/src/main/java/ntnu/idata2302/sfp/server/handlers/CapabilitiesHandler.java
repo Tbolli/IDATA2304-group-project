@@ -8,6 +8,7 @@ import ntnu.idata2302.sfp.library.header.MessageTypes;
 import ntnu.idata2302.sfp.library.node.NodeDescriptor;
 import ntnu.idata2302.sfp.library.node.NodeIds;
 import ntnu.idata2302.sfp.server.ServerContext;
+import ntnu.idata2302.sfp.server.factory.HeaderFactory;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -23,15 +24,7 @@ public class CapabilitiesHandler implements MessageHandler {
     CapabilitiesQueryBody reqBody = (CapabilitiesQueryBody) message.getBody();
 
     // Response - Header
-    Header resHeader = new Header(
-      new byte[] { 'S', 'F', 'P' },
-      (byte)1,
-      MessageTypes.CAPABILITIES_LIST,
-      NodeIds.SERVER,
-      reqHeader.getTargetId(),
-      0,
-      UUID.randomUUID()
-    );
+    Header resHeader = HeaderFactory.serverHeader(MessageTypes.CAPABILITIES_LIST,reqHeader.getSourceId());
 
     // Response - Body
     CapabilitiesListBody resBody = new CapabilitiesListBody(
