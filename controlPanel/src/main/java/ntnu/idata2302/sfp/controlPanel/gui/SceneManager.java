@@ -15,7 +15,7 @@ import java.util.Map;
  *
  * <p>This class holds a reference to the application's primary {@link Stage} and
  * provides a method to switch views by loading FXML files from the resource path
- * {@code /ntnu/smartFarm/gui/views/{viewName}.fxml}. Loaded {@link Scene} instances
+ * {@code /ntnu/idata2302/sfp/controlPanel/gui/views/{viewName}.fxml}. Loaded {@link Scene} instances
  * are cached in-memory to avoid reloading FXML on later switches. A global
  * application stylesheet located at {@code /ntnu/smartFarm/gui/styles/app.css} is
  * applied to each scene when first used.</p>
@@ -51,10 +51,10 @@ public class SceneManager {
    * Switch the current scene to the view identified by {@code viewName}.
    *
    * <p>The method looks for an FXML file at the resource path
-   * {@code /ntnu/smartFarm/gui/views/{viewName}.fxml}. If the view has been loaded before
+   * {@code /ntnu/idata2302/sfp/controlPanel/gui/views/{viewName}.fxml}. If the view has been loaded before
    * it will be retrieved from an internal cache; otherwise the FXML is loaded and a new
    * {@link Scene} is created and cached. The application stylesheet
-   * {@code /ntnu/smartFarm/gui/styles/app.css} is ensured to be present on the scene's
+   * {@code /ntnu/idata2302/sfp/controlPanel/gui/styles/app.css} is ensured to be present on the scene's
    * stylesheets.</p>
    *
    * <p>If the primary stage has not been set via {@link #setStage(Stage)} this method
@@ -75,7 +75,7 @@ public class SceneManager {
       Scene scene = sceneCache.get(viewName);
       if (scene == null) {
         FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource(
-            "/ntnu/smartFarm/gui/views/" + viewName + ".fxml"));
+            "/ntnu/idata2302/sfp/controlPanel/gui/views/" + viewName + ".fxml"));
         Parent root = loader.load();
         scene = new Scene(root);
         sceneCache.put(viewName, scene);
@@ -83,7 +83,7 @@ public class SceneManager {
 
 
       String style = Objects.requireNonNull(
-          SceneManager.class.getResource("/ntnu/smartFarm/gui/styles/app.css")).toExternalForm();
+          SceneManager.class.getResource("/ntnu/idata2302/sfp/controlPanel/gui/styles/app.css")).toExternalForm();
       if (!scene.getStylesheets().contains(style)) {
         scene.getStylesheets().add(style);
       }
