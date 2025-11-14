@@ -4,6 +4,7 @@ import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
 import ntnu.idata2302.sfp.server.handlers.AnnounceHandler;
+import ntnu.idata2302.sfp.server.handlers.CapabilitiesHandler;
 import ntnu.idata2302.sfp.server.handlers.DataReportHandler;
 import ntnu.idata2302.sfp.server.handlers.DataRequestHandler;
 
@@ -24,6 +25,7 @@ public class Server {
     dispatcher.registerHandler(MessageTypes.DATA_REPORT, new DataReportHandler());
     dispatcher.registerHandler(MessageTypes.DATA_REQUEST, new DataRequestHandler());
     dispatcher.registerHandler(MessageTypes.ANNOUNCE, new AnnounceHandler());
+    dispatcher.registerHandler(MessageTypes.CAPABILITIES_QUERY, new CapabilitiesHandler());
   }
 
   public static void main(String[] args) {

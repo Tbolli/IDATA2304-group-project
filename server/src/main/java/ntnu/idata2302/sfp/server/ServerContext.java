@@ -5,8 +5,10 @@ import ntnu.idata2302.sfp.library.node.NodeDescriptor;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class ServerContext {
   // Each connected node (Sensor or Control Panel | LogicalId, Socket)
@@ -47,6 +49,13 @@ public class ServerContext {
   public void sendTo(Socket socket, SmartFarmingProtocol packet) throws IOException {
     socket.getOutputStream().write(packet.toBytes());
     socket.getOutputStream().flush();
+  }
+
+  public List<NodeDescriptor> getServerNodeDescriptors() {
+    return nodeRsegistry.values()
+      .stream()
+      .filter(desc -> desc != null && desc.nodeType() == 1)
+      .collect(Collectors.toList());
   }
 
   // Broadcast to all nodes

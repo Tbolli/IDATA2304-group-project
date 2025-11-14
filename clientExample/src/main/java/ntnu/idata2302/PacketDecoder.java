@@ -32,7 +32,7 @@ public class PacketDecoder {
       // 🔹 Announce
       case ANNOUNCE_ACK:
         AnnounceAckBody ack = (AnnounceAckBody) body;
-        System.out.println("givenId =" + header.getTargetId());
+        System.out.println("givenId = " + header.getTargetId());
         System.out.println("requestId = " + ack.requestId());
         System.out.println("status    = " + ack.status());
         break;

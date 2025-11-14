@@ -4,7 +4,8 @@ import ntnu.idata2302.sfp.library.body.Body;
 import ntnu.idata2302.sfp.library.codec.CborCodec;
 
 public record UnsubscribeBody(
-  String subscriptionId
+  int requestId,
+  int subscriptionId
 ) implements Body {
 
   @Override

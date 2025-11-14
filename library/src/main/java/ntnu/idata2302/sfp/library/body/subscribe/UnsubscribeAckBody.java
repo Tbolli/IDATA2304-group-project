@@ -4,7 +4,7 @@ import ntnu.idata2302.sfp.library.body.Body;
 import ntnu.idata2302.sfp.library.codec.CborCodec;
 
 public record UnsubscribeAckBody(
-  String subscriptionId,
+  int requestId,
   int status
 ) implements Body {
 

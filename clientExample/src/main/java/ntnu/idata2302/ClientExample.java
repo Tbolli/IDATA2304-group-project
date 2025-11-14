@@ -2,6 +2,7 @@ package ntnu.idata2302;
 
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
 import ntnu.idata2302.sfp.library.body.announce.AnnounceBody;
+import ntnu.idata2302.sfp.library.body.capabilities.CapabilitiesQueryBody;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
 import ntnu.idata2302.sfp.library.node.NodeDescriptor;
@@ -52,19 +53,23 @@ public class ClientExample {
 
     while (true) {
       System.out.println("\n=== CLIENT MENU ===");
-      System.out.println("1 → Send capabilities announce");
-      System.out.println("listen → Listen for packets");
-      System.out.println("exit → Close client");
+      System.out.println("1      | Announce");
+      System.out.println("2      | Capabilities Query");
+      System.out.println("listen | Listen for packets");
+      System.out.println("exit   | Close client");
       System.out.print("Select option: ");
 
       String choice = scanner.nextLine().trim();
 
       switch (choice) {
         case "1":
-          sendCapabilitiesAnnounce();
+          sendAnnounce();
           waitForSingleResponse();
           break;
-
+        case "2":
+          sendCapQuery();
+          waitForSingleResponse();
+          break;
         case "listen":
           startListening(scanner);
           break;
@@ -78,7 +83,7 @@ public class ClientExample {
     }
   }
 
-  private void sendCapabilitiesAnnounce() {
+  private void sendAnnounce() {
     try {
       Header header = new Header(
         new byte[]{'S', 'F', 'P'},
@@ -99,6 +104,30 @@ public class ClientExample {
         nodeDescriptor
       );
 
+      SmartFarmingProtocol packet = new SmartFarmingProtocol(header, body);
+
+      out.write(packet.toBytes());
+      out.flush();
+
+      System.out.println("Packet sent.");
+    } catch (Exception e) {
+      System.err.println("Failed to send packet: " + e.getMessage());
+    }
+  }
+
+  private void sendCapQuery(){
+    try {
+      Header header = new Header(
+        new byte[]{'S', 'F', 'P'},
+        (byte) 1,
+        MessageTypes.CAPABILITIES_QUERY,
+        NodeIds.BROADCAST,
+        NodeIds.SERVER,
+        0,
+        UUID.randomUUID()
+      );
+
+      CapabilitiesQueryBody body = new CapabilitiesQueryBody(counter.incrementAndGet());
       SmartFarmingProtocol packet = new SmartFarmingProtocol(header, body);
 
       out.write(packet.toBytes());
