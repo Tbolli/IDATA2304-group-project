@@ -1,4 +1,4 @@
-package ntnu.idata2302.sfp.sensorNode.logic;
+package ntnu.idata2302.sfp.sensorNode.core;
 
 /**
  * Represents a dynamic sensor that produces smoothly changing values.
