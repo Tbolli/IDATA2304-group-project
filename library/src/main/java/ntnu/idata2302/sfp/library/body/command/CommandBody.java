@@ -4,7 +4,7 @@ import ntnu.idata2302.sfp.library.body.Body;
 import ntnu.idata2302.sfp.library.codec.CborCodec;
 
 public record CommandBody(
-  String commandId,
+  int requestId,
   String actuator,
   int action,
   String timestamp
