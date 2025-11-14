@@ -20,10 +20,10 @@ public class Server {
 
   static {
     dispatcher.registerHandler(MessageTypes.DATA_REPORT, new DataReportHandler());
-    dispatcher.registerHandler(MessageTypes.DATA_REQUEST, new DataRequestHandler());
     dispatcher.registerHandler(MessageTypes.ANNOUNCE, new AnnounceHandler());
     dispatcher.registerHandler(MessageTypes.CAPABILITIES_QUERY, new CapabilitiesHandler());
     dispatcher.registerHandler(MessageTypes.SUBSCRIBE, new SubscribeHandler());
+    dispatcher.registerHandler(MessageTypes.UNSUBSCRIBE, new UnSubscribeHandler());
   }
 
   public static void main(String[] args) {

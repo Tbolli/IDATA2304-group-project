@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class ServerContext {
+
   // Each connected node (Sensor or Control Panel | LogicalId, Socket)
   private final Map<Integer, Socket> socketRegistry = new ConcurrentHashMap<>();
   private final Map<Integer, NodeDescriptor> nodeRegistry = new ConcurrentHashMap<>();
@@ -61,6 +62,26 @@ public class ServerContext {
 
   public void removeSubscriptions(int subId) {
     subscriptions.remove(subId);
+  }
+
+  public List<Integer> getSubscribersForSensorNode(int sensorNodeId) {
+    return subscriptions.entrySet()
+      .stream()
+      .filter(e -> e.getValue().stream()
+        .anyMatch(sub -> sub.sensorNodeId() == sensorNodeId))
+      .map(Map.Entry::getKey) // control panel IDs
+      .toList();
+  }
+
+  public void sendToSubscribers(SmartFarmingProtocol packet) {
+    int sensorId = packet.getHeader().getSourceId();
+    for (int cpId : getSubscribersForSensorNode(sensorId)) {
+      try {
+        sendTo(cpId, packet);
+      } catch (IOException e) {
+        System.out.println("Failed to send report to CP " + cpId);
+      }
+    }
   }
 
   public List<NodeDescriptor> getServerNodeDescriptors() {
