@@ -10,26 +10,13 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>sfp-library-temp</artifactId>
-    <packaging>jar</packaging>
+    <artifactId>sfp-sensorNode</artifactId>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>5.10.2</junit.version>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.16.1</version> <!-- Use a recent version -->
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-cbor</artifactId>
-            <version>2.16.1</version> <!-- Use a recent version -->
-        </dependency>
-    </dependencies>
     <build>
         <plugins>
             <plugin>

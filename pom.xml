@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>library-temp</module>
+        <module>sensorNode</module>
         <module>client</module>
         <module>server</module>
     </modules>
