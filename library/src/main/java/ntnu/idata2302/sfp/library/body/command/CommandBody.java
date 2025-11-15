@@ -6,8 +6,7 @@ import ntnu.idata2302.sfp.library.codec.CborCodec;
 public record CommandBody(
   int requestId,
   String actuator,
-  int action,
-  String timestamp
+  double newValue
 ) implements Body {
 
   @Override

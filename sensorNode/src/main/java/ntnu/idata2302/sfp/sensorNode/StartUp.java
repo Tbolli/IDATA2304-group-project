@@ -2,6 +2,7 @@ package ntnu.idata2302.sfp.sensorNode;
 
 import ntnu.idata2302.sfp.sensorNode.core.SensorNode;
 import ntnu.idata2302.sfp.sensorNode.core.SimulationLoop;
+import ntnu.idata2302.sfp.sensorNode.entity.ActuatorType;
 import ntnu.idata2302.sfp.sensorNode.factory.NodeFactory;
 import ntnu.idata2302.sfp.sensorNode.factory.PacketFactory;
 import ntnu.idata2302.sfp.sensorNode.net.NetworkLoop;
@@ -22,7 +23,7 @@ public class StartUp {
       SensorNode node = NodeFactory.defaultNode();
 
       // Create network client
-      SensorNodeContext client = new SensorNodeContext(SERVER_HOST, SERVER_PORT);
+      SensorNodeContext client = new SensorNodeContext(SERVER_HOST, SERVER_PORT, node);
       // Connect to the server
       client.connect();
       // Send initial packet

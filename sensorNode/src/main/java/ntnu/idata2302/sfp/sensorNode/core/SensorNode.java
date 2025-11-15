@@ -44,6 +44,12 @@ public class SensorNode {
     actuators.forEach(Actuator::update);
   }
 
+  public Actuator findActuator(String actuatorName) {
+    return actuators.stream()
+      .filter(a -> a.getType().displayName().equalsIgnoreCase(actuatorName))
+      .findFirst()
+      .orElse(null);
+  }
 
   public void setId(int id){
     this.id = id;

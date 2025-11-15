@@ -90,14 +90,17 @@ public enum ActuatorType {
     return unit;
   }
 
+  /** Parse from display name (e.g., "Fan", "Shade Screen", "CO2 Injector") */
+  public static ActuatorType fromDisplayName(String displayName) {
+    if (displayName == null)
+      throw new IllegalArgumentException("Display name cannot be null");
 
-  /** Returns the string representation of the actuator type.
-   *
-   * @return the display name
-   */
+    for (ActuatorType t : values()) {
+      if (t.displayName.equalsIgnoreCase(displayName.trim())) {
+        return t;
+      }
+    }
 
-  @Override
-  public String toString() {
-    return displayName;
+    throw new IllegalArgumentException("Unknown actuator display name: " + displayName);
   }
 }

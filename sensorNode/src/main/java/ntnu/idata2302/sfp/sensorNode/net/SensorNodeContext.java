@@ -2,6 +2,8 @@ package ntnu.idata2302.sfp.sensorNode.net;
 
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
 import ntnu.idata2302.sfp.library.header.Header;
+import ntnu.idata2302.sfp.sensorNode.core.Sensor;
+import ntnu.idata2302.sfp.sensorNode.core.SensorNode;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -16,15 +18,16 @@ public class SensorNodeContext {
 
   private final String host;
   private final int port;
-  private int id;
+  private final SensorNode sensorNode;
 
   private Socket socket;
   private DataInputStream in;
   private OutputStream out;
 
-  public SensorNodeContext(String host, int port) {
+  public SensorNodeContext(String host, int port, SensorNode node) {
     this.host = host;
     this.port = port;
+    this.sensorNode = node;
   }
 
   /** Opens a blocking TCP connection to the server. */
@@ -72,9 +75,14 @@ public class SensorNodeContext {
   }
 
   public void setId(int id) {
-    this.id = id;
+    sensorNode.setId(id);
   }
+
   public int getId() {
-    return id;
+    return sensorNode.getId();
+  }
+
+  public SensorNode getSensorNode() {
+    return sensorNode;
   }
 }

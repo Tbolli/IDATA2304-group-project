@@ -1,8 +1,11 @@
 package ntnu.idata2302.sfp.sensorNode.factory;
 
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
+import ntnu.idata2302.sfp.library.body.announce.AnnounceAckBody;
 import ntnu.idata2302.sfp.library.body.announce.AnnounceBody;
+import ntnu.idata2302.sfp.library.body.command.CommandAckBody;
 import ntnu.idata2302.sfp.library.body.data.DataReportBody;
+import ntnu.idata2302.sfp.library.body.error.ErrorBody;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
 import ntnu.idata2302.sfp.library.node.NodeDescriptor;
@@ -68,12 +71,44 @@ public class PacketFactory {
     return new SmartFarmingProtocol(header, body);
   }
 
+
+  public static SmartFarmingProtocol buildAnnounceAckPacket(int givenId, int requestId) {
+    Header header = new Header(
+      new byte[]{'S', 'F', 'P'},
+      (byte) 1,
+      MessageTypes.ANNOUNCE_ACK,
+      givenId,
+      NodeIds.SERVER,
+      0,
+      UUID.randomUUID()
+    );
+
+    AnnounceAckBody body = new AnnounceAckBody(requestId, 1);
+    return new SmartFarmingProtocol(header, body);
+  }
+
+  public static SmartFarmingProtocol buildCommandAckPacket(int sourceId, int targetId, int requestId, int status, String message) {
+    Header header = new Header(
+      new byte[]{'S', 'F', 'P'},
+      (byte) 1,
+      MessageTypes.COMMAND_ACK,
+      sourceId,
+      targetId,
+      0,
+      UUID.randomUUID()
+    );
+
+    CommandAckBody body = new CommandAckBody(requestId, status, message);
+    return new SmartFarmingProtocol(header, body);
+  }
+
+
   // DATA REPORT PACKET
-  public static SmartFarmingProtocol buildReportPacket(SensorNode node) {
+  public static SmartFarmingProtocol buildReportPacket(SensorNode sensorNode) {
 
     // Convert sensors → readings with value
     List<DataReportBody.SensorReading> sensorReadings =
-      node.getSensors().stream()
+      sensorNode.getSensors().stream()
         .map(s -> new DataReportBody.SensorReading(
           s.getName(),
           s.getValue(),
@@ -85,7 +120,7 @@ public class PacketFactory {
 
     // Convert actuators → states
     List<DataReportBody.ActuatorState> actuatorStates =
-      node.getActuators().stream()
+      sensorNode.getActuators().stream()
         .map(a -> new DataReportBody.ActuatorState(
           a.getType().name(),
           a.getCurrentValue(),
@@ -105,12 +140,27 @@ public class PacketFactory {
       new byte[]{'S', 'F', 'P'},
       (byte) 1,
       MessageTypes.DATA_REPORT,
-      node.getId(),        // this SN's assigned ID
+      sensorNode.getId(),        // this SN's assigned ID
       NodeIds.SERVER,
       0,
       UUID.randomUUID()
     );
 
+    return new SmartFarmingProtocol(header, body);
+  }
+
+  public static SmartFarmingProtocol buildErrorPacket(int sourceId, int targetId, int errorId, String message) {
+    Header header = new Header(
+      new byte[]{'S', 'F', 'P'},
+      (byte) 1,
+      MessageTypes.ERROR,
+      sourceId,
+      targetId,
+      0,
+      UUID.randomUUID()
+    );
+
+    ErrorBody body = new ErrorBody(errorId, message);
     return new SmartFarmingProtocol(header, body);
   }
 }
