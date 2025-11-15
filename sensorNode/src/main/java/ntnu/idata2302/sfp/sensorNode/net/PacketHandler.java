@@ -39,22 +39,23 @@ public class PacketHandler {
     Header header = packet.getHeader();
     CommandBody body = (CommandBody) packet.getBody();
 
-    // Validate actuator
-    if (body.actuator() == null || body.actuator().isBlank()) {
+    // Validate actuators
+    if (body.actuators() == null) {
       SmartFarmingProtocol errorBody = PacketFactory.buildErrorPacket(
         header.getSourceId(),
         header.getTargetId(),
         1,
-        String.format("BAD_REQUEST: missing required field 'actuator' in body: %s", body)
+        String.format("BAD_REQUEST: missing required field 'actuators' in body: %s", body)
       );
       client.sendPacket(errorBody);
       return;
     }
 
-    // Set a new value for the actuator
-    Actuator actuator = client.getSensorNode()
-      .findActuator(body.actuator());
-    actuator.act(body.newValue());
+    // Set a new value for the actuators
+    body.actuators().forEach(inAct -> {
+      Actuator act = client.getSensorNode().findActuator(inAct.name());
+      act.act(inAct.newValue());
+    });
 
     // Send ack packet
     SmartFarmingProtocol resBody = PacketFactory.buildCommandAckPacket(

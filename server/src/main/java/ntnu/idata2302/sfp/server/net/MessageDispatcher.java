@@ -2,7 +2,7 @@ package ntnu.idata2302.sfp.server.net;
 
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
-import ntnu.idata2302.sfp.server.handlers.MessageHandler;
+import ntnu.idata2302.sfp.server.net.handlers.MessageHandler;
 
 import java.net.Socket;
 import java.util.Map;

@@ -3,9 +3,9 @@ package ntnu.idata2302.sfp.server;
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
-import ntnu.idata2302.sfp.server.handlers.*;
 import ntnu.idata2302.sfp.server.net.MessageDispatcher;
 import ntnu.idata2302.sfp.server.net.ServerContext;
+import ntnu.idata2302.sfp.server.net.handlers.*;
 
 import java.io.DataInputStream;
 import java.io.EOFException;

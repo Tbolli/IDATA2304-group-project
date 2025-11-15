@@ -1,4 +1,4 @@
-package ntnu.idata2302.sfp.server.handlers;
+package ntnu.idata2302.sfp.server.net.handlers;
 
 
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
