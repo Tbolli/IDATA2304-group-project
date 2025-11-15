@@ -1,6 +1,7 @@
 package ntnu.idata2302.sfp.sensorNode.net;
 
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
+import ntnu.idata2302.sfp.library.body.announce.AnnounceAckBody;
 import ntnu.idata2302.sfp.library.body.announce.AnnounceBody;
 import ntnu.idata2302.sfp.library.body.command.CommandBody;
 import ntnu.idata2302.sfp.library.body.error.ErrorBody;
@@ -18,21 +19,17 @@ public class PacketHandler {
     System.out.println("Handling packet: " + type.toString());
 
     switch (type) {
-      case ANNOUNCE_ACK -> PacketHandler.AnnounceHandle(client, packet);
+      case ANNOUNCE_ACK -> PacketHandler.AnnounceAckHandle(client, packet);
       case COMMAND -> PacketHandler.CommandHandle(client, packet);
     }
   }
 
-  private static void AnnounceHandle(SensorNodeContext client, SmartFarmingProtocol packet){
+  private static void AnnounceAckHandle(SensorNodeContext client, SmartFarmingProtocol packet){
     Header header = packet.getHeader();
-    AnnounceBody body = (AnnounceBody) packet.getBody();
+    AnnounceAckBody body = (AnnounceAckBody) packet.getBody();
 
     // Set id for sensor node
     client.setId(header.getTargetId());
-
-    // Send ack packet
-    SmartFarmingProtocol resPacket = PacketFactory.buildAnnounceAckPacket(header.getTargetId(),body.requestId());
-    client.sendPacket(resPacket);
   }
 
   private static void CommandHandle(SensorNodeContext client, SmartFarmingProtocol packet){

@@ -5,22 +5,25 @@ import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.sensorNode.core.Sensor;
 import ntnu.idata2302.sfp.sensorNode.core.SensorNode;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
+import java.io.*;
+import java.security.KeyStore;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
 
 /**
  * Handles TCP connection to the server.
  * Provides packet send/receive utilities.
  */
 public class SensorNodeContext {
+  private SSLContext sslContext;
 
   private final String host;
   private final int port;
   private final SensorNode sensorNode;
 
-  private Socket socket;
+  private SSLSocket socket;
   private DataInputStream in;
   private OutputStream out;
 
@@ -31,12 +34,36 @@ public class SensorNodeContext {
   }
 
   /** Opens a blocking TCP connection to the server. */
-  public void connect() throws IOException {
-    socket = new Socket(host, port);
+  public void connect() throws Exception {
+    initializeTLS();
+    SSLSocketFactory factory = sslContext.getSocketFactory();
+    socket = (SSLSocket) factory.createSocket(host, port);
+    socket.startHandshake();
+
     in = new DataInputStream(socket.getInputStream());
     out = socket.getOutputStream();
+
     System.out.println("Connected to server.");
   }
+
+  private void initializeTLS() throws Exception {
+    KeyStore trustStore = KeyStore.getInstance("JKS");
+
+    InputStream ts = SensorNodeContext.class.getClassLoader()
+      .getResourceAsStream("server.truststore");
+
+    if (ts == null)
+      throw new FileNotFoundException("server.truststore not found in resources");
+
+    trustStore.load(ts, "password".toCharArray());
+
+    TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+    tmf.init(trustStore);
+
+    sslContext = SSLContext.getInstance("TLS");
+    sslContext.init(null, tmf.getTrustManagers(), null);
+  }
+
 
   /** Returns true if socket is alive. */
   public boolean isConnected() {

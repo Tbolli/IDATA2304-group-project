@@ -7,16 +7,20 @@ import ntnu.idata2302.sfp.server.net.MessageDispatcher;
 import ntnu.idata2302.sfp.server.net.ServerContext;
 import ntnu.idata2302.sfp.server.net.handlers.*;
 
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.net.ServerSocket;
+import javax.net.ssl.*;
+import java.io.*;
 import java.net.Socket;
+import java.security.KeyStore;
+
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+
 
 public class Server {
 
   private static final int PORT = 5050;
-
+  private static SSLContext sslContext;
   private static final MessageDispatcher dispatcher = new MessageDispatcher();
   private static final ServerContext context = new ServerContext();
 
@@ -33,16 +37,24 @@ public class Server {
 
   public static void main(String[] args) {
 
-    try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-      System.out.println("Server running on port: " + serverSocket.getInetAddress().getHostAddress() + ":" + PORT);
+    try{
+      initializeTLS();
 
-      // Server up and running at all times
+      SSLServerSocketFactory factory = sslContext.getServerSocketFactory();
+      SSLServerSocket serverSocket = (SSLServerSocket) factory.createServerSocket(PORT);
+
+      System.out.println("TLS Server running on port " + PORT);
+
       while (true) {
-        Socket socket = serverSocket.accept();
-        new Thread(() -> handleClient(socket)).start();
+        SSLSocket clientSocket = (SSLSocket) serverSocket.accept();
+        clientSocket.startHandshake();
+        new Thread(() -> handleClient(clientSocket)).start();
       }
+
     } catch (IOException e) {
       e.printStackTrace();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
   }
 
@@ -91,5 +103,27 @@ public class Server {
       } catch (IOException ignored) {}
       System.out.println("Connection closed: " + socket.getInetAddress().getHostAddress());
     }
+  }
+  private static void initializeTLS() throws Exception {
+
+    KeyStore keyStore = KeyStore.getInstance("JKS");
+
+    // Since this won't be hosted we can just keep our keystore in resources
+    InputStream is = Server.class.getClassLoader()
+      .getResourceAsStream("server.keystore");
+
+    if (is == null)
+      throw new FileNotFoundException("server.keystore not found in resources");
+
+    keyStore.load(is, "password".toCharArray());
+
+    KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+    kmf.init(keyStore, "password".toCharArray());
+
+    TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+    tmf.init(keyStore);
+
+    sslContext = SSLContext.getInstance("TLS");
+    sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
   }
 }
