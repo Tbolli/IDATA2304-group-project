@@ -84,4 +84,5 @@ public class Header {
     this.payloadLength = payloadLength;
   }
 
+  public void setTargetId(int targetId) {}
 }

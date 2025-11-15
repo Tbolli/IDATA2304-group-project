@@ -12,7 +12,5 @@ public class DataReportHandler implements MessageHandler {
   public void handle(SmartFarmingProtocol message, Socket client, ServerContext context) throws IOException {
     // Direct message to all subscribers of the node
     context.sendToSubscribers(message);
-    System.out.println("GOT IT");
   }
-
 }

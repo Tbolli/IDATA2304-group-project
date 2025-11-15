@@ -26,6 +26,8 @@ public class Server {
     dispatcher.registerHandler(MessageTypes.CAPABILITIES_QUERY, new CapabilitiesHandler());
     dispatcher.registerHandler(MessageTypes.SUBSCRIBE, new SubscribeHandler());
     dispatcher.registerHandler(MessageTypes.UNSUBSCRIBE, new UnSubscribeHandler());
+    dispatcher.registerHandler(MessageTypes.COMMAND, new CommandHandler());
+    dispatcher.registerHandler(MessageTypes.COMMAND_ACK, new UnSubscribeHandler());
   }
 
   public static void main(String[] args) {

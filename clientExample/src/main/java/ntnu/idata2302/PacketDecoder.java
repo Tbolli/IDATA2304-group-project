@@ -82,15 +82,11 @@ public class PacketDecoder {
       case COMMAND:
         CommandBody cmd = (CommandBody) body;
         System.out.println("actuator  = " + cmd.actuator());
-        System.out.println("action    = " + cmd.action());
-        System.out.println("timestamp = " + cmd.timestamp());
         break;
 
       case COMMAND_ACK:
         CommandAckBody cmdAck = (CommandAckBody) body;
-        System.out.println("commandId = " + cmdAck.commandId());
         System.out.println("status    = " + cmdAck.status());
-        System.out.println("action    = " + cmdAck.action());
         break;
 
       default:

@@ -1,6 +1,7 @@
 package ntnu.idata2302.sfp.server.net;
 
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
+import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.node.NodeDescriptor;
 import ntnu.idata2302.sfp.library.body.subscribe.SubscribeBody;
 
@@ -40,7 +41,8 @@ public class ServerContext {
   }
 
   // Send to specific node with ID
-  public void sendTo(int targetId, SmartFarmingProtocol packet) throws IOException {
+  public void sendTo(SmartFarmingProtocol packet) throws IOException {
+    int targetId = packet.getHeader().getTargetId();
     Socket targetSocket = socketRegistry.get(targetId);
     if (targetSocket == null || targetSocket.isClosed()) {
       System.out.println("Cannot send to " + targetId + " — not connected.");
@@ -77,7 +79,8 @@ public class ServerContext {
     int sensorId = packet.getHeader().getSourceId();
     for (int cpId : getSubscribersForSensorNode(sensorId)) {
       try {
-        sendTo(cpId, packet);
+        packet.getHeader().setTargetId(cpId);
+        sendTo(packet);
       } catch (IOException e) {
         System.out.println("Failed to send report to CP " + cpId);
       }
