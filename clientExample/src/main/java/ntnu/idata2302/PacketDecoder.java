@@ -80,8 +80,6 @@ public class PacketDecoder {
 
       // 🔹 Commands
       case COMMAND:
-        CommandBody cmd = (CommandBody) body;
-        System.out.println("actuator  = " + cmd.actuator());
         break;
 
       case COMMAND_ACK:

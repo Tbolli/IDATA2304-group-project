@@ -51,7 +51,7 @@ public class PacketHandler {
       return;
     }
 
-    // Set a new value for the actuators
+    // Set new values for the actuators
     body.actuators().forEach(inAct -> {
       Actuator act = client.getSensorNode().findActuator(inAct.name());
       act.act(inAct.newValue());
