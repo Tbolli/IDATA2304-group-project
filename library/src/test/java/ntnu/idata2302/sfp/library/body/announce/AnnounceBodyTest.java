@@ -14,9 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Test class for {@link AnnounceBody}.
  *
- * <p>This class verifies correct CBOR serialization/deserialization
- * and error handling behavior.</p>
- *
  * <b>Positive Tests:</b>
  * <ul>
  *   <li>toCborAndFromCbor_roundTrip_positive</li>

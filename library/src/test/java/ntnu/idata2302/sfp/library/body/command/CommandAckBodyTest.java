@@ -10,9 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Test class for {@link CommandAckBody}.
  *
- * <p>This class verifies correct CBOR serialization/deserialization and
- * error handling.</p>
- *
  * <b>Positive Tests:</b>
  * <ul>
  *   <li>Checks that a CommandAckBody with a message is correctly encoded and decoded.</li>

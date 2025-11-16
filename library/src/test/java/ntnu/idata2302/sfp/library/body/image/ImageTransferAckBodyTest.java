@@ -10,9 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Test class for {@link ImageTransferAckBody}.
  *
- * <p>This class verifies correct CBOR serialization/deserialization and
- * error handling.</p>
- *
  * <b>Positive Tests:</b>
  * <ul>
  *   <li>ImageTransferAckBody with image id and status is correctly encoded and decoded.</li>

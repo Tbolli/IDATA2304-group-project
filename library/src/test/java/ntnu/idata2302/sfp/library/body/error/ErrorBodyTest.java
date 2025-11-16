@@ -9,9 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Test class for {@link ErrorBody}.
  *
- * <p>This class verifies correct CBOR serialization/deserialization and
- * error handling.</p>
- *
  * <b>Positive Tests:</b>
  * <ul>
  *   <li>ErrorBody with all fields populated is correctly encoded and decoded.</li>

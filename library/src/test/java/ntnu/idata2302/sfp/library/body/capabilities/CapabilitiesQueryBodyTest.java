@@ -11,9 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Test class for {@link CapabilitiesQueryBody}.
  *
- * <p>This class verifies correct CBOR serialization/deserialization
- * and validates error handling for invalid inputs.</p>
- *
  * <b>Positive Tests:</b>
  * <ul>
  *   <li>Verifies that CapabilitiesQueryBody is correctly encoded and decoded using CBOR</li>

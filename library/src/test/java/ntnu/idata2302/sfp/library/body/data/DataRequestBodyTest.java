@@ -11,9 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * Test class for {@link DataRequestBody}.
  *
- * <p>This class verifies correct CBOR serialization/deserialization and
- * error handling.</p>
- *
  * <b>Positive Tests:</b>
  * <ul>
  *   <li>DataRequestBody with all sections populated is correctly encoded and decoded.</li>
