@@ -4,7 +4,6 @@ package ntnu.idata2302.sfp.sensorNode.core;
  * Represents a dynamic sensor that produces smoothly changing values.
  * The sensor can optionally define a valid numeric range. If a range is
  * provided, values are clamped; otherwise, updates scale based on magnitude.
- *
  * Updates use lightweight pseudo-noise and a slow drift component to create
  * realistic environmental fluctuations.
  */
@@ -39,8 +38,9 @@ public class Sensor {
    * @param unit     unit of measurement
    */
   public Sensor(String name, double minValue, double maxValue, String unit) {
-    if (maxValue <= minValue)
+    if (maxValue <= minValue) {
       throw new IllegalArgumentException("maxValue must be > minValue");
+    }
 
     this.name = name;
     this.minValue = minValue;
@@ -51,7 +51,7 @@ public class Sensor {
 
   /**
    * Constructs an unranged sensor. The starting value is taken literally,
-   * and update behavior scales with the magnitude of the current value.
+   * and updates behavior scales with the size of the current value.
    *
    * @param name         sensor identifier
    * @param currentValue initial sensor value
@@ -90,10 +90,10 @@ public class Sensor {
     // Smooth noise progression for natural changes
     noiseOffset += 0.05;
     double smoothNoise =
-      Math.sin(noiseOffset) * 0.5 +
-        Math.sin(noiseOffset * 0.37) * 0.2;
+        Math.sin(noiseOffset) * 0.5 +
+            Math.sin(noiseOffset * 0.37) * 0.2;
 
-    // Determine update step based on range or magnitude
+    // Determine an update step based on range or magnitude
     double step;
     if (minValue != null && maxValue != null) {
       step = (maxValue - minValue) * 0.02;
@@ -108,17 +108,31 @@ public class Sensor {
 
     // Compute the updated reading
     double newValue = currentValue
-      + smoothNoise * step
-      + drift * step * 2;
+        + smoothNoise * step
+        + drift * step * 2;
 
     setValue(newValue);
   }
 
-  public double getValue() { return currentValue; }
-  public String getName() { return name; }
-  public String getUnit() { return unit; }
-  public Double getMinValue() { return minValue; }
-  public Double getMaxValue() { return maxValue; }
+  public double getValue() {
+    return currentValue;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public String getUnit() {
+    return unit;
+  }
+
+  public Double getMinValue() {
+    return minValue;
+  }
+
+  public Double getMaxValue() {
+    return maxValue;
+  }
 
   @Override
   public String toString() {

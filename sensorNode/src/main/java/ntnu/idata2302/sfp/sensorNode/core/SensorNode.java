@@ -5,12 +5,22 @@ import java.util.List;
 
 /**
  * Represents a complete sensor node device in the Smart Farming Protocol.
- * A sensor node owns a collection of {@link Sensor} instances (producers of
+ *
+ * <p>A sensor node owns collections of {@link Sensor} instances (producers of
  * environmental values) and {@link Actuator} instances (controllable outputs).
- * <p>
- * The node provides methods to update its sensors, update actuators toward
- * targets, and expose their current state to whoever requests it (e.g., server).
- * This class does not handle networking directly—only local simulation logic.
+ * The node provides methods to advance its internal simulation state
+ * ({@link #tick()}), look up actuators by name, and expose its configuration
+ * and runtime identifiers to callers.</p>
+ *
+ * <p>Notes:
+ * <ul>
+ *   <li>The constructor defensively copies the provided sensor and actuator lists
+ *       to avoid external modification of the internal lists.</li>
+ *   <li>The getters return references to the internal lists. Callers should
+ *       treat these as live collections and avoid modifying them unless that
+ *       is intentionally allowed by the application.</li>
+ * </ul>
+ * </p>
  */
 public class SensorNode {
 
@@ -24,10 +34,13 @@ public class SensorNode {
    * Creates a new sensor node with a set of sensors and actuators.
    * The lists are copied defensively to avoid external modification.
    *
-   * @param sensors   environmental sensors this node provides
-   * @param actuators controllable actuators this node exposes
+   * @param sensors   environmental sensors this node provides; must not be {@code null}
+   * @param actuators controllable actuators this node exposes; must not be {@code null}
+   * @param supportsImage whether this node can capture/send images
+   * @param supportsAggregate whether this node supports aggregate reporting
    */
-  public SensorNode(List<Sensor> sensors, List<Actuator> actuators, boolean supportsImage, boolean supportsAggregate) {
+  public SensorNode(List<Sensor> sensors, List<Actuator> actuators, boolean supportsImage,
+                    boolean supportsAggregate) {
     this.sensors = new ArrayList<>(sensors);
     this.actuators = new ArrayList<>(actuators);
     this.supportsImage = supportsImage;
@@ -35,42 +48,91 @@ public class SensorNode {
   }
 
   /**
-   * Updates internal simulation state.
-   * - Sensors generate new dynamic readings
-   * - Actuators move toward their target values
+   * Advances the internal simulation state by one step.
+   *
+   * <p>This updates each {@link Sensor} to produce a new reading and causes each
+   * {@link Actuator} to move toward its configured target state.</p>
    */
   public void tick() {
     sensors.forEach(Sensor::updateValue);
     actuators.forEach(Actuator::update);
   }
 
+  /**
+   * Find an actuator by its display name (case-insensitive).
+   *
+   * <p>The method compares the provided {@code actuatorName} to each actuator's
+   * {@code getType().displayName()} using a case-insensitive match and returns
+   * the first match.</p>
+   *
+   * @param actuatorName the display name of the actuator to find; may be {@code null}
+   * @return the first matching {@link Actuator}, or {@code null} if no match is found
+   */
   public Actuator findActuator(String actuatorName) {
     return actuators.stream()
-      .filter(a -> a.getType().displayName().equalsIgnoreCase(actuatorName))
-      .findFirst()
-      .orElse(null);
+        .filter(a -> a.getType().displayName().equalsIgnoreCase(actuatorName))
+        .findFirst()
+        .orElse(null);
   }
 
-  public void setId(int id){
+  /**
+   * Set the logical identifier for this sensor node.
+   *
+   * @param id the id to assign to this node
+   */
+  public void setId(int id) {
     this.id = id;
   }
 
-  public int getId(){
+  /**
+   * Get the logical identifier assigned to this node.
+   *
+   * @return the node id
+   */
+  public int getId() {
     return id;
   }
 
+  /**
+   * Return the internal list of sensors.
+   *
+   * <p>Note: this is the live internal list previously created by the constructor.
+   * Callers should avoid modifying the returned list unless modification of the
+   * node's sensor set is intended.</p>
+   *
+   * @return the list of {@link Sensor} instances owned by this node
+   */
   public List<Sensor> getSensors() {
     return sensors;
   }
 
+  /**
+   * Whether this node supports image capture/transfer.
+   *
+   * @return {@code true} if image support is available
+   */
   public boolean supportsImage() {
     return supportsImage;
   }
 
+  /**
+   * Whether this node supports aggregate reporting mode.
+   *
+   * @return {@code true} if aggregate reporting is supported
+   */
   public boolean supportsAggregate() {
     return supportsAggregate;
   }
 
+  /**
+   * Return the internal list of actuators.
+   *
+   * <p>As with {@link #getSensors()}, this returns the live internal collection;
+   * callers should treat it as read-only unless modifying the node's actuators
+   * is desired.</p>
+   *
+   * @return the list of {@link Actuator} instances exposed by this node
+   */
   public List<Actuator> getActuators() {
     return actuators;
   }

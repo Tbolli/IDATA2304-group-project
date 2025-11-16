@@ -62,7 +62,6 @@ public enum ActuatorType {
   ALARM("Alarm", "state");
 
 
-
   private final String displayName;
   private final String unit;
 
@@ -71,7 +70,8 @@ public enum ActuatorType {
     this.unit = unit;
   }
 
-  /** Returns the display name of the actuator type.
+  /**
+   * Returns the display name of the actuator type.
    *
    * @return the display name
    */
@@ -81,7 +81,8 @@ public enum ActuatorType {
   }
 
 
-  /** Returns the default unit of measurement for the actuator type.
+  /**
+   * Returns the default unit of measurement for the actuator type.
    *
    * @return the unit of measurement
    */
@@ -90,10 +91,22 @@ public enum ActuatorType {
     return unit;
   }
 
-  /** Parse from display name (e.g., "Fan", "Shade Screen", "CO2 Injector") */
+  /**
+   * Parse an {@link ActuatorType} from its display name.
+   *
+   * <p>The comparison is case-insensitive and trims surrounding whitespace.
+   * Example inputs: {@code "Fan"}, {@code "Shade Screen"}, {@code "CO2 Injector"}.</p>
+   *
+   * @param displayName the human-readable display name to parse; must not be {@code null}
+   * @return the matching {@link ActuatorType}
+   * @throws IllegalArgumentException if
+   *                                  {@code displayName} is {@code null}
+   *                                  or does not match any actuator type
+   */
   public static ActuatorType fromDisplayName(String displayName) {
-    if (displayName == null)
+    if (displayName == null) {
       throw new IllegalArgumentException("Display name cannot be null");
+    }
 
     for (ActuatorType t : values()) {
       if (t.displayName.equalsIgnoreCase(displayName.trim())) {

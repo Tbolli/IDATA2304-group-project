@@ -55,7 +55,7 @@ public class Actuator {
     this.minValue = minValue;
     this.maxValue = maxValue;
     this.unit = type.unit();
-    this.currentValue = minValue + (maxValue - minValue) / 2.0; // start in middle
+    this.currentValue = minValue + (maxValue - minValue) / 2.0; // start in the middle
     this.targetValue = currentValue;
   }
 

@@ -1,5 +1,12 @@
 package ntnu.idata2302.sfp.server;
 
+import java.io.*;
+import java.net.Socket;
+import java.security.KeyStore;
+import javax.net.ssl.*;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
@@ -7,16 +14,19 @@ import ntnu.idata2302.sfp.server.net.MessageDispatcher;
 import ntnu.idata2302.sfp.server.net.ServerContext;
 import ntnu.idata2302.sfp.server.net.handlers.*;
 
-import javax.net.ssl.*;
-import java.io.*;
-import java.net.Socket;
-import java.security.KeyStore;
 
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLServerSocketFactory;
-
-
+/**
+ * TLS-enabled example server for the Smart Farming Protocol (SFP).
+ *
+ * <p>This class initializes a TLS context using a keystore stored in the
+ * resources, creates an SSL server socket, accepts client connections and
+ * spawns a dedicated thread to handle each client. Incoming SFP packets are
+ * read from the client stream, parsed into {@link SmartFarmingProtocol}
+ * objects and dispatched to registered handlers using {@link MessageDispatcher}.</p>
+ *
+ * <p>The server is intended for example/demo use: it logs status and errors
+ * to standard output and performs minimal validation of client input.</p>
+ */
 public class Server {
 
   private static final int PORT = 5050;
@@ -25,6 +35,7 @@ public class Server {
   private static final ServerContext context = new ServerContext();
 
   static {
+    // Register handlers for known message types at class load time.
     dispatcher.registerHandler(MessageTypes.DATA_REPORT, new DataReportHandler());
     dispatcher.registerHandler(MessageTypes.ANNOUNCE, new AnnounceHandler());
     dispatcher.registerHandler(MessageTypes.CAPABILITIES_QUERY, new CapabilitiesHandler());
@@ -35,9 +46,18 @@ public class Server {
     dispatcher.registerHandler(MessageTypes.ERROR, new ForwardPacketHandler());
   }
 
+  /**
+   * Application entry point.
+   *
+   * <p>This method initializes the TLS context, creates an {@link SSLServerSocket}
+   * bound to the configured {@link #PORT}, and enters an acceptance loop. For each
+   * accepted client socket a new thread is started which invokes {@link #handleClient(Socket)}.</p>
+   *
+   * @param args command line arguments (ignored)
+   */
   public static void main(String[] args) {
 
-    try{
+    try {
       initializeTLS();
 
       SSLServerSocketFactory factory = sslContext.getServerSocketFactory();
@@ -46,6 +66,7 @@ public class Server {
       System.out.println("TLS Server running on port " + PORT);
 
       while (true) {
+
         SSLSocket clientSocket = (SSLSocket) serverSocket.accept();
         clientSocket.startHandshake();
         new Thread(() -> handleClient(clientSocket)).start();
@@ -58,8 +79,24 @@ public class Server {
     }
   }
 
+  /**
+   * Handle a connected client socket.
+   *
+   * <p>This method runs on a dedicated thread for a single client. It reads
+   * a full SFP header (fixed size {@link Header#HEADER_SIZE}), validates the
+   * protocol prefix, reads the body according to the header payload length,
+   * constructs a {@link SmartFarmingProtocol} message and dispatches it using
+   * {@link MessageDispatcher} together with the provided {@link ServerContext}.</p>
+   *
+   * <p>The method logs and handles {@link EOFException} (a client closed the
+   * connection) and other I/O or parsing errors; it ensures the socket is
+   * closed on exit.</p>
+   *
+   * @param socket the client socket to read from; must not be {@code null}
+   */
   private static void handleClient(Socket socket) {
-    System.out.println("New connection from " + socket.getInetAddress().getHostAddress() + ":" + socket.getPort());
+    System.out.println(
+        "New connection from " + socket.getInetAddress().getHostAddress() + ":" + socket.getPort());
 
     try (DataInputStream dis = new DataInputStream(socket.getInputStream())) {
       while (true) {
@@ -91,7 +128,8 @@ public class Server {
       }
 
     } catch (EOFException e) {
-      System.out.println("Client disconnected normally: " + socket.getInetAddress().getHostAddress());
+      System.out.println(
+          "Client disconnected normally: " + socket.getInetAddress().getHostAddress());
     } catch (IOException e) {
       System.out.println("I/O error: " + e.getMessage());
     } catch (Exception e) {
@@ -100,20 +138,33 @@ public class Server {
     } finally {
       try {
         socket.close();
-      } catch (IOException ignored) {}
+      } catch (IOException ignored) {
+      }
       System.out.println("Connection closed: " + socket.getInetAddress().getHostAddress());
     }
   }
+
+  /**
+   * Initialize TLS context used by the server.
+   *
+   * <p>The method loads a JKS keystore named `server.keystore` from the classpath
+   * resources, initializes {@link KeyManagerFactory} and {@link TrustManagerFactory}
+   * and sets up the {@link SSLContext} instance used to create server sockets.</p>
+   *
+   * @throws Exception if the keystore cannot be found, read, or if the TLS
+   *                   context initialization fails for any reason
+   */
   private static void initializeTLS() throws Exception {
 
     KeyStore keyStore = KeyStore.getInstance("JKS");
 
-    // Since this won't be hosted we can just keep our keystore in resources
+    // Since this won't be hosted, we can just keep our keystore in resources
     InputStream is = Server.class.getClassLoader()
-      .getResourceAsStream("server.keystore");
+        .getResourceAsStream("server.keystore");
 
-    if (is == null)
+    if (is == null) {
       throw new FileNotFoundException("server.keystore not found in resources");
+    }
 
     keyStore.load(is, "password".toCharArray());
 
