@@ -38,7 +38,7 @@ public class MessageRouter {
   private static final ConcurrentHashMap<String, SensorHandler> sensors = new ConcurrentHashMap<>();
 
   /**
-   * The CP's single connection to the main Smart Farming Server.
+   * The ControlPanel's single connection to the main Smart Farming Server.
    */
   private static ServerConnection serverConnection;
 

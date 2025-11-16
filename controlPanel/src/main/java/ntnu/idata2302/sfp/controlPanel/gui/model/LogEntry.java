@@ -1,4 +1,4 @@
-package ntnu.idata2302.sfp.controlPanel.gui.controllers;
+package ntnu.idata2302.sfp.controlPanel.gui.model;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;

@@ -4,27 +4,24 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="900" prefWidth="1440"
-            style="-fx-background-color: #D8F3DC;"
+<BorderPane prefHeight="900" prefWidth="1440" style="-fx-background-color: #D8F3DC;"
             stylesheets="@/ntnu/idata2302/sfp/controlPanel/gui/styles/nodes.css"
-            xmlns="http://javafx.com/javafx/17.0.12"
-            xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="ntnu.idata2302.sfp.controlPanel.gui.controllers.NodesController">
 
     <!-- SIDEBAR -->
     <left>
-        <VBox alignment="TOP_CENTER" prefWidth="200" spacing="25"
-              style="-fx-background-color: #80ED99;">
-            <ImageView fitHeight="90" fitWidth="90">
+        <VBox alignment="TOP_CENTER" prefWidth="200" spacing="25" style="-fx-background-color: #80ED99;">
+            <ImageView fitHeight="211.0" fitWidth="205.0">
                 <image>
                     <Image url="@/ntnu/idata2302/sfp/controlPanel/images/SMF_Logo.png"/>
                 </image>
             </ImageView>
 
             <!-- Navigation Buttons -->
-            <Button text="Home" onAction="#openHome" styleClass="sidebar-btn"/>
-            <Button text="Nodes" styleClass="sidebar-btn-active"/>
-            <Button text="DataLog" onAction="#openDataLog" styleClass="sidebar-btn"/>
+            <Button onAction="#openHome" styleClass="sidebar-btn" text="Home"/>
+            <Button styleClass="sidebar-btn-active" text="Nodes"/>
+            <Button onAction="#openDataLog" styleClass="sidebar-btn" text="DataLog"/>
         </VBox>
     </left>
 
@@ -33,64 +30,45 @@
         <AnchorPane>
 
             <!-- Page Title -->
-            <Label fx:id="pageTitle"
-                   text="Smart Farming System"
-                   styleClass="page-title"
-                   AnchorPane.leftAnchor="240" AnchorPane.topAnchor="30"/>
+            <Label fx:id="pageTitle" styleClass="page-title" text="Smart Farming System" AnchorPane.leftAnchor="240"
+                   AnchorPane.topAnchor="30"/>
 
             <!-- Section Header -->
-            <Label text="Nodes" styleClass="section-title"
-                   AnchorPane.leftAnchor="240" AnchorPane.topAnchor="90"/>
+            <Label styleClass="section-title" text="Nodes" AnchorPane.leftAnchor="240" AnchorPane.topAnchor="90"/>
 
             <!-- Table for Node Overview -->
-            <TableView fx:id="nodesTable"
-                       styleClass="nodes-table"
-                       AnchorPane.topAnchor="130"
-                       AnchorPane.leftAnchor="240"
-                       AnchorPane.rightAnchor="480"
-                       AnchorPane.bottomAnchor="80">
+            <TableView fx:id="nodesTable" styleClass="nodes-table" AnchorPane.bottomAnchor="80"
+                       AnchorPane.leftAnchor="240" AnchorPane.rightAnchor="480" AnchorPane.topAnchor="130">
 
                 <columns>
-                    <TableColumn fx:id="colId" text="Node ID" prefWidth="120"/>
-                    <TableColumn fx:id="colIp" text="IP Address" prefWidth="150"/>
-                    <TableColumn fx:id="colStatus" text="Status" prefWidth="120"/>
-                    <TableColumn fx:id="colSensor" text="Sensor Type" prefWidth="140"/>
-                    <TableColumn fx:id="colInfo" text="Info" prefWidth="180"/>
+                    <TableColumn fx:id="colId" prefWidth="120" text="Node ID"/>
+                    <TableColumn fx:id="colIp" prefWidth="150" text="IP Address"/>
+                    <TableColumn fx:id="colStatus" prefWidth="120" text="Status"/>
+                    <TableColumn fx:id="colSensor" prefWidth="140" text="Sensor Type"/>
+                    <TableColumn fx:id="colInfo" prefWidth="180" text="Info"/>
                 </columns>
             </TableView>
 
             <!-- DETAILS PANEL -->
-            <VBox spacing="12" prefWidth="350"
-                  styleClass="details-box"
-                  AnchorPane.topAnchor="130"
-                  AnchorPane.rightAnchor="70"
-                  AnchorPane.bottomAnchor="80">
-                <Label fx:id="detailTitle"
-                       text="Node 001 (192.168.0.10)"
-                       styleClass="details-title"/>
-                <Label fx:id="detailTemp"
-                       text="🌡 Temperature: 23°C"
-                       styleClass="details-text"/>
-                <Label fx:id="detailHumidity"
-                       text="💧 Humidity: 49%"
-                       styleClass="details-text"/>
+            <VBox prefWidth="350" spacing="12" styleClass="details-box" AnchorPane.bottomAnchor="80"
+                  AnchorPane.rightAnchor="70" AnchorPane.topAnchor="130">
+                <Label fx:id="detailTitle" styleClass="details-title" text="Node 001 (192.168.0.10)"/>
+                <Label fx:id="detailTemp" styleClass="details-text" text="🌡 Temperature: 23°C"/>
+                <Label fx:id="detailHumidity" styleClass="details-text" text="💧 Humidity: 49%"/>
 
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <Label text="🔥 Heater" styleClass="details-text"/>
-                    <ToggleButton fx:id="heaterToggle" onAction="#onToggleHeater"
-                                  text="OFF" styleClass="toggle-off"/>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label styleClass="details-text" text="🔥 Heater"/>
+                    <ToggleButton fx:id="heaterToggle" onAction="#onToggleHeater" styleClass="toggle-off" text="OFF"/>
                 </HBox>
 
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <Label text="🌀 Fan" styleClass="details-text"/>
-                    <ToggleButton fx:id="fanToggle" onAction="#onToggleFan"
-                                  text="ON" styleClass="toggle-on"/>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label styleClass="details-text" text="🌀 Fan"/>
+                    <ToggleButton fx:id="fanToggle" onAction="#onToggleFan" styleClass="toggle-on" text="ON"/>
                 </HBox>
 
                 <Region VBox.vgrow="ALWAYS"/>
 
-                <Button fx:id="refreshBtn" onAction="#onRefresh"
-                        text="Refresh" styleClass="refresh-btn"/>
+                <Button fx:id="refreshBtn" onAction="#onRefresh" styleClass="refresh-btn" text="Refresh"/>
             </VBox>
         </AnchorPane>
     </center>

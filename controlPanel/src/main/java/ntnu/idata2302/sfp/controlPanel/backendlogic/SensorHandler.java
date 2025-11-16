@@ -29,12 +29,11 @@ public class SensorHandler extends Thread {
   /**
    * Create a new handler for the given sensor socket.
    *
-   * @param socket           open socket connected to a sensor;
-   *                         must not be {@code null} and should be connected
-   * @param serverConnection helper/manager used by routing logic; retained for use by this handler
+   * @param socket open socket connected to a sensor;
+   *               must not be {@code null} and should be connected
    * @throws IOException if input or output streams cannot be created from the socket
    */
-  public SensorHandler(Socket socket, ServerConnection serverConnection) throws IOException {
+  public SensorHandler(Socket socket) throws IOException {
     this.socket = socket;
     this.out = new PrintWriter(socket.getOutputStream(), true);
     this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));

@@ -1,21 +1,16 @@
 
 package ntnu.idata2302.sfp.controlPanel.gui.controllers;
 
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import ntnu.idata2302.sfp.controlPanel.backendlogic.BackendEventBus;
 import ntnu.idata2302.sfp.controlPanel.gui.SceneManager;
-import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.URL;
 
 /**
  * Controller for the Home / Dashboard view.
@@ -30,29 +25,20 @@ import java.net.URL;
  *
  * <p>Threading note:
  * - The {@link #initialize()} method registers an event listener
- * that calls {@link #updateGreenhouseUI(String)}
  * on the JavaFX thread; UI code must run on the JavaFX Application Thread.
  */
 public class HomeController {
 
 
-  private int currentGreenhouse = 1;
-
-
-  @FXML
-  private Label pageTitle;
+  public Button homeBtn;
+  public Button nodesBtn;
+  public Button logsBtn;
+  public Label pageTitle;
 
   @FXML
   private VBox mainCardsBox;
   @FXML
   private AnchorPane homeContentPane;
-
-  @FXML
-  private Button gh1Btn;
-  @FXML
-  private Button gh2Btn;
-  @FXML
-  private Button gh3Btn;
 
   @FXML
   private Button windowBtn;
@@ -74,9 +60,6 @@ public class HomeController {
   public void initialize() {
     System.out.println("HomeController loaded!");
 
-    // Listen for backend sensor messages
-    BackendEventBus.onSensorMessage(json ->
-        Platform.runLater(() -> updateGreenhouseUI(json)));
   }
 
 
@@ -107,108 +90,6 @@ public class HomeController {
   }
 
 
-  /**
-   * Switch the UI to greenhouse 1.
-   */
-  @FXML
-  public void openGreenhouse1() {
-    loadGreenhouseData(1);
-  }
-
-  /**
-   * Switch the UI to greenhouse 2.
-   */
-
-  @FXML
-  public void openGreenhouse2() {
-    loadGreenhouseData(2);
-  }
-
-  /**
-   * Switch the UI to greenhouse 3.
-   */
-  @FXML
-  public void openGreenhouse3() {
-    loadGreenhouseData(3);
-  }
-
-  /**
-   * Open the "More" view (legacy behavior: load data log into a center).
-   */
-  @FXML
-  public void openMore() {
-    // This is your old behavior
-    loadViewIntoCenter("/ntnu/smartFarm/gui/views/dataLog.fxml");
-  }
-
-
-  /**
-   * Change the active greenhouse id and refresh UI state to reflect the selection.
-   *
-   * <p>This updates the page title and button visibility; it does not perform any
-   * network or long-running operations.
-   *
-   * @param greenhouseId the greenhouse id to activate (expected 1..3)
-   */
-  private void loadGreenhouseData(int greenhouseId) {
-    currentGreenhouse = greenhouseId;
-
-    pageTitle.setText("Smart Farming System — Greenhouse " + greenhouseId);
-
-    refreshGreenhouseButtons();
-
-    System.out.println("Switched to Greenhouse " + greenhouseId);
-  }
-
-
-  /**
-   * Update the visibility of greenhouse quick-select buttons so the currently active
-   * greenhouse button is hidden (prevents re-selecting the same greenhouse visually).
-   */
-  private void refreshGreenhouseButtons() {
-    if (gh1Btn != null) {
-      gh1Btn.setVisible(currentGreenhouse != 1);
-    }
-    if (gh2Btn != null) {
-      gh2Btn.setVisible(currentGreenhouse != 2);
-    }
-    if (gh3Btn != null) {
-      gh3Btn.setVisible(currentGreenhouse != 3);
-    }
-  }
-
-
-  /**
-   * Parse a backend sensor JSON message and update visible UI elements for the
-   * currently selected greenhouse.
-   *
-   * <p>Expected JSON keys (examples): "greenhouse" (int), "temperature" (string/number),
-   * "humidity" (string/number). If the message does not target the current greenhouse,
-   * this method returns without modifying the UI.
-   *
-   * <p>Error handling: malformed JSON is caught and logged; the method will not throw.
-   *
-   * @param json raw JSON string received from the backend event bus
-   */
-  private void updateGreenhouseUI(String json) {
-    try {
-      JSONObject obj = new JSONObject(json);
-
-      int target = obj.optInt("greenhouse", -1);
-      if (target != currentGreenhouse) {
-        return;
-      }
-
-      String temp = obj.optString("temperature", "--");
-      String hum = obj.optString("humidity", "--");
-
-      System.out.println("Updating greenhouse UI: GH" + target);
-
-    } catch (Exception e) {
-      System.err.println("❌ Failed to update Home UI: " + json);
-    }
-  }
-
 
   /**
    * Show a simple node details popup inside the home content pane.
@@ -221,18 +102,22 @@ public class HomeController {
     mainCardsBox.setVisible(false);
 
     Label nodeDetails = new Label(
-        "🌡 Node Details (Temperature Node)\n" +
-            "\n" +
-            "• IP: 192.168.0.10\n" +
-            "• Status: Online\n" +
-            "• Sensor Type: Temperature\n" +
-            "• Value: 24°C"
+        """
+            🌡 Node Details (Temperature Node)
+            
+            • IP: 192.168.0.10
+            • Status: Online
+            • Sensor Type: Temperature
+            • Value: 24°C"""
     );
     nodeDetails.setStyle(
-        "-fx-font-size: 16px; -fx-text-fill: #2B4854; " +
-            "-fx-background-color: white; -fx-padding: 20; " +
-            "-fx-background-radius: 10; -fx-border-radius: 10; " +
-            "-fx-border-color: #3E6151;"
+        "-fx-font-size: 16px; -fx-text-fill: #2B4854; "
+        +
+        "-fx-background-color: white; -fx-padding: 20; "
+        +
+        "-fx-background-radius: 10; -fx-border-radius: 10; "
+        +
+        "-fx-border-color: #3E6151;"
     );
 
     Button backBtn = new Button("← Back to Dashboard");
@@ -259,19 +144,24 @@ public class HomeController {
     mainCardsBox.setVisible(false);
 
     Label details = new Label(
-        "📊 Node Full Details:\n\n" +
-            "• IP: 192.168.0.10\n" +
-            "• Status: Online\n" +
-            "• Sensor: Temperature\n" +
-            "• Current Value: 24°C\n" +
-            "• Last Update: 2 sec ago\n" +
-            "• Alerts: None"
+        """
+            📊 Node Full Details:
+            
+            • IP: 192.168.0.10
+            • Status: Online
+            • Sensor: Temperature
+            • Current Value: 24°C
+            • Last Update: 2 sec ago
+            • Alerts: None"""
     );
     details.setStyle(
-        "-fx-font-size: 15px; -fx-text-fill: #2B4854; " +
-            "-fx-background-color: white; -fx-padding: 25; " +
-            "-fx-background-radius: 10; -fx-border-radius: 10; " +
-            "-fx-border-color: #3E6151;"
+        "-fx-font-size: 15px; -fx-text-fill: #2B4854; "
+        +
+        "-fx-background-color: white; -fx-padding: 25; "
+        +
+        "-fx-background-radius: 10; -fx-border-radius: 10; "
+        +
+        "-fx-border-color: #3E6151;"
     );
 
     Button backBtn = new Button("← Back to Dashboard");
@@ -323,28 +213,5 @@ public class HomeController {
     }
   }
 
-
-  /**
-   * Load the given FXML resource and place the resulting view into the center of the
-   * application's main BorderPane root. Any IO errors are printed to the console.
-   *
-   * @param fxmlResourcePath classpath path to the FXML resource (e.g. /ntnu/.../view.fxml)
-   */
-  private void loadViewIntoCenter(String fxmlResourcePath) {
-    try {
-      URL resource = getClass().getResource(fxmlResourcePath);
-      if (resource == null) {
-        System.err.println("FXML not found: " + fxmlResourcePath);
-        return;
-      }
-      Parent view = FXMLLoader.load(resource);
-
-      BorderPane main = (BorderPane) pageTitle.getScene().getRoot();
-      main.setCenter(view);
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
 
 }

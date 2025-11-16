@@ -3,68 +3,69 @@ package ntnu.idata2302.sfp.controlPanel.gui.controllers;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
+import ntnu.idata2302.sfp.controlPanel.backendlogic.BackendEventBus;
 import ntnu.idata2302.sfp.controlPanel.gui.SceneManager;
 import ntnu.idata2302.sfp.controlPanel.gui.model.NodeItem;
-
-import java.io.IOException;
-import java.net.URL;
-
-import ntnu.idata2302.sfp.controlPanel.backendlogic.BackendEventBus;
 import org.json.JSONObject;
 
+
+/**
+ * Controller for the Nodes view.
+ * Responsible for populating the node table, showing node details,
+ * reacting to backend sensor messages and handling actuator UI controls.
+ */
 public class NodesController {
 
-    /* ─────────────────────────────────────────────
-                    NAVIGATION BUTTONS
-       ───────────────────────────────────────────── */
+
+  /**
+   * Switch to the home scene.
+   */
 
   @FXML
-  private void goHome(ActionEvent event) {
+  public void openHome() {
     SceneManager.switchScene("home");
   }
 
-  @FXML
-  public void openHome(ActionEvent event) {
-    SceneManager.switchScene("home");
-  }
+  /**
+   * Switch to the data log scene.
+   */
 
   @FXML
-  public void openDataLog(ActionEvent event) {
+  public void openDataLog() {
     SceneManager.switchScene("dataLog");
   }
 
-    /* ─────────────────────────────────────────────
-                    FXML UI REFERENCES
-       ───────────────────────────────────────────── */
 
-  @FXML private Label pageTitle;
+  @FXML
+  private TableView<NodeItem> nodesTable;
+  @FXML
+  private TableColumn<NodeItem, String> colId;
+  @FXML
+  private TableColumn<NodeItem, String> colIp;
+  @FXML
+  private TableColumn<NodeItem, String> colStatus;
+  @FXML
+  private TableColumn<NodeItem, String> colSensor;
+  @FXML
+  private TableColumn<NodeItem, String> colInfo;
 
-  @FXML private TableView<NodeItem> nodesTable;
-  @FXML private TableColumn<NodeItem, String> colId;
-  @FXML private TableColumn<NodeItem, String> colIp;
-  @FXML private TableColumn<NodeItem, String> colStatus;
-  @FXML private TableColumn<NodeItem, String> colSensor;
-  @FXML private TableColumn<NodeItem, String> colInfo;
-
-  @FXML private Label detailTitle;
-  @FXML private Label detailTemp;
-  @FXML private Label detailHumidity;
-  @FXML private ToggleButton heaterToggle;
-  @FXML private ToggleButton fanToggle;
-  @FXML private Button refreshBtn;
+  @FXML
+  private Label detailTitle;
+  @FXML
+  private Label detailTemp;
+  @FXML
+  private Label detailHumidity;
+  @FXML
+  private ToggleButton heaterToggle;
+  @FXML
+  private ToggleButton fanToggle;
+  @FXML
+  private Button refreshBtn;
 
   private final ObservableList<NodeItem> sampleData = FXCollections.observableArrayList();
 
-
-    /* ─────────────────────────────────────────────
-                    INITIALIZE
-       ───────────────────────────────────────────── */
 
   @FXML
   private void initialize() {
@@ -85,28 +86,20 @@ public class NodesController {
     nodesTable.setItems(sampleData);
 
     // Update details when selected
-    nodesTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
-      showDetails(newSel);
-    });
+    nodesTable.getSelectionModel().selectedItemProperty()
+        .addListener((obs, oldSel, newSel) -> showDetails(newSel));
 
     // Select first by default
     if (!sampleData.isEmpty()) {
       nodesTable.getSelectionModel().select(0);
-      showDetails(sampleData.get(0));
+      showDetails(sampleData.getFirst());
     }
 
-        /* ─────────────────────────────────────────────
-                    BACKEND LIVE UPDATE LISTENER
-           ───────────────────────────────────────────── */
     BackendEventBus.onSensorMessage(json ->
         Platform.runLater(() -> updateNode(json))
     );
   }
 
-
-    /* ─────────────────────────────────────────────
-                    SHOW NODE DETAILS
-       ───────────────────────────────────────────── */
 
   private void showDetails(NodeItem node) {
     if (node == null) {
@@ -120,7 +113,7 @@ public class NodesController {
 
     detailTitle.setText(node.getId() + " (" + node.getIp() + ")");
 
-    // TEMP/HUMI example placeholders
+    // TEMP/HUM example placeholders
     detailTemp.setText("🌡 Temperature: --");
     detailHumidity.setText("💧 Humidity: --");
 
@@ -132,16 +125,14 @@ public class NodesController {
   }
 
 
-    /* ─────────────────────────────────────────────
-                    BACKEND REAL-TIME UPDATE
-       ───────────────────────────────────────────── */
-
   private void updateNode(String json) {
     try {
       JSONObject obj = new JSONObject(json);
 
       String id = obj.optString("temp_id", null);
-      if (id == null) return;
+      if (id == null) {
+        return;
+      }
 
       String temp = obj.optString("temperature", "--");
       String hum = obj.optString("humidity", "--");
@@ -167,12 +158,8 @@ public class NodesController {
   }
 
 
-    /* ─────────────────────────────────────────────
-                    ACTUATOR BUTTONS
-       ───────────────────────────────────────────── */
-
   @FXML
-  private void onToggleHeater(ActionEvent event) {
+  private void onToggleHeater() {
     boolean on = heaterToggle.isSelected();
     heaterToggle.setText(on ? "ON" : "OFF");
 
@@ -181,7 +168,7 @@ public class NodesController {
   }
 
   @FXML
-  private void onToggleFan(ActionEvent event) {
+  private void onToggleFan() {
     boolean on = fanToggle.isSelected();
     fanToggle.setText(on ? "ON" : "OFF");
 
@@ -190,51 +177,22 @@ public class NodesController {
   }
 
 
-    /* ─────────────────────────────────────────────
-                    REFRESH BUTTON
-       ───────────────────────────────────────────── */
-
   @FXML
-  private void onRefresh(ActionEvent event) {
+  private void onRefresh() {
     NodeItem sel = nodesTable.getSelectionModel().getSelectedItem();
     if (sel != null) {
       detailTemp.setText(detailTemp.getText() + " · refreshed");
       refreshBtn.setDisable(true);
 
       new Thread(() -> {
-        try { Thread.sleep(500); } catch (InterruptedException ignored) {}
+        try {
+          Thread.sleep(500);
+        } catch (InterruptedException ignored) {
+          System.out.println("❌ Refresh interrupted");
+        }
         Platform.runLater(() -> refreshBtn.setDisable(false));
       }).start();
     }
   }
 
-
-    /* ─────────────────────────────────────────────
-                LOAD OTHER SCREENS INTO CENTER
-       ───────────────────────────────────────────── */
-
-  @FXML
-  private void onViewSelected(ActionEvent event) {
-    NodeItem sel = nodesTable.getSelectionModel().getSelectedItem();
-    if (sel != null) {
-      loadViewIntoCenter("/ntnu/smartFarm/gui/views/nodeDetails.fxml");
-    } else {
-      new Alert(Alert.AlertType.INFORMATION, "Select a node first.", ButtonType.OK).showAndWait();
-    }
-  }
-
-  private void loadViewIntoCenter(String fxmlResourcePath) {
-    try {
-      URL resource = getClass().getResource(fxmlResourcePath);
-      if (resource == null) {
-        System.err.println("FXML not found: " + fxmlResourcePath);
-        return;
-      }
-      Parent view = FXMLLoader.load(resource);
-      BorderPane main = (BorderPane) pageTitle.getScene().getRoot();
-      main.setCenter(view);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
 }

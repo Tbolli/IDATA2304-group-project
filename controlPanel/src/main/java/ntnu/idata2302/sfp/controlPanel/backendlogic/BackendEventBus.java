@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 public final class BackendEventBus {
 
   private static final List<Consumer<String>> sensorListeners = new CopyOnWriteArrayList<>();
+  @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
   private static final List<Consumer<String>> serverListeners = new CopyOnWriteArrayList<>();
 
 
@@ -38,22 +39,6 @@ public final class BackendEventBus {
     Objects.requireNonNull(listener, "listener");
     sensorListeners.add(listener);
   }
-
-//      /**
-//       * Register a listener to receive server messages.
-//       *
-//       * <p>The listener will be invoked each time
-//       {@link #publishServerMessage(String)} is called.
-//       * Registration is thread-safe. Duplicate registrations are allowed (the listener will be
-//       * invoked once per registration).
-//       *
-//       * @param listener consumer that handles published server messages; must not be {@code null}
-//       * @throws NullPointerException if {@code listener} is {@code null}
-//       */
-//      public static void onServerMessage(Consumer<String> listener) {
-//        Objects.requireNonNull(listener, "listener");
-//        serverListeners.add(listener);
-//      }
 
   /**
    * Publish a sensor message to all registered sensor listeners.

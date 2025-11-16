@@ -4,6 +4,7 @@ package ntnu.idata2302.sfp.controlPanel.backendlogic;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * Listens for incoming sensor node connections on a configured TCP port and
@@ -85,19 +86,36 @@ public class SensorListener implements Runnable {
    * <p>Important: this method blocks while accepting connections. Callers must run it
    * on a dedicated thread to avoid blocking application startup or other tasks.
    */
+
   @Override
   public void run() {
     try (ServerSocket serverSocket = new ServerSocket(port)) {
       System.out.println(" SensorListener active on port " + port);
 
-      while (true) {
-        Socket sensorSocket = serverSocket.accept();
-        System.out.println(" New Sensor connected: " + sensorSocket.getInetAddress());
-        SensorHandler handler = new SensorHandler(sensorSocket, serverConnection);
-        new Thread(handler).start();
+      while (!Thread.currentThread().isInterrupted() && !serverSocket.isClosed()) {
+        try {
+          Socket sensorSocket = serverSocket.accept();
+          System.out.println(" New Sensor connected: " + sensorSocket.getInetAddress());
+          SensorHandler handler = new SensorHandler(sensorSocket);
+          new Thread(handler).start();
+
+        } catch (SocketException se) {
+          if (serverSocket.isClosed()) {
+            System.out.println(" ServerSocket closed, stopping listener loop.");
+          } else {
+            System.err.println(" Socket exception while accepting: " + se.getMessage());
+          }
+          break;
+        } catch (IOException ioe) {
+          System.err.println(" I/O error accepting connection: " + ioe.getMessage());
+          break;
+        }
       }
+
     } catch (IOException e) {
-      System.err.println(" Error in SensorListener: " + e.getMessage());
+      System.err.println(" Error starting SensorListener: " + e.getMessage());
+    } finally {
+      System.out.println(" SensorListener on port " + port + " shutting down.");
     }
   }
 }

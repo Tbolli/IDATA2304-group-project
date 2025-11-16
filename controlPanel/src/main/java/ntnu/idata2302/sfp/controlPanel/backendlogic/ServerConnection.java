@@ -119,6 +119,7 @@ public class ServerConnection {
         MessageRouter.routeFromServer(line);
       }
     } catch (IOException e) {
+      //noinspection CallToPrintStackTrace
       e.printStackTrace();
     }
   }

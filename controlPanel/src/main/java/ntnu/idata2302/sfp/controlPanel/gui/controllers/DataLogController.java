@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import ntnu.idata2302.sfp.controlPanel.backendlogic.BackendEventBus;
 import ntnu.idata2302.sfp.controlPanel.gui.SceneManager;
+import ntnu.idata2302.sfp.controlPanel.gui.model.LogEntry;
 import org.json.JSONObject;
 
 /**
@@ -27,6 +28,7 @@ import org.json.JSONObject;
  */
 public class DataLogController {
 
+  public Label pageTitle;
   @FXML
   private TableView<LogEntry> logTable;
   @FXML
