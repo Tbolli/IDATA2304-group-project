@@ -12,6 +12,7 @@
     <modules>
         <module>library</module>
         <module>server</module>
+        <module>controlPanel</module>
         <module>clientExample</module>
         <module>sensorNode</module>
     </modules>
