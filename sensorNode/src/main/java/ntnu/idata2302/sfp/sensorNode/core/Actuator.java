@@ -3,6 +3,8 @@ package ntnu.idata2302.sfp.sensorNode.core;
 
 import ntnu.idata2302.sfp.sensorNode.entity.ActuatorType;
 
+import java.util.Objects;
+
 /**
  * This class represents a controllable actuator
  * that can adjust a physical or simulated value
@@ -31,7 +33,7 @@ public class Actuator {
 
   private double currentValue; // the current value of the actuator
   private double targetValue; // the desired target value
-  private double stepFraction = 0.05; // 5% of range per update()
+  private double stepFraction = 0.18; // 18% of range per update()
 
   /**
    * Constructs a new {@code Actuator} instance of the specified type with a defined
@@ -59,6 +61,20 @@ public class Actuator {
     this.targetValue = currentValue;
   }
 
+  // Constructor for binary actuators
+  public Actuator(ActuatorType type, double currentValue) {
+    if (currentValue != 1.0 && currentValue != 0.0) {
+      throw new IllegalArgumentException("currentValue must be either 0.0 or 1.0");
+    }
+    this.type = type;
+    this.minValue = 0.0;
+    this.maxValue = 1.0;
+    this.unit = type.unit();
+    this.currentValue = currentValue;
+    this.targetValue = currentValue;
+  }
+
+
   // --------------- Setters ---------------
 
   /**
@@ -71,7 +87,13 @@ public class Actuator {
    */
 
   public void act(double value) {
-    this.targetValue = clamp(value, minValue, maxValue);
+    if(Objects.equals(unit, "state")){
+      // Separate logic for binary actuators
+      this.targetValue = value;
+      this.currentValue = value;
+    }else{
+      this.targetValue = clamp(value, minValue, maxValue);
+    }
   }
 
   /**
@@ -180,7 +202,7 @@ public class Actuator {
    */
 
   private static double clamp(double v, double min, double max) {
-    return (v < min) ? min : (v > max) ? max : v;
+    return (v < min) ? min : Math.min(v, max);
   }
 
 
@@ -197,6 +219,8 @@ public class Actuator {
    */
 
   public void update() {
+    if(Objects.equals(unit, "state"))
+      return; // No need to update binary actuators
     double diff = targetValue - currentValue;
     if (Math.abs(diff) < 1e-9) {
       return;
