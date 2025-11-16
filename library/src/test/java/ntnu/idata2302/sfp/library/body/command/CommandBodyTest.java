@@ -27,6 +27,11 @@ public class CommandBodyTest {
 
   // --------------------------- POSITIVE TESTS ---------------------------------- //
 
+  /**
+   * Verifies that a {@link CommandBody} with a list of actuators
+   * is correctly encoded to CBOR and decoded back to an equivalent instance.
+   */
+
   @Test
   void toCbor_roundTrip_positive() {
     // Arrange
@@ -46,6 +51,11 @@ public class CommandBodyTest {
   }
 
   // --------------------------- NEGATIVE TESTS ---------------------------------- //
+
+  /**
+   * Verifies that decoding invalid CBOR data
+   * results in an exception being thrown.
+   */
 
   @Test
   void fromCbor_invalidData_negative() {
