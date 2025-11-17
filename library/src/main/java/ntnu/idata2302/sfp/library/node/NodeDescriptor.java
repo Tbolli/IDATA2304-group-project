@@ -1,5 +1,7 @@
 package ntnu.idata2302.sfp.library.node;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.List;
 
 /**
@@ -36,9 +38,10 @@ public record NodeDescriptor(
    * @param id   unique sensor identifier within the node
    *             (non\-null, used for addressing and mapping)
    * @param unit human\-readable measurement unit for the sensor values
-   *             (may be {@code null} if unspecified)
+   *             (maybe {@code null} if unspecified)
    */
-  public record SensorDescriptor(String id, String unit) {
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  public record SensorDescriptor(String id, String unit, Double minValue, Double maxValue) {
   }
 
   /**
@@ -52,7 +55,7 @@ public record NodeDescriptor(
    * @param maxValue optional maximum allowed value for the actuator;
    *                 may be {@code null} if not applicable
    * @param unit     human\-readable unit for the actuator value
-   *                 (may be {@code null} if unspecified)
+   *                 (maybe {@code null} if unspecified)
    */
   public record ActuatorDescriptor(String id, double value, Double minValue, Double maxValue,
                                    String unit) {

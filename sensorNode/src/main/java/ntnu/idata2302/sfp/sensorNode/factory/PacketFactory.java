@@ -52,8 +52,10 @@ public class PacketFactory {
     List<NodeDescriptor.SensorDescriptor> sensorDescriptors =
         sensorNode.getSensors().stream()
             .map(s -> new NodeDescriptor.SensorDescriptor(
-                s.getName(),     // ID / sensor name
-                s.getUnit()))     // unit only
+                s.getName(),
+                s.getUnit(),
+                s.getMinValue(),
+                s.getMaxValue()))
             .toList();
 
 

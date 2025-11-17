@@ -4,21 +4,34 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="900" prefWidth="1440" style="-fx-background-color: #D8F3DC;" stylesheets="@/ntnu/idata2302/sfp/controlPanel/gui/styles/datalog.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ntnu.idata2302.sfp.controlPanel.gui.controllers.DataLogController">
+<BorderPane prefHeight="900" prefWidth="1440"
+            style="-fx-background-color: #D8F3DC;"
+            stylesheets="@/ntnu/idata2302/sfp/controlPanel/gui/styles/datalog.css,  @/ntnu/idata2302/sfp/controlPanel/gui/styles/sidebar.css"
+            xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ntnu.idata2302.sfp.controlPanel.gui.controllers.DataLogController">
 
     <!-- SIDEBAR -->
     <left>
-        <VBox id="sidebar" alignment="TOP_CENTER" prefWidth="200" spacing="25" style="-fx-background-color: #80ED99;">
+        <VBox alignment="TOP_CENTER"
+              prefWidth="200"
+              spacing="25"
+              styleClass="sidebar">
 
-            <ImageView fitHeight="218.0" fitWidth="210.0">
-                <Image url="@/ntnu/idata2302/sfp/controlPanel/images/SMF_Logo.png" />
-            </ImageView>
+            <!-- Centered logo -->
+            <StackPane alignment="CENTER" styleClass="sidebar-logo">
+                <ImageView fitHeight="200" preserveRatio="true">
+                    <image>
+                        <Image url="@/ntnu/idata2302/sfp/controlPanel/images/SMF_Logo.png"/>
+                    </image>
+                </ImageView>
+            </StackPane>
 
-            <Button onAction="#openHome" styleClass="sidebar-btn" text="Home" />
-            <Button onAction="#openNodes" prefHeight="52.0" prefWidth="141.0" styleClass="sidebar-btn" text="Nodes" />
-            <Button prefHeight="59.0" prefWidth="151.0" styleClass="sidebar-btn-active" text="DataLog" />
+            <!-- Buttons -->
+            <Button onAction="#openNodes" styleClass="sidebar-btn" text="Nodes" />
+            <Button styleClass="sidebar-btn-active" text="Data Log" />
         </VBox>
     </left>
+
 
     <!-- CENTER CONTENT -->
     <center>

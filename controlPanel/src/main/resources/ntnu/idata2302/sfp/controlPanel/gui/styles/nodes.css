@@ -1,92 +1,69 @@
-/* ===== Base Page ===== */
-.page-title {
-    -fx-font-size: 30px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #1B4332;
-}
-
-.section-title {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #1B4332;
-}
-
-/* ===== Sidebar ===== */
-.sidebar-btn {
+/* === ListView container === */
+.nodes-list {
     -fx-background-color: transparent;
-    -fx-text-fill: #1B4332;
-    -fx-font-weight: 600;
-    -fx-font-size: 14px;
-    -fx-pref-width: 150;
-    -fx-pref-height: 45;
+    -fx-padding: 10 10 20 0;
+    -fx-control-inner-background: transparent;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
-.sidebar-btn:hover {
-    -fx-background-color: #57CC99;
-    -fx-cursor: hand;
+/* Remove selection highlight and default stray text */
+.nodes-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 8 0;
+    -fx-text-fill: transparent;
 }
 
-.sidebar-btn-active {
-    -fx-background-color: #57CC99;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-background-radius: 10;
+/* Keep empty rows invisible */
+.nodes-list .list-cell:empty {
+    -fx-background-color: transparent;
 }
 
-/* ===== Table ===== */
-.nodes-table {
-    -fx-background-color: #D8F3DC;
-    -fx-border-color: #3E6151;
-    -fx-border-radius: 10;
-    -fx-background-radius: 10;
-}
-
-.table-view .column-header {
-    -fx-background-color: #80ED99;
-}
-
-.table-view .column-header .label {
-    -fx-text-fill: #1B4332;
-    -fx-font-weight: bold;
-}
-
-.table-row-cell {
+/* === Node card === */
+.node-card {
     -fx-background-color: white;
-    -fx-table-cell-border-color: transparent;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #CCE8D3;
+    -fx-border-width: 1;
+    -fx-padding: 14 18;
+    -fx-spacing: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 10, 0.15, 0, 3);
+    -fx-transition: 0.2s;
 }
 
-.table-row-cell:filled:selected {
-    -fx-background-color: #B7E4C7;
+/* Hover = border highlight instead of glow */
+.node-card:hover {
+    -fx-border-color: #57CC99;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 12, 0.2, 0, 3);
 }
 
-/* ===== Details Box ===== */
-.details-box {
-    -fx-background-color: white;
-    -fx-border-color: #3E6151;
-    -fx-border-radius: 10;
-    -fx-background-radius: 10;
-    -fx-padding: 16;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 8, 0, 0, 2);
-}
-
-.details-title {
-    -fx-font-size: 15px;
+/* === Text formatting === */
+.node-header {
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-text-fill: #1B4332;
 }
 
-.details-text {
+.node-subtitle {
     -fx-font-size: 14px;
+    -fx-font-weight: bold;
     -fx-text-fill: #2B4854;
+    -fx-padding: 4 0 0 0;
 }
 
-/* ===== Toggles ===== */
+/* Ensure inner labels use readable color */
+.node-card .label {
+    -fx-text-fill: #1B4332;
+}
+
+/* === Actuator controls === */
 .toggle-on {
     -fx-background-color: #00C851;
     -fx-text-fill: white;
     -fx-background-radius: 20;
     -fx-font-weight: bold;
-    -fx-pref-width: 60;
+    -fx-pref-width: 70;
 }
 
 .toggle-off {
@@ -94,29 +71,43 @@
     -fx-text-fill: white;
     -fx-background-radius: 20;
     -fx-font-weight: bold;
-    -fx-pref-width: 60;
+    -fx-pref-width: 70;
 }
 
-/* ===== Refresh Button ===== */
-.refresh-btn {
-    -fx-background-color: #A66B6B;
-    -fx-text-fill: white;
+.slider {
+    -fx-pref-width: 160;
+}
+
+/* === Scrollbar style === */
+.scroll-bar:horizontal, .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: rgba(87,204,153,0.6);
+    -fx-background-radius: 5;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: rgba(87,204,153,0.9);
+}
+
+/* === Connection text === */
+.page-title-small {
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #1B4332;
+}
+
+/* === Section title === */
+.section-title {
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
-    -fx-background-radius: 15;
-    -fx-pref-width: 150;
-    -fx-pref-height: 35;
+    -fx-text-fill: #1B4332;
 }
 
-.refresh-btn:hover {
-    -fx-background-color: #863434;
-}
-
-/* ===== Scrollbars and Focus ===== */
-.table-view .scroll-bar:horizontal,
-.table-view .scroll-bar:vertical {
-    -fx-opacity: 0;
-}
-
-.table-view:focused {
-    -fx-border-color: transparent;
+.connection-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1B4332;
 }

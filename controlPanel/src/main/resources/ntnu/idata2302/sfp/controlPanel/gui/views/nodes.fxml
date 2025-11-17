@@ -1,75 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 
 <BorderPane prefHeight="900" prefWidth="1440" style="-fx-background-color: #D8F3DC;"
-            stylesheets="@/ntnu/idata2302/sfp/controlPanel/gui/styles/nodes.css"
-            xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="ntnu.idata2302.sfp.controlPanel.gui.controllers.NodesController">
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ntnu.idata2302.sfp.controlPanel.gui.controllers.NodesController"
+            stylesheets="@/ntnu/idata2302/sfp/controlPanel/gui/styles/nodes.css, @/ntnu/idata2302/sfp/controlPanel/gui/styles/sidebar.css">
 
     <!-- SIDEBAR -->
     <left>
-        <VBox alignment="TOP_CENTER" prefWidth="200" spacing="25" style="-fx-background-color: #80ED99;">
-            <ImageView fitHeight="211.0" fitWidth="205.0">
-                <image>
-                    <Image url="@/ntnu/idata2302/sfp/controlPanel/images/SMF_Logo.png"/>
-                </image>
-            </ImageView>
+        <VBox alignment="TOP_CENTER"
+              prefWidth="200"
+              spacing="25"
+              styleClass="sidebar">
 
-            <!-- Navigation Buttons -->
-            <Button onAction="#openHome" styleClass="sidebar-btn" text="Home"/>
-            <Button styleClass="sidebar-btn-active" text="Nodes"/>
-            <Button onAction="#openDataLog" styleClass="sidebar-btn" text="DataLog"/>
+            <!-- Centered logo -->
+            <StackPane alignment="CENTER" styleClass="sidebar-logo">
+                <ImageView fitHeight="200" preserveRatio="true">
+                    <image>
+                        <Image url="@/ntnu/idata2302/sfp/controlPanel/images/SMF_Logo.png"/>
+                    </image>
+                </ImageView>
+            </StackPane>
+
+            <!-- Buttons -->
+            <Button styleClass="sidebar-btn-active" text="Nodes" />
+            <Button onAction="#openDataLog" styleClass="sidebar-btn" text="DataLog" />
         </VBox>
     </left>
+
 
     <!-- MAIN CONTENT -->
     <center>
         <AnchorPane>
 
-            <!-- Page Title -->
-            <Label fx:id="pageTitle" styleClass="page-title" text="Smart Farming System" AnchorPane.leftAnchor="240"
+            <!-- Connection Status -->
+            <Label fx:id="connectionLabel"
+                   text="Connected to 127.0.0.1:5050"
+                   styleClass="connection-title"
+                   AnchorPane.leftAnchor="30"
                    AnchorPane.topAnchor="30"/>
 
-            <!-- Section Header -->
-            <Label styleClass="section-title" text="Nodes" AnchorPane.leftAnchor="240" AnchorPane.topAnchor="90"/>
+            <!-- Section Title -->
+            <Label text="Nodes"
+                   styleClass="section-title"
+                   AnchorPane.leftAnchor="30"
+                   AnchorPane.topAnchor="80"/>
 
-            <!-- Table for Node Overview -->
-            <TableView fx:id="nodesTable" styleClass="nodes-table" AnchorPane.bottomAnchor="80"
-                       AnchorPane.leftAnchor="240" AnchorPane.rightAnchor="480" AnchorPane.topAnchor="130">
-
-                <columns>
-                    <TableColumn fx:id="colId" prefWidth="120" text="Node ID"/>
-                    <TableColumn fx:id="colIp" prefWidth="150" text="IP Address"/>
-                    <TableColumn fx:id="colStatus" prefWidth="120" text="Status"/>
-                    <TableColumn fx:id="colSensor" prefWidth="140" text="Sensor Type"/>
-                    <TableColumn fx:id="colInfo" prefWidth="180" text="Info"/>
-                </columns>
-            </TableView>
-
-            <!-- DETAILS PANEL -->
-            <VBox prefWidth="350" spacing="12" styleClass="details-box" AnchorPane.bottomAnchor="80"
-                  AnchorPane.rightAnchor="70" AnchorPane.topAnchor="130">
-                <Label fx:id="detailTitle" styleClass="details-title" text="Node 001 (192.168.0.10)"/>
-                <Label fx:id="detailTemp" styleClass="details-text" text="🌡 Temperature: 23°C"/>
-                <Label fx:id="detailHumidity" styleClass="details-text" text="💧 Humidity: 49%"/>
-
-                <HBox alignment="CENTER_LEFT" spacing="10">
-                    <Label styleClass="details-text" text="🔥 Heater"/>
-                    <ToggleButton fx:id="heaterToggle" onAction="#onToggleHeater" styleClass="toggle-off" text="OFF"/>
-                </HBox>
-
-                <HBox alignment="CENTER_LEFT" spacing="10">
-                    <Label styleClass="details-text" text="🌀 Fan"/>
-                    <ToggleButton fx:id="fanToggle" onAction="#onToggleFan" styleClass="toggle-on" text="ON"/>
-                </HBox>
-
-                <Region VBox.vgrow="ALWAYS"/>
-
-                <Button fx:id="refreshBtn" onAction="#onRefresh" styleClass="refresh-btn" text="Refresh"/>
-            </VBox>
+            <!-- Nodes List -->
+            <ListView fx:id="nodesList"
+                      styleClass="nodes-list"
+                      AnchorPane.topAnchor="120"
+                      AnchorPane.leftAnchor="30"
+                      AnchorPane.rightAnchor="40"
+                      AnchorPane.bottomAnchor="40"/>
         </AnchorPane>
     </center>
 </BorderPane>

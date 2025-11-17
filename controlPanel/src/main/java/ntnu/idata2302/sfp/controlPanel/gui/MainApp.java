@@ -27,8 +27,8 @@ public class MainApp extends Application {
     // Register the main stage in SceneManager
     SceneManager.setStage(stage);
 
-    // Load the first scene (Home)
-    SceneManager.switchScene("home");
+    // Load the first scene (Login)
+    SceneManager.switchScene("login");
   }
 
   /**
