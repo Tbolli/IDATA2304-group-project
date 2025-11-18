@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import ntnu.idata2302.sfp.controlPanel.gui.controllers.Unloadable;
 
 /**
  * Utility for managing scenes in the control panel GUI.
@@ -26,6 +27,7 @@ import javafx.stage.Stage;
 public class SceneManager {
 
   private static Stage primaryStage;
+  private static Object currentController;
   private static final Map<String, Scene> sceneCache = new HashMap<>();
 
   /**
@@ -71,7 +73,10 @@ public class SceneManager {
       System.err.println("SceneManager: Stage not set!");
       return;
     }
-
+    // If previous controller supports unloading, call it
+    if (currentController instanceof Unloadable unloadable) {
+      unloadable.onUnload();
+    }
     try {
       // Check cache first
       Scene scene = sceneCache.get(viewName);

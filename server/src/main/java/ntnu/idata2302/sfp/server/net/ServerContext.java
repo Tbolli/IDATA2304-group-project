@@ -56,6 +56,7 @@ public class ServerContext {
    */
   public void unregisterNode(int nodeId) {
     socketRegistry.remove(nodeId);
+    nodeRegistry.remove(nodeId);
     System.out.println("Node " + nodeId + " disconnected");
   }
 
@@ -161,6 +162,8 @@ public class ServerContext {
     for (int cpId : getSubscribersForSensorNode(sensorId)) {
       try {
         packet.getHeader().setTargetId(cpId);
+        System.out.println(packet.getHeader().getMessageType());
+        System.out.println(packet.getHeader().getTargetId());
         sendTo(packet);
       } catch (IOException e) {
         System.out.println("Failed to send report to CP " + cpId);

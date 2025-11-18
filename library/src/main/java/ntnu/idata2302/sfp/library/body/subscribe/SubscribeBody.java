@@ -60,8 +60,8 @@ public record SubscribeBody(
   @JsonInclude(JsonInclude.Include.NON_NULL)
   public record NodeSubscription(
       int sensorNodeId,
-      List<String> metrics,      // e.g. ["temperature", "humidity"]
-      List<String> actuators     // e.g. ["valve1", "pump"]
+      List<String> metrics,      // e.g. ["temperature", "humidity"] | ["*"] for all
+      List<String> actuators     // e.g. ["valve1", "pump"] | ["*"] for all
   ) {
   }
 }

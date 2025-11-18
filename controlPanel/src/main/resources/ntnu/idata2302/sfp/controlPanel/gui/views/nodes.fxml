@@ -6,8 +6,7 @@
 <?import javafx.scene.image.Image?>
 
 <BorderPane prefHeight="900" prefWidth="1440" style="-fx-background-color: #D8F3DC;"
-            xmlns="http://javafx.com/javafx/17.0.12"
-            xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="ntnu.idata2302.sfp.controlPanel.gui.controllers.NodesController"
             stylesheets="@/ntnu/idata2302/sfp/controlPanel/gui/styles/nodes.css, @/ntnu/idata2302/sfp/controlPanel/gui/styles/sidebar.css">
 
@@ -18,7 +17,6 @@
               spacing="25"
               styleClass="sidebar">
 
-            <!-- Centered logo -->
             <StackPane alignment="CENTER" styleClass="sidebar-logo">
                 <ImageView fitHeight="200" preserveRatio="true">
                     <image>
@@ -27,29 +25,31 @@
                 </ImageView>
             </StackPane>
 
-            <!-- Buttons -->
-            <Button styleClass="sidebar-btn-active" text="Nodes" />
-            <Button onAction="#openDataLog" styleClass="sidebar-btn" text="DataLog" />
+            <Button styleClass="sidebar-btn-active" text="Nodes"/>
+            <Button onAction="#openDataLog" styleClass="sidebar-btn" text="DataLog"/>
         </VBox>
     </left>
-
 
     <!-- MAIN CONTENT -->
     <center>
         <AnchorPane>
 
-            <!-- Connection Status -->
             <Label fx:id="connectionLabel"
-                   text="Connected to 127.0.0.1:5050"
                    styleClass="connection-title"
                    AnchorPane.leftAnchor="30"
                    AnchorPane.topAnchor="30"/>
 
-            <!-- Section Title -->
             <Label text="Nodes"
                    styleClass="section-title"
                    AnchorPane.leftAnchor="30"
                    AnchorPane.topAnchor="80"/>
+
+            <!-- Refresh button -->
+            <Button text="Refresh"
+                    onAction="#refreshCapabilities"
+                    styleClass="refresh-btn"
+                    AnchorPane.rightAnchor="40"
+                    AnchorPane.topAnchor="30"/>
 
             <!-- Nodes List -->
             <ListView fx:id="nodesList"

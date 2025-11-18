@@ -11,6 +11,8 @@ public class DataReportHandler implements MessageHandler {
   @Override
   public void handle(SmartFarmingProtocol message, Socket client, ServerContext context) throws IOException {
     // Direct message to all subscribers of the node
+    // TODO -REMOVE print
+    System.out.println(context.getSubscribersForSensorNode(message.getHeader().getSourceId()));
     context.sendToSubscribers(message);
   }
 }

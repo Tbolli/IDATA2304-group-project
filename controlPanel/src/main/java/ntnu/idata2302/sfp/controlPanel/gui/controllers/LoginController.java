@@ -6,7 +6,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.input.KeyCode;
 import ntnu.idata2302.sfp.controlPanel.gui.SceneManager;
+import ntnu.idata2302.sfp.controlPanel.net.AppContext;
+import ntnu.idata2302.sfp.controlPanel.net.SfpClient;
 
+import java.io.IOException;
 import java.util.Objects;
 
 public class LoginController {
@@ -69,12 +72,14 @@ public class LoginController {
   @FXML
   private void connectToServer() {
     String ip = String.format("%s.%s.%s.%s", ip1.getText(), ip2.getText(), ip3.getText(), ip4.getText());
-    System.out.println("Connecting to: " + ip);
-
-    SceneManager.switchScene("nodes");
-
-    // Temporary demonstration feedback
-    //feedbackLabel.setText("Unable to connect to " + ip);
+    SfpClient client = new SfpClient(ip, 5050);
+    try {
+      client.connect();
+      AppContext.setClient(client);
+      SceneManager.switchScene("nodes");
+    } catch (IOException e) {
+      feedbackLabel.setText("Unable to connect to " + ip);
+      e.printStackTrace();
+    }
   }
-
 }

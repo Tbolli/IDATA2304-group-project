@@ -32,15 +32,6 @@ public class StartUp {
   private static final int SERVER_PORT = 5050;
 
   /**
-   * Simple counter used by the application (reserved for future use).
-   *
-   * <p>Currently unused in startup logic; kept for compatibility or later
-   * extensions.</p>
-   */
-  private static final AtomicInteger counter = new AtomicInteger(0);
-
-
-  /**
    * Program entry point.
    *
    * <p>Performs the following steps in order:

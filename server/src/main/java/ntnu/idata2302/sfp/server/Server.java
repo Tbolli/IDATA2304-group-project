@@ -102,6 +102,7 @@ public class Server {
       while (true) {
         // Read full header
         byte[] headerBytes = dis.readNBytes(Header.HEADER_SIZE);
+
         if (headerBytes.length < Header.HEADER_SIZE) {
           System.out.println("Incomplete header.");
           break;
@@ -122,6 +123,8 @@ public class Server {
 
         // Parse full SFP message
         SmartFarmingProtocol packet = SmartFarmingProtocol.fromBytes(header, bodyBytes);
+        System.out.println(packet.getHeader().getMessageType()); // TODO remove
+
 
         // dispatch the packet
         dispatcher.dispatch(packet, socket, context);
