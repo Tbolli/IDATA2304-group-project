@@ -46,7 +46,7 @@ public enum ActuatorType {
 
   // Lighting
   SHADE_SCREEN("Shade Screen", "%"),
-  LIGHT("Light", "%"),
+  LIGHT("Light", "state"),
 
   // Watering
   SPRINKLER("Sprinkler", "%"),

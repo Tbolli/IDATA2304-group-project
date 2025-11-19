@@ -3,7 +3,9 @@ package ntnu.idata2302.sfp.controlPanel.factory;
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
 import ntnu.idata2302.sfp.library.body.announce.AnnounceBody;
 import ntnu.idata2302.sfp.library.body.capabilities.CapabilitiesQueryBody;
+import ntnu.idata2302.sfp.library.body.command.CommandBody;
 import ntnu.idata2302.sfp.library.body.subscribe.SubscribeBody;
+import ntnu.idata2302.sfp.library.body.subscribe.UnsubscribeBody;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
 import ntnu.idata2302.sfp.library.node.NodeDescriptor;
@@ -31,7 +33,7 @@ public class PacketFactory {
     return new SmartFarmingProtocol(header, body);
   }
 
-  public static SmartFarmingProtocol Announce(int requestId){
+  public static SmartFarmingProtocol announce(int requestId){
     Header header = new Header(
       new byte[]{ 'S', 'F', 'P' },
       (byte) 0,
@@ -50,7 +52,7 @@ public class PacketFactory {
     return new SmartFarmingProtocol(header, body);
   }
 
-  public static SmartFarmingProtocol SubscribeSingularNode(int sourceId, int requestId, int nodeId, List<String> sensorNames, List<String> actuatorNames){
+  public static SmartFarmingProtocol subscribeNode(int sourceId, int requestId, int sensorNodeId){
     Header header = new Header(
       new byte[]{ 'S', 'F', 'P' },
       (byte) 1,
@@ -61,17 +63,51 @@ public class PacketFactory {
       UUID.randomUUID()
     );
 
-    SubscribeBody.NodeSubscription ns = new SubscribeBody.NodeSubscription(
-      nodeId,
-      sensorNames,
-      actuatorNames
-    );
-
     SubscribeBody body = new SubscribeBody(
       requestId,
-      List.of(ns)
+      sensorNodeId
     );
 
     return new SmartFarmingProtocol(header, body);
   }
+
+  public static SmartFarmingProtocol unSubscribeNode(int sourceId, int requestId, int sensorNodeId){
+    Header header = new Header(
+      new byte[]{ 'S', 'F', 'P' },
+      (byte) 1,
+      MessageTypes.UNSUBSCRIBE,
+      sourceId,
+      NodeIds.SERVER,
+      0,
+      UUID.randomUUID()
+    );
+
+    UnsubscribeBody body = new UnsubscribeBody(
+      requestId,
+      sensorNodeId
+    );
+
+    return new SmartFarmingProtocol(header, body);
+  }
+
+  public static SmartFarmingProtocol command(int sourceId, int sensorNodeId, int requestId, List<CommandBody.CommandPart> parts){
+    Header header = new Header(
+      new byte[]{ 'S', 'F', 'P' },
+      (byte) 1,
+      MessageTypes.COMMAND,
+      sourceId,
+      sensorNodeId,
+      0,
+      UUID.randomUUID()
+    );
+
+
+    CommandBody body = new CommandBody(
+      requestId,
+      parts
+    );
+
+    return new SmartFarmingProtocol(header, body);
+  }
+
 }

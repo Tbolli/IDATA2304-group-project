@@ -63,14 +63,14 @@ public class SimulationLoop implements Runnable {
   public void run() {
     try {
       while (true) {
+        Thread.sleep(2000); // send a report every 2 seconds
+
         // update internal sensor/actuator simulation
         node.tick();
 
         // build and send a report packet
         SmartFarmingProtocol report = PacketFactory.buildReportPacket(node);
         client.sendPacket(report);
-
-        Thread.sleep(2000); // send a report every 2 seconds
       }
     } catch (InterruptedException ignored) {
       System.out.println("Simulation loop interrupted");

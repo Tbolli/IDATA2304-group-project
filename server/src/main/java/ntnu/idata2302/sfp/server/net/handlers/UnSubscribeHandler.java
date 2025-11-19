@@ -21,7 +21,7 @@ public class UnSubscribeHandler implements MessageHandler{
     UnsubscribeBody reqBody = (UnsubscribeBody) message.getBody();
 
     // Remove subscriptions
-    context.removeSubscriptions(reqBody.subscriptionId());
+    context.removeSubscription(reqHeader.getSourceId(), reqBody.sensorNodeId());
 
     // Response - Header
     Header resHeader = HeaderFactory.serverHeader(MessageTypes.UNSUBSCRIBE_ACK,reqHeader.getSourceId());
@@ -29,7 +29,6 @@ public class UnSubscribeHandler implements MessageHandler{
     // Response - Body
     SubscribeAckBody resBody = new SubscribeAckBody(
       reqBody.requestId(),
-      counter.getAndIncrement(),
       1
     );
 

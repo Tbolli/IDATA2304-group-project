@@ -63,14 +63,14 @@ public final class NodeFactory {
         new Sensor("Temperature", 10, 40, "°C"),
         new Sensor("Humidity", 20, 100, "%"),
         new Sensor("CO2", 300, 3000, "ppm"),
-        new Sensor("Light", 0, 100_000, "lux"),
+        new Sensor("Light Sensor", 0, 100_000, "lux"),
         new Sensor("SoilMoisture", 0, 100, "%")
     );
 
     List<Actuator> actuators = List.of(
         new Actuator(ActuatorType.FAN, 0, 100),       // % power
         new Actuator(ActuatorType.HEATER, 0, 100),    // % power
-        new Actuator(ActuatorType.LIGHT, 0, 100)      // % brightness
+        new Actuator(ActuatorType.LIGHT, 1.0)                // state brightness
     );
 
     return new SensorNode(sensors, actuators, false, false);

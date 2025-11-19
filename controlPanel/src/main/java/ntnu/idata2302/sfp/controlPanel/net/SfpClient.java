@@ -2,6 +2,7 @@ package ntnu.idata2302.sfp.controlPanel.net;
 
 import ntnu.idata2302.sfp.controlPanel.factory.PacketFactory;
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
+import ntnu.idata2302.sfp.library.body.command.CommandBody;
 import ntnu.idata2302.sfp.library.header.Header;
 
 import javax.net.ssl.SSLContext;
@@ -105,7 +106,7 @@ public class SfpClient {
 
   /** Send ANNOUNCE packet to the server */
   public void sendAnnounce(){
-    SmartFarmingProtocol packet = PacketFactory.Announce(
+    SmartFarmingProtocol packet = PacketFactory.announce(
       AppContext.getRequestId()
     );
     sendPacket(packet);
@@ -117,21 +118,36 @@ public class SfpClient {
       AppContext.getControllerId(),
       AppContext.getRequestId()
     );
-    // TODO remove
-    System.out.println("sending cap req");
     sendPacket(packet);
-    System.out.println("done sending cap req");
-
   }
 
   /** Send SUBSCRIBE packet subscribing a single node to the server */
-  public void sendSubscribe(int nodeId, List<String> sensorNames, List<String> actuatorNames){
-    SmartFarmingProtocol packet = PacketFactory.SubscribeSingularNode(
+  public void sendSubscribe(int nodeId){
+    SmartFarmingProtocol packet = PacketFactory.subscribeNode(
       AppContext.getControllerId(),
       AppContext.getRequestId(),
+      nodeId
+    );
+    sendPacket(packet);
+  }
+
+  /** Send UNSUBSCRIBE packet unsubscribing from single node */
+  public void sendUnsubscribe(int sensorNodeId){
+    SmartFarmingProtocol packet = PacketFactory.unSubscribeNode(
+      AppContext.getControllerId(),
+      AppContext.getRequestId(),
+      sensorNodeId
+    );
+    sendPacket(packet);
+  }
+
+  /** Send COMMAND packet to SensorNode through the Server */
+  public void sendActuatorCommand(int nodeId, List<CommandBody.CommandPart> parts){
+    SmartFarmingProtocol packet = PacketFactory.command(
+      AppContext.getControllerId(),
       nodeId,
-      sensorNames,
-      actuatorNames
+      AppContext.getRequestId(),
+      parts
     );
     sendPacket(packet);
   }

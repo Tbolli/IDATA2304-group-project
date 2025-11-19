@@ -169,29 +169,6 @@ public class Actuator {
     return currentValue;
   }
 
-
-  /**
-   * Returns the target value the actuator is moving toward.
-   *
-   * @return the target value
-   */
-
-  public double getTargetValue() {
-    return targetValue;
-  }
-
-
-  /**
-   * Returns the fraction that controls how quickly the actuator moves toward its target.
-   *
-   * @return the step fraction
-   */
-
-  public double getStepFraction() {
-    return stepFraction;
-  }
-
-
   /**
    * Clamps a value so that it stays within the given range.
    *
