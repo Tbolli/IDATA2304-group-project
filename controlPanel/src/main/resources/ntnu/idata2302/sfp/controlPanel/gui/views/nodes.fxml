@@ -19,9 +19,7 @@
 
             <StackPane alignment="CENTER" styleClass="sidebar-logo">
                 <ImageView fitHeight="200" preserveRatio="true">
-                    <image>
-                        <Image url="@/ntnu/idata2302/sfp/controlPanel/images/SMF_Logo.png"/>
-                    </image>
+                    <Image url="@/ntnu/idata2302/sfp/controlPanel/images/SMF_Logo.png"/>
                 </ImageView>
             </StackPane>
 

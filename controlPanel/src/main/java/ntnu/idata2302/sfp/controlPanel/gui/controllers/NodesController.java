@@ -190,7 +190,6 @@ public class NodesController implements Unloadable {
     this.bufferedPacket = packet;
   }
 
-
   @Override
   public void onUnload() {
     EventBus.unsubscribe(packetListener);
