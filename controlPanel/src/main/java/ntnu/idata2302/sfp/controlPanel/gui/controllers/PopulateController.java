@@ -262,11 +262,22 @@ public class PopulateController {
     if (!search.exists())
       return null;
 
+    File shaded = null;
+
     for (File f : search.listFiles()) {
-      if (f.getName().endsWith(".jar"))
-        return f;
+
+      String name = f.getName();
+
+      // Skip original jar
+      if (name.startsWith("original-"))
+        continue;
+
+      // Prefer shaded JAR (the one without "original-")
+      if (name.endsWith(".jar")) {
+        shaded = f;
+      }
     }
 
-    return null;
+    return shaded;
   }
 }
