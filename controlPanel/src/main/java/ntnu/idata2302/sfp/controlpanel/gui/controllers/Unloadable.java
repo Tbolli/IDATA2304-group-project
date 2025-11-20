@@ -5,5 +5,10 @@ package ntnu.idata2302.sfp.controlpanel.gui.controllers;
  * SceneManager should call {@link #onUnload()} when the scene is removed/switched.
  */
 public interface Unloadable {
+
+  /**
+   * Called when the scene is unloaded to perform any necessary cleanup.
+   */
+
   void onUnload();
 }
