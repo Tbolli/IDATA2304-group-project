@@ -125,6 +125,10 @@ public class Actuator {
     return type;
   }
 
+  public double getStepFraction(){return stepFraction;}
+
+
+  public double getTargetValue(){return targetValue;}
 
   /**
    * Returns the unit of measurement used by this actuator.

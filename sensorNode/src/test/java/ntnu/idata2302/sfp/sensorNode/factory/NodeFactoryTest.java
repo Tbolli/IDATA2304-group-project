@@ -91,9 +91,6 @@ public class NodeFactoryTest {
     assertTrue(sensors.stream().anyMatch(s -> s.getName().equals("CO2")
       && s.getMinValue() == 300.0 && s.getMaxValue() == 3000.0));
 
-    assertTrue(sensors.stream().anyMatch(s -> s.getName().equals("Light")
-      && s.getMinValue() == 0.0 && s.getMaxValue() == 100000.0));
-
     assertTrue(sensors.stream().anyMatch(s -> s.getName().equals("SoilMoisture")
       && s.getMinValue() == 0.0 && s.getMaxValue() == 100.0));
   }

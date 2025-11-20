@@ -15,228 +15,129 @@ import java.util.UUID;
 
 /**
  * Unit tests for {@link UnSubscribeHandler}.
- *
- * <p>These tests verify that the handler:
- * <ul>
- *   <li>Removes subscriptions in {@link ServerContext} based on the request body</li>
- *   <li>Sends an {@link MessageTypes#UNSUBSCRIBE_ACK} response back to the client</li>
- *   <li>Uses an internal counter for the acknowledgement subscription ID</li>
- *   <li>Propagates {@link IOException} from {@link ServerContext#sendTo(Socket, SmartFarmingProtocol)}</li>
- * </ul>
- * </p>
  */
 public class UnsubscribeHandlerTest {
 
   // --------------------------- POSITIVE TESTS ---------------------------------- //
 
-  /**
-   * Verifies that an UNSUBSCRIBE request:
-   * <ul>
-   *   <li>Calls {@link ServerContext#removeSubscriptions(int)} with the subscription ID from the request</li>
-   *   <li>Sends an UNSUBSCRIBE_ACK response to the same client socket</li>
-   *   <li>Copies the requestId from {@link UnsubscribeBody} into {@link SubscribeAckBody}</li>
-   *   <li>Sets the response header message type to UNSUBSCRIBE_ACK and targetId to the original sourceId</li>
-   * </ul>
-   */
   @Test
   public void handle_removesSubscriptionAndSendsAck_positive() throws IOException {
     // Arrange
     int sourceId = 123;
     int targetId = 999;
     int requestId = 10;
-    int subscriptionId = 77;
+    int sensorNodeId = 77;
 
     Header requestHeader = new Header(
-        new byte[]{'S', 'F', 'P'},
-        (byte) 1,
-        MessageTypes.UNSUBSCRIBE,
-        sourceId,
-        targetId,
-        0,
-        UUID.randomUUID()
+      new byte[]{'S', 'F', 'P'},
+      (byte) 1,
+      MessageTypes.UNSUBSCRIBE,
+      sourceId,
+      targetId,
+      0,
+      UUID.randomUUID()
     );
 
-    UnsubscribeBody requestBody = new UnsubscribeBody(requestId, subscriptionId);
+    UnsubscribeBody requestBody = new UnsubscribeBody(requestId, sensorNodeId);
     SmartFarmingProtocol requestPacket = new SmartFarmingProtocol(requestHeader, requestBody);
 
     RecordingServerContext context = new RecordingServerContext();
-    Socket client = null;
     UnSubscribeHandler handler = new UnSubscribeHandler();
+    Socket client = null;
 
     // Act
     handler.handle(requestPacket, client, context);
 
-    // Assert
-    // Subscription removal
+    // Assert — correct removal
     Assertions.assertEquals(
-        subscriptionId,
-        context.getLastRemovedSubscriptionId(),
-        "Handler should remove the subscription with the ID from the request body"
+      sensorNodeId,
+      context.getLastRemovedSensorNodeId(),
+      "Handler must call removeSubscription with correct snId"
     );
 
-    // Response sent
+    Assertions.assertEquals(
+      sourceId,
+      context.getLastRemovedCpId(),
+      "Handler must call removeSubscription with correct cpId"
+    );
+
+    // Assert — Ack sent
     SmartFarmingProtocol responsePacket = context.getLastSentPacket();
-    Assertions.assertNotNull(
-        responsePacket,
-        "Handler should send a response packet"
-    );
-    Assertions.assertSame(
-        client,
-        context.getLastSocket(),
-        "Response should be sent to the same client socket"
-    );
+    Assertions.assertNotNull(responsePacket, "Handler must send a response packet");
 
-    // Response header checks
-    Header responseHeader = responsePacket.getHeader();
-    Assertions.assertEquals(
-        MessageTypes.UNSUBSCRIBE_ACK,
-        responseHeader.getMessageType(),
-        "Response message type should be UNSUBSCRIBE_ACK"
-    );
-    Assertions.assertEquals(
-        sourceId,
-        responseHeader.getTargetId(),
-        "Response targetId should match original request sourceId"
-    );
+    Assertions.assertSame(client, context.getLastSocket(), "Ack must be sent to the same socket");
 
-    // Response body checks
+    // Assert — Header
+    Header ackHeader = responsePacket.getHeader();
+    Assertions.assertEquals(MessageTypes.UNSUBSCRIBE_ACK, ackHeader.getMessageType());
+    Assertions.assertEquals(sourceId, ackHeader.getTargetId());
+
+    // Assert — Body (handler uses SubscribeAckBody!)
     Assertions.assertTrue(
-        responsePacket.getBody() instanceof SubscribeAckBody,
-        "Response body should be a SubscribeAckBody"
-    );
-    SubscribeAckBody ackBody = (SubscribeAckBody) responsePacket.getBody();
-    Assertions.assertEquals(
-        requestId,
-        ackBody.requestId(),
-        "Ack should copy the requestId from the unsubscribe body"
-    );
-  }
-
-  /**
-   * Verifies that the internal acknowledgement subscription ID counter
-   * is incremented for each call to
-   * {@link UnSubscribeHandler#handle(SmartFarmingProtocol, Socket, ServerContext)}.
-   */
-  @Test
-  public void handle_incrementsAckSubscriptionIdOnMultipleCalls_positive() throws IOException {
-    // Arrange
-    int sourceId = 1;
-    int targetId = 2;
-
-    Header header1 = new Header(
-        new byte[]{'S', 'F', 'P'},
-        (byte) 1,
-        MessageTypes.UNSUBSCRIBE,
-        sourceId,
-        targetId,
-        0,
-        UUID.randomUUID()
-    );
-    Header header2 = new Header(
-        new byte[]{'S', 'F', 'P'},
-        (byte) 1,
-        MessageTypes.UNSUBSCRIBE,
-        sourceId,
-        targetId,
-        0,
-        UUID.randomUUID()
+      responsePacket.getBody() instanceof SubscribeAckBody,
+      "Response body must be SubscribeAckBody"
     );
 
-    UnsubscribeBody body1 = new UnsubscribeBody(1, 10);
-    UnsubscribeBody body2 = new UnsubscribeBody(2, 20);
-
-    SmartFarmingProtocol packet1 = new SmartFarmingProtocol(header1, body1);
-    SmartFarmingProtocol packet2 = new SmartFarmingProtocol(header2, body2);
-
-    RecordingServerContext context = new RecordingServerContext();
-    UnSubscribeHandler handler = new UnSubscribeHandler();
-    Socket client = null;
-
-    // Act
-    handler.handle(packet1, client, context);
-    SmartFarmingProtocol response1 = context.getLastSentPacket();
-    SubscribeAckBody ack1 = (SubscribeAckBody) response1.getBody();
-
-    handler.handle(packet2, client, context);
-    SmartFarmingProtocol response2 = context.getLastSentPacket();
-    SubscribeAckBody ack2 = (SubscribeAckBody) response2.getBody();
-
-    // Assert
-    Assertions.assertEquals(
-        1,
-        ack1.subscriptionId(),
-        "First acknowledgement subscriptionId should be 1"
-    );
-    Assertions.assertEquals(
-        2,
-        ack2.subscriptionId(),
-        "Second acknowledgement subscriptionId should be 2"
-    );
+    SubscribeAckBody ack = (SubscribeAckBody) responsePacket.getBody();
+    Assertions.assertEquals(requestId, ack.requestId(), "Ack must copy requestId");
+    Assertions.assertEquals(1, ack.status(), "Ack status should normally be 1 for success");
   }
 
   // --------------------------- NEGATIVE TESTS ---------------------------------- //
 
-  /**
-   * Verifies that if {@link ServerContext#sendTo(Socket, SmartFarmingProtocol)}
-   * throws an {@link IOException}, the exception is propagated by
-   * {@link UnSubscribeHandler#handle(SmartFarmingProtocol, Socket, ServerContext)}.
-   */
   @Test
   public void handle_propagatesIOExceptionFromSendTo_negative() {
     // Arrange
     int sourceId = 5;
     int targetId = 6;
     int requestId = 3;
-    int subscriptionId = 99;
+    int sensorNodeId = 99;
 
     Header requestHeader = new Header(
-        new byte[]{'S', 'F', 'P'},
-        (byte) 1,
-        MessageTypes.UNSUBSCRIBE,
-        sourceId,
-        targetId,
-        0,
-        UUID.randomUUID()
+      new byte[]{'S', 'F', 'P'},
+      (byte) 1,
+      MessageTypes.UNSUBSCRIBE,
+      sourceId,
+      targetId,
+      0,
+      UUID.randomUUID()
     );
 
-    UnsubscribeBody requestBody = new UnsubscribeBody(requestId, subscriptionId);
+    UnsubscribeBody requestBody = new UnsubscribeBody(requestId, sensorNodeId);
     SmartFarmingProtocol requestPacket = new SmartFarmingProtocol(requestHeader, requestBody);
 
     FailingServerContext context = new FailingServerContext();
     UnSubscribeHandler handler = new UnSubscribeHandler();
     Socket client = null;
-    boolean ioExceptionThrown = false;
+
+    boolean thrown = false;
 
     // Act
     try {
       handler.handle(requestPacket, client, context);
     } catch (IOException e) {
-      ioExceptionThrown = true;
+      thrown = true;
     }
 
     // Assert
-    Assertions.assertTrue(
-        ioExceptionThrown,
-        "IOException from ServerContext.sendTo should be propagated by the handler"
-    );
+    Assertions.assertTrue(thrown, "IOException must propagate from ServerContext.sendTo");
   }
 
-  /**
-   * Test double for {@link ServerContext} that records:
-   * <ul>
-   *   <li>The last subscription ID passed to {@link #removeSubscriptions(int)}</li>
-   *   <li>The last socket and packet passed to {@link #sendTo(Socket, SmartFarmingProtocol)}</li>
-   * </ul>
-   */
+  // =================================================================== //
+  // Test Doubles
+  // =================================================================== //
+
   private static class RecordingServerContext extends ServerContext {
 
-    private int lastRemovedSubscriptionId;
+    private int lastRemovedSensorNodeId;
+    private int lastRemovedCpId;
     private Socket lastSocket;
     private SmartFarmingProtocol lastSentPacket;
 
     @Override
-    public void removeSubscriptions(int subscriptionId) {
-      this.lastRemovedSubscriptionId = subscriptionId;
+    public void removeSubscription(int cpId, int snId) {
+      this.lastRemovedCpId = cpId;
+      this.lastRemovedSensorNodeId = snId;
     }
 
     @Override
@@ -245,29 +146,27 @@ public class UnsubscribeHandlerTest {
       this.lastSentPacket = packet;
     }
 
-    int getLastRemovedSubscriptionId() {
-      return this.lastRemovedSubscriptionId;
+    int getLastRemovedSensorNodeId() {
+      return lastRemovedSensorNodeId;
+    }
+
+    int getLastRemovedCpId() {
+      return lastRemovedCpId;
     }
 
     Socket getLastSocket() {
-      return this.lastSocket;
+      return lastSocket;
     }
 
     SmartFarmingProtocol getLastSentPacket() {
-      return this.lastSentPacket;
+      return lastSentPacket;
     }
   }
 
-  /**
-   * Test double for {@link ServerContext} that always throws an
-   * {@link IOException} from {@link #sendTo(Socket, SmartFarmingProtocol)}
-   * to simulate a failure when sending the acknowledgement.
-   */
   private static class FailingServerContext extends ServerContext {
-
     @Override
     public void sendTo(Socket socket, SmartFarmingProtocol packet) throws IOException {
-      throw new IOException("Simulated send failure");
+      throw new IOException("Simulated failure");
     }
   }
 }

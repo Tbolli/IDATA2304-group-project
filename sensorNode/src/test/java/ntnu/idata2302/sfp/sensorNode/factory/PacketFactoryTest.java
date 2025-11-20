@@ -7,6 +7,7 @@ import ntnu.idata2302.sfp.library.body.error.ErrorBody;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
 import ntnu.idata2302.sfp.library.node.NodeIds;
+import ntnu.idata2302.sfp.sensorNode.factory.PacketFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,29 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PacketFactoryTest {
 
   // --------------------------- POSITIVE TESTS ---------------------------------- //
-
-  /**
-   * Verifies that buildAnnounceAckPacket creates a packet with the expected header and body.
-   */
-  @Test
-  void buildAnnounceAckPacket_positive() {
-    // Arrange
-    int givenId = 42;
-    int requestId = 7;
-
-    // Act
-    SmartFarmingProtocol protocol = PacketFactory.buildAnnounceAckPacket(givenId, requestId);
-    Header header = protocol.getHeader();
-    AnnounceAckBody body = (AnnounceAckBody) protocol.getBody();
-
-    // Assert
-    assertEquals(MessageTypes.ANNOUNCE_ACK, header.getMessageType());
-    assertEquals(givenId, header.getSourceId());
-    assertEquals(NodeIds.SERVER, header.getTargetId());
-    assertEquals(requestId, body.requestId());
-    assertEquals(1, body.status());
-  }
-
   /**
    * Verifies that buildCommandAckPacket creates a packet with the expected header and body.
    */

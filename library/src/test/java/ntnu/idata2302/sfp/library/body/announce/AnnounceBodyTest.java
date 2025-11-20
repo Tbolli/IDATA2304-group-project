@@ -39,8 +39,8 @@ class AnnounceBodyTest {
   void toCborAndFromCbor_roundTrip_positive() {
     // Arrange
     List<SensorDescriptor> sensors = List.of(
-      new SensorDescriptor("temp-1", "C"),
-      new SensorDescriptor("hum-1", "%")
+      new SensorDescriptor("temp-1", "C", -30.0, 80.0),
+      new SensorDescriptor("hum-1", "%", 0.0, 100.0)
     );
     List<ActuatorDescriptor> actuators = List.of(
       new ActuatorDescriptor("fan-1", 0.0, 0.0, 1.0, "on/off")

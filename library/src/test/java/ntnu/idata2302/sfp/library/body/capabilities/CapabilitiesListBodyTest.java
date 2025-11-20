@@ -39,7 +39,7 @@ class CapabilitiesListBodyTest {
   void toCborAndFromCbor_roundTrip_positive() {
     // Arrange
     List<SensorDescriptor> sensors = new ArrayList<SensorDescriptor>();
-    sensors.add(new SensorDescriptor("temp-1", "C"));
+    sensors.add(new SensorDescriptor("temp-1", "C", -20.0, 80.0));
 
     List<ActuatorDescriptor> actuators = new ArrayList<ActuatorDescriptor>();
     actuators.add(new ActuatorDescriptor("fan-1", 0.0, 0.0, 1.0, "on/off"));

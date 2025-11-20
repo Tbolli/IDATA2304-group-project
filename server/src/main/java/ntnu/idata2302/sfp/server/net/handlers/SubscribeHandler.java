@@ -14,7 +14,6 @@ import java.net.Socket;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SubscribeHandler implements MessageHandler{
-  private final AtomicInteger counter = new AtomicInteger(1);
 
   @Override
   public void handle(SmartFarmingProtocol message, Socket client, ServerContext context) throws IOException {

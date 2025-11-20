@@ -41,7 +41,7 @@ public class UnsubscribeBodyTest {
 
     // Assert
     assertEquals(original.requestId(), decoded.requestId());
-    assertEquals(original.subscriptionId(), decoded.subscriptionId());
+    assertEquals(original.sensorNodeId(), decoded.sensorNodeId());
   }
 
   // --------------------------- NEGATIVE TESTS ---------------------------------- //

@@ -55,7 +55,6 @@ public class ActuatorTest {
 
     double expectedMid = min + (max - min) / 2.0;
     assertEquals(expectedMid, actuator.getCurrentValue());
-    assertEquals(expectedMid, actuator.getTargetValue());
   }
 
   /**

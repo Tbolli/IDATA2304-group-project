@@ -32,7 +32,7 @@ public class SubscribeAckBodyTest {
   @Test
   void toCbor_roundTrip_successStatus_positive() {
     // Arrange
-    SubscribeAckBody original = new SubscribeAckBody(1, 42, 0);
+    SubscribeAckBody original = new SubscribeAckBody(1, 42);
 
     // Act
     byte[] cbor = original.toCbor();
@@ -40,7 +40,6 @@ public class SubscribeAckBodyTest {
 
     // Assert
     assertEquals(original.requestId(), decoded.requestId());
-    assertEquals(original.subscriptionId(), decoded.subscriptionId());
     assertEquals(original.status(), decoded.status());
   }
 
@@ -51,7 +50,7 @@ public class SubscribeAckBodyTest {
   @Test
   void toCbor_roundTrip_errorStatus_positive() {
     // Arrange
-    SubscribeAckBody original = new SubscribeAckBody(2, 99, 1);
+    SubscribeAckBody original = new SubscribeAckBody(2, 99);
 
     // Act
     byte[] cbor = original.toCbor();
@@ -59,7 +58,6 @@ public class SubscribeAckBodyTest {
 
     // Assert
     assertEquals(original.requestId(), decoded.requestId());
-    assertEquals(original.subscriptionId(), decoded.subscriptionId());
     assertEquals(original.status(), decoded.status());
   }
 

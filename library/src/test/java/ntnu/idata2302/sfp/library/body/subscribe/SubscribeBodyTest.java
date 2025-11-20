@@ -1,6 +1,7 @@
 package ntnu.idata2302.sfp.library.body.subscribe;
 
 import ntnu.idata2302.sfp.library.codec.CborCodec;
+import ntnu.idata2302.sfp.library.node.NodeDescriptor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -34,16 +35,9 @@ public class SubscribeBodyTest {
   @Test
   void toCbor_roundTrip_singleNode_positive() {
     // Arrange
-    SubscribeBody.NodeSubscription node =
-      new SubscribeBody.NodeSubscription(
-        101,
-        List.of("temperature", "humidity"),
-        List.of("valve1", "pump1")
-      );
-
     SubscribeBody original = new SubscribeBody(
       42,
-      List.of(node)
+      101
     );
 
     // Act
@@ -52,10 +46,7 @@ public class SubscribeBodyTest {
 
     // Assert
     assertEquals(original.requestId(), decoded.requestId());
-    assertEquals(original.nodes().size(), decoded.nodes().size());
-    assertEquals(original.nodes().get(0).sensorNodeId(), decoded.nodes().get(0).sensorNodeId());
-    assertEquals(original.nodes().get(0).metrics(), decoded.nodes().get(0).metrics());
-    assertEquals(original.nodes().get(0).actuators(), decoded.nodes().get(0).actuators());
+    assertEquals(original.sensorNodeId(), decoded.sensorNodeId());
   }
 
   /**
@@ -67,7 +58,7 @@ public class SubscribeBodyTest {
     // Arrange
     SubscribeBody original = new SubscribeBody(
       7,
-      List.of()
+      202
     );
 
     // Act
@@ -76,7 +67,7 @@ public class SubscribeBodyTest {
 
     // Assert
     assertEquals(original.requestId(), decoded.requestId());
-    assertEquals(original.nodes(), decoded.nodes());
+    assertEquals(original.sensorNodeId(), decoded.sensorNodeId());
   }
 
   // --------------------------- NEGATIVE TESTS ---------------------------------- //

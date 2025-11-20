@@ -87,7 +87,16 @@ public class AnnounceHandlerTest {
     // Assert
     // Registered node
     assertNotNull(registeredDescriptor[0], "Node descriptor should be registered");
-    assertEquals(descriptor, registeredDescriptor[0], "Registered descriptor should match the announce descriptor");
+    // The server should assign a nodeId – cannot remain null
+    assertNotNull(registeredDescriptor[0].nodeId(), "Registered descriptor must have a generated nodeId");
+
+    // All other fields must match
+    assertEquals(descriptor.nodeType(), registeredDescriptor[0].nodeType());
+    assertEquals(descriptor.sensors(), registeredDescriptor[0].sensors());
+    assertEquals(descriptor.actuators(), registeredDescriptor[0].actuators());
+    assertEquals(descriptor.supportsImages(), registeredDescriptor[0].supportsImages());
+    assertEquals(descriptor.supportsAggregates(), registeredDescriptor[0].supportsAggregates());
+
     assertEquals(clientSocket, registeredSocket[0], "Registered socket should be the client socket");
 
     // Response

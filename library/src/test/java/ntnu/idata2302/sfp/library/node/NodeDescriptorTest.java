@@ -33,7 +33,7 @@ public class NodeDescriptorTest {
   void constructor_fullValues_positive() {
     // Arrange
     NodeDescriptor.SensorDescriptor s1 =
-      new NodeDescriptor.SensorDescriptor("temp", "C");
+      new NodeDescriptor.SensorDescriptor("temp", "C", -20.0, 80.0);
 
     NodeDescriptor.ActuatorDescriptor a1 =
       new NodeDescriptor.ActuatorDescriptor("fan", 1.0, 0.0, 1.0, "%");

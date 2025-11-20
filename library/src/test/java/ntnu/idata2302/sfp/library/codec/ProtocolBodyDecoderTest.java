@@ -111,13 +111,7 @@ public class ProtocolBodyDecoderTest {
   @Test
   void decode_subscribe_positive() {
     // Arrange
-    SubscribeBody.NodeSubscription node =
-      new SubscribeBody.NodeSubscription(
-        101,
-        List.of("temperature"),
-        List.of("valve1")
-      );
-    SubscribeBody original = new SubscribeBody(9, List.of(node));
+    SubscribeBody original = new SubscribeBody(9, 101);
     byte[] body = original.toCbor();
 
     // Act
@@ -126,7 +120,7 @@ public class ProtocolBodyDecoderTest {
     // Assert
     SubscribeBody asSubscribe = (SubscribeBody) decoded;
     assertEquals(original.requestId(), asSubscribe.requestId());
-    assertEquals(original.nodes().get(0).sensorNodeId(), asSubscribe.nodes().get(0).sensorNodeId());
+    assertEquals(original.sensorNodeId(), asSubscribe.sensorNodeId());
   }
 
   /**
