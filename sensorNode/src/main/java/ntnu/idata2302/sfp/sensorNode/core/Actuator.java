@@ -1,9 +1,9 @@
-package ntnu.idata2302.sfp.sensorNode.core;
-
-
-import ntnu.idata2302.sfp.sensorNode.entity.ActuatorType;
+package ntnu.idata2302.sfp.sensornode.core;
 
 import java.util.Objects;
+import ntnu.idata2302.sfp.sensorNode.entity.ActuatorType;
+
+
 
 /**
  * This class represents a controllable actuator
@@ -61,6 +61,19 @@ public class Actuator {
     this.targetValue = currentValue;
   }
 
+  /**
+   * Constructs a new binary {@code Actuator} instance of the specified type.
+   *
+   * <p>Binary actuators can only take on two states: 0.0 (off) and 1.0 (on).
+   * The initial current and target values are set to the provided {@code currentValue},
+   * which must be either 0.0 or 1.0. The {@link ActuatorType} determines the actuator’s
+   * purpose and default unit of measurement.</p>
+   *
+   * @param currentValue the initial state of the actuator; must be either 0.0 or 1.0
+   * @throws IllegalArgumentException if {@code currentValue} is not 0.0 or 1.0
+   *
+   */
+
   // Constructor for binary actuators
   public Actuator(ActuatorType type, double currentValue) {
     if (currentValue != 1.0 && currentValue != 0.0) {
@@ -87,11 +100,11 @@ public class Actuator {
    */
 
   public void act(double value) {
-    if(Objects.equals(unit, "state")){
+    if (Objects.equals(unit, "state")) {
       // Separate logic for binary actuators
       this.targetValue = value;
       this.currentValue = value;
-    }else{
+    } else {
       this.targetValue = clamp(value, minValue, maxValue);
     }
   }
@@ -125,10 +138,14 @@ public class Actuator {
     return type;
   }
 
-  public double getStepFraction(){return stepFraction;}
+  public double getStepFraction() {
+    return stepFraction;
+  }
 
 
-  public double getTargetValue(){return targetValue;}
+  public double getTargetValue() {
+    return targetValue;
+  }
 
   /**
    * Returns the unit of measurement used by this actuator.
@@ -200,8 +217,9 @@ public class Actuator {
    */
 
   public void update() {
-    if(Objects.equals(unit, "state"))
+    if (Objects.equals(unit, "state")) {
       return; // No need to update binary actuators
+    }
     double diff = targetValue - currentValue;
     if (Math.abs(diff) < 1e-9) {
       return;
