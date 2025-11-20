@@ -1,6 +1,10 @@
 package ntnu.idata2302.sfp.sensornode.net;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.KeyStore;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
@@ -9,6 +13,7 @@ import javax.net.ssl.TrustManagerFactory;
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.sensornode.core.SensorNode;
+
 
 
 /**
@@ -102,7 +107,7 @@ public class SensorNodeContext {
    * Returns whether the underlying socket is currently connected and open.
    *
    * @return {@code true} if the socket is non-null, connected and not closed;
-   * {@code false} otherwise
+   *          {@code false} otherwise
    */
   public boolean isConnected() {
     return socket != null && socket.isConnected() && !socket.isClosed();
