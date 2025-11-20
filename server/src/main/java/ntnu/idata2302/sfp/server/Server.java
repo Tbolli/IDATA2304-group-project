@@ -102,6 +102,7 @@ public class Server {
       while (true) {
         // Read full header
         byte[] headerBytes = dis.readNBytes(Header.HEADER_SIZE);
+
         if (headerBytes.length < Header.HEADER_SIZE) {
           System.out.println("Incomplete header.");
           break;
@@ -130,8 +131,6 @@ public class Server {
     } catch (EOFException e) {
       System.out.println(
           "Client disconnected normally: " + socket.getInetAddress().getHostAddress());
-    } catch (IOException e) {
-      System.out.println("I/O error: " + e.getMessage());
     } catch (Exception e) {
       System.out.println("Unexpected error: " + e.getMessage());
       e.printStackTrace();
@@ -140,7 +139,8 @@ public class Server {
         socket.close();
       } catch (IOException ignored) {
       }
-      System.out.println("Connection closed: " + socket.getInetAddress().getHostAddress());
+      System.out.println("Connection closed: " + socket.getInetAddress().getHostAddress() + ", removing node.");
+      context.unregisterNode(socket);
     }
   }
 

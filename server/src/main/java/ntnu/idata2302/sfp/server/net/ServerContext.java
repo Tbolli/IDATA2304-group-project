@@ -1,17 +1,21 @@
 package ntnu.idata2302.sfp.server.net;
 
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
+import ntnu.idata2302.sfp.library.body.data.DataReportBody;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.node.NodeDescriptor;
 import ntnu.idata2302.sfp.library.body.subscribe.SubscribeBody;
+import ntnu.idata2302.sfp.server.entity.Subscription;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
+// TODO fix comments
 /**
  * Server-side context that tracks connected nodes, their sockets and
  * subscription relationships.
@@ -32,9 +36,8 @@ public class ServerContext {
   private final Map<Integer, Socket> socketRegistry = new ConcurrentHashMap<>();
   private final Map<Integer, NodeDescriptor> nodeRegistry = new ConcurrentHashMap<>();
 
-  // For each control-panel nodeId → list of per-SN subscriptions
-  private final Map<Integer, List<SubscribeBody.NodeSubscription>> subscriptions =
-      new ConcurrentHashMap<>();
+  // For each control-panel nodeId → per-SN subscriptions
+  private final List<Subscription> subscriptions = new CopyOnWriteArrayList<>();
 
   /**
    * Register a connected node.
@@ -52,31 +55,22 @@ public class ServerContext {
   /**
    * Unregister a node and remove its socket association.
    *
-   * @param nodeId the logical node id to remove
+   * @param socket the socket of the client
    */
-  public void unregisterNode(int nodeId) {
+  public void unregisterNode(Socket socket) {
+    Integer nodeId = socketRegistry.entrySet().stream()
+      .filter(e -> e.getValue().equals(socket))
+      .map(Map.Entry::getKey)
+      .findFirst()
+      .orElse(null);
+
+    if(nodeId == null)
+      return;
+
+    removeAllSubscriptions(nodeId);
     socketRegistry.remove(nodeId);
-    System.out.println("Node " + nodeId + " disconnected");
-  }
-
-  /**
-   * Retrieve the socket for a node.
-   *
-   * @param nodeId logical id of the node
-   * @return the {@link Socket} associated with {@code nodeId}, or {@code null} if not connected
-   */
-  public Socket getSocket(int nodeId) {
-    return socketRegistry.get(nodeId);
-  }
-
-  /**
-   * Check whether a node is currently registered/connected.
-   *
-   * @param nodeId logical id of the node
-   * @return {@code true} if a socket is registered for {@code nodeId}
-   */
-  public boolean hasNode(int nodeId) {
-    return socketRegistry.containsKey(nodeId);
+    nodeRegistry.remove(nodeId);
+    System.out.println("Node: #" + nodeId + " removed from sever ");
   }
 
   /**
@@ -100,6 +94,16 @@ public class ServerContext {
     targetSocket.getOutputStream().flush();
   }
 
+  public void sendTo(int nodeId, SmartFarmingProtocol packet) throws IOException {
+    Socket targetSocket = socketRegistry.get(nodeId);
+    if (targetSocket == null || targetSocket.isClosed()) {
+      System.out.println("Cannot send to " + nodeId + " — not connected.");
+      return;
+    }
+    targetSocket.getOutputStream().write(packet.toBytes());
+    targetSocket.getOutputStream().flush();
+  }
+
   /**
    * Send a packet to a specific socket.
    *
@@ -115,20 +119,24 @@ public class ServerContext {
   /**
    * Store subscriptions for a control-panel id.
    *
-   * @param subId control-panel node id (subscriber id)
-   * @param subs  list of {@link SubscribeBody.NodeSubscription} entries associated with {@code subId}
+   * @param subscription the subscription to store
    */
-  public void setSubscriptions(int subId, List<SubscribeBody.NodeSubscription> subs) {
-    subscriptions.put(subId, subs);
+  public void setSubscription(Subscription subscription) {
+    subscriptions.add(subscription);
   }
 
   /**
    * Remove all subscriptions for a control-panel id.
    *
-   * @param subId control-panel node id whose subscriptions should be removed
+   * @param cpId control-panel node id
+   * @param snId sensorNode id
    */
-  public void removeSubscriptions(int subId) {
-    subscriptions.remove(subId);
+  public void removeSubscription(int cpId,int snId) {
+    subscriptions.removeIf(s -> s.getSnId() == snId && s.getCpId() == cpId);
+  }
+
+  public void removeAllSubscriptions(int id) {
+    subscriptions.removeIf(s -> s.getSnId() == id || s.getCpId() == id);
   }
 
   /**
@@ -138,12 +146,10 @@ public class ServerContext {
    * @return a list of control-panel ids (may be empty)
    */
   public List<Integer> getSubscribersForSensorNode(int sensorNodeId) {
-    return subscriptions.entrySet()
-        .stream()
-        .filter(e -> e.getValue().stream()
-            .anyMatch(sub -> sub.sensorNodeId() == sensorNodeId))
-        .map(Map.Entry::getKey) // control panel IDs
-        .toList();
+    return subscriptions.stream()
+      .filter(s -> s.getSnId() == sensorNodeId)
+      .map(Subscription::getCpId)
+      .toList();
   }
 
   /**
@@ -160,8 +166,7 @@ public class ServerContext {
     int sensorId = packet.getHeader().getSourceId();
     for (int cpId : getSubscribersForSensorNode(sensorId)) {
       try {
-        packet.getHeader().setTargetId(cpId);
-        sendTo(packet);
+        sendTo(cpId,packet);
       } catch (IOException e) {
         System.out.println("Failed to send report to CP " + cpId);
       }

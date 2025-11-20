@@ -27,6 +27,9 @@ public class CapabilitiesHandler implements MessageHandler {
       reqBody.requestId(),
       context.getServerNodeDescriptors()
     );
+    // TODO remove
+    System.out.println("Getting descriptors");
+    System.out.println(context.getServerNodeDescriptors());
 
     context.sendTo(
       client, new SmartFarmingProtocol(resHeader, resBody)

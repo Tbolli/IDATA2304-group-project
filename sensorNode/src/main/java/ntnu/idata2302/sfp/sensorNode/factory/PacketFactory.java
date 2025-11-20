@@ -52,8 +52,10 @@ public class PacketFactory {
     List<NodeDescriptor.SensorDescriptor> sensorDescriptors =
         sensorNode.getSensors().stream()
             .map(s -> new NodeDescriptor.SensorDescriptor(
-                s.getName(),     // ID / sensor name
-                s.getUnit()))     // unit only
+                s.getName(),
+                s.getUnit(),
+                s.getMinValue(),
+                s.getMaxValue()))
             .toList();
 
 
@@ -92,32 +94,6 @@ public class PacketFactory {
         descriptor
     );
 
-    return new SmartFarmingProtocol(header, body);
-  }
-
-
-  /**
-   * Build an ANNOUNCE_ACK packet acknowledging a previous announcement.
-   *
-   * <p>The packet contains an {@link AnnounceAckBody} with the original
-   * request id and the assigned node id.</p>
-   *
-   * @param givenId   the node id assigned by the server
-   * @param requestId the announcement request id being acknowledged
-   * @return a {@link SmartFarmingProtocol} containing an ANNOUNCE_ACK header and body
-   */
-  public static SmartFarmingProtocol buildAnnounceAckPacket(int givenId, int requestId) {
-    Header header = new Header(
-        new byte[] {'S', 'F', 'P'},
-        (byte) 1,
-        MessageTypes.ANNOUNCE_ACK,
-        givenId,
-        NodeIds.SERVER,
-        0,
-        UUID.randomUUID()
-    );
-
-    AnnounceAckBody body = new AnnounceAckBody(requestId, 1);
     return new SmartFarmingProtocol(header, body);
   }
 

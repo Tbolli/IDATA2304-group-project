@@ -7,16 +7,14 @@ import ntnu.idata2302.sfp.library.codec.CborCodec;
  * Immutable acknowledgement body for a subscription request.
  *
  * <p>Represents the server's acknowledgement of a subscribing request, containing
- * the original request identifier, the assigned subscription identifier, and a
- * numeric status code indicating success (commonly 0) or an error.</p>
+ * the original request identifier and a
+ * numeric status code indicating success (commonly 1) or an error.</p>
  *
  * @param requestId      client-provided request identifier that this ack corresponds to
- * @param subscriptionId server-assigned identifier for the created subscription
- * @param status         numeric status code (e.g. 0 = success, non-zero = error)
+ * @param status         numeric status code (e.g. 1 = success, 0 = error)
  */
 public record SubscribeAckBody(
     int requestId,
-    int subscriptionId,
     int status
 ) implements Body {
 

@@ -1,0 +1,39 @@
+/* Sidebar container */
+.sidebar {
+    -fx-background-color: #80ED99;
+    -fx-padding: 25 0 25 0;
+    -fx-spacing: 25;
+    -fx-alignment: TOP_CENTER;
+}
+
+/* Logo wrapper */
+.sidebar-logo {
+    -fx-padding: 10 0 30 0;
+}
+
+/* Base style shared by all sidebar buttons */
+.sidebar-btn,
+.sidebar-btn-active {
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #1B4332;
+
+    -fx-background-radius: 22;
+    -fx-pref-width: 170;      /* unified width */
+    -fx-pref-height: 48;      /* unified height */
+
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+/* Hover */
+.sidebar-btn:hover {
+    -fx-background-color: #57CC99;
+    -fx-text-fill: white;
+}
+
+/* Active page button */
+.sidebar-btn-active {
+    -fx-background-color: #57CC99;
+    -fx-text-fill: white;
+}

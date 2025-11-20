@@ -5,38 +5,53 @@ import ntnu.idata2302.sfp.library.body.announce.AnnounceAckBody;
 import ntnu.idata2302.sfp.library.body.announce.AnnounceBody;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
+import ntnu.idata2302.sfp.library.node.NodeDescriptor;
 import ntnu.idata2302.sfp.server.net.ServerContext;
 import ntnu.idata2302.sfp.server.factory.HeaderFactory;
 import ntnu.idata2302.sfp.server.util.IdAllocator;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 
-public class AnnounceHandler implements MessageHandler{
+public class AnnounceHandler implements MessageHandler {
 
   @Override
-  public void handle(SmartFarmingProtocol message, Socket client, ServerContext context) throws IOException {
-    AnnounceBody reqBody = (AnnounceBody) message.getBody();
+  public void handle(SmartFarmingProtocol message,
+                     Socket client,
+                     ServerContext context) throws IOException {
 
-    // Register node
+    // Extract announce request
+    AnnounceBody reqBody = (AnnounceBody) message.getBody();
+    NodeDescriptor announcedNode = reqBody.descriptor();
+
+    // Allocate ID from allocator
     int givenId = IdAllocator.allocate();
-    context.registerNode(
+
+    // Create new descriptor same as incoming, only ID replaced
+    NodeDescriptor registeredNode = new NodeDescriptor(
       givenId,
-      reqBody.descriptor(),
-      client
+      announcedNode.nodeType(),
+      announcedNode.sensors(),
+      announcedNode.actuators(),
+      announcedNode.supportsImages(),
+      announcedNode.supportsAggregates()
     );
 
-    // Response - Header
-    Header resHeader = HeaderFactory.serverHeader(MessageTypes.ANNOUNCE_ACK,givenId);
+    // Register node & its socket
+    context.registerNode(givenId, registeredNode, client);
 
-    // Response - Body
+    // Respond with ACK -------------------------
+    Header resHeader = HeaderFactory.serverHeader(
+      MessageTypes.ANNOUNCE_ACK,
+      givenId
+    );
+
     AnnounceAckBody resBody = new AnnounceAckBody(
       reqBody.requestId(),
-      1
+      1  // success status
     );
 
-    context.sendTo(
-      client, new SmartFarmingProtocol(resHeader, resBody)
-    );
+    context.sendTo(client, new SmartFarmingProtocol(resHeader, resBody));
   }
 }

@@ -3,238 +3,223 @@ package ntnu.idata2302.sfp.controlPanel.gui.controllers;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
 import ntnu.idata2302.sfp.controlPanel.gui.SceneManager;
-import ntnu.idata2302.sfp.controlPanel.gui.model.NodeItem;
+import ntnu.idata2302.sfp.controlPanel.gui.components.ActuatorControlUI;
+import ntnu.idata2302.sfp.controlPanel.gui.components.NodeCell;
+import ntnu.idata2302.sfp.controlPanel.gui.model.NodeEntry;
+import ntnu.idata2302.sfp.controlPanel.net.AppContext;
+import ntnu.idata2302.sfp.controlPanel.net.EventBus;
+import ntnu.idata2302.sfp.controlPanel.net.SfpClient;
+import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
+import ntnu.idata2302.sfp.library.body.capabilities.CapabilitiesListBody;
+import ntnu.idata2302.sfp.library.body.data.DataReportBody;
+import ntnu.idata2302.sfp.library.header.Header;
+import ntnu.idata2302.sfp.library.header.MessageTypes;
 
-import java.io.IOException;
-import java.net.URL;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
-import ntnu.idata2302.sfp.controlPanel.backendlogic.BackendEventBus;
-import org.json.JSONObject;
+/**
+ * Controller for the Nodes view. In addition to existing responsibilities this
+ * class now auto-refreshes capabilities whenever the view becomes visible again.
+ *
+ * It uses multiple listeners (scene, parent, visible) and a small debounce
+ * to ensure a single refresh is triggered when the user switches back to this view.
+ */
+public class NodesController implements Unloadable {
 
-public class NodesController {
+  private SfpClient client;
 
-    /* ─────────────────────────────────────────────
-                    NAVIGATION BUTTONS
-       ───────────────────────────────────────────── */
+  @FXML private ListView<NodeEntry> nodesList;
+  @FXML private Label connectionLabel;
 
-  @FXML
-  private void goHome(ActionEvent event) {
-    SceneManager.switchScene("home");
-  }
+  private final Map<Integer, NodeEntry> nodes = new ConcurrentHashMap<>();
+  private final ObservableList<NodeEntry> observableNodes = FXCollections.observableArrayList();
 
-  @FXML
-  public void openHome(ActionEvent event) {
-    SceneManager.switchScene("home");
-  }
+  final Map<String, Double> actuatorPendingValues = new ConcurrentHashMap<>();
+  volatile boolean uiFreeze = false;
+  SmartFarmingProtocol bufferedPacket = null;
 
-  @FXML
-  public void openDataLog(ActionEvent event) {
-    SceneManager.switchScene("dataLog");
-  }
+  final Map<Integer, Map<String, ActuatorControlUI>> uiControlsPerNode = new ConcurrentHashMap<>();
 
-    /* ─────────────────────────────────────────────
-                    FXML UI REFERENCES
-       ───────────────────────────────────────────── */
+  private final Consumer<SmartFarmingProtocol> packetListener = this::handlePacket;
 
-  @FXML private Label pageTitle;
-
-  @FXML private TableView<NodeItem> nodesTable;
-  @FXML private TableColumn<NodeItem, String> colId;
-  @FXML private TableColumn<NodeItem, String> colIp;
-  @FXML private TableColumn<NodeItem, String> colStatus;
-  @FXML private TableColumn<NodeItem, String> colSensor;
-  @FXML private TableColumn<NodeItem, String> colInfo;
-
-  @FXML private Label detailTitle;
-  @FXML private Label detailTemp;
-  @FXML private Label detailHumidity;
-  @FXML private ToggleButton heaterToggle;
-  @FXML private ToggleButton fanToggle;
-  @FXML private Button refreshBtn;
-
-  private final ObservableList<NodeItem> sampleData = FXCollections.observableArrayList();
-
-
-    /* ─────────────────────────────────────────────
-                    INITIALIZE
-       ───────────────────────────────────────────── */
+  /** debounce: last time we triggered an auto-refresh */
+  private volatile long lastAutoRefresh = 0L;
+  /** minimum milliseconds between auto-refresh calls to avoid duplicates */
+  private static final long AUTO_REFRESH_COOLDOWN_MS = 400;
 
   @FXML
-  private void initialize() {
-    // Bind columns
-    colId.setCellValueFactory(cell -> cell.getValue().idProperty());
-    colIp.setCellValueFactory(cell -> cell.getValue().ipProperty());
-    colStatus.setCellValueFactory(cell -> cell.getValue().statusProperty());
-    colSensor.setCellValueFactory(cell -> cell.getValue().sensorTypeProperty());
-    colInfo.setCellValueFactory(cell -> cell.getValue().infoProperty());
-
-    // Temporary sample nodes
-    sampleData.addAll(
-        new NodeItem("Node 001", "192.168.0.10", "Online", "Temperature", "Last seen 2s"),
-        new NodeItem("Node 002", "192.168.0.11", "Online", "Humidity", "Last seen 5s"),
-        new NodeItem("Node 003", "192.168.0.12", "Offline", "Soil", "Last seen 12m")
-    );
-
-    nodesTable.setItems(sampleData);
-
-    // Update details when selected
-    nodesTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
-      showDetails(newSel);
-    });
-
-    // Select first by default
-    if (!sampleData.isEmpty()) {
-      nodesTable.getSelectionModel().select(0);
-      showDetails(sampleData.get(0));
-    }
-
-        /* ─────────────────────────────────────────────
-                    BACKEND LIVE UPDATE LISTENER
-           ───────────────────────────────────────────── */
-    BackendEventBus.onSensorMessage(json ->
-        Platform.runLater(() -> updateNode(json))
-    );
-  }
-
-
-    /* ─────────────────────────────────────────────
-                    SHOW NODE DETAILS
-       ───────────────────────────────────────────── */
-
-  private void showDetails(NodeItem node) {
-    if (node == null) {
-      detailTitle.setText("No node selected");
-      detailTemp.setText("");
-      detailHumidity.setText("");
-      heaterToggle.setSelected(false);
-      fanToggle.setSelected(false);
+  public void initialize() {
+    client = AppContext.getClient();
+    if (client == null) {
+      System.err.println("No SFP client in AppContext");
       return;
     }
 
-    detailTitle.setText(node.getId() + " (" + node.getIp() + ")");
+    connectionLabel.setText("Connected to " + client.getHost() + ":" + client.getPort());
 
-    // TEMP/HUMI example placeholders
-    detailTemp.setText("🌡 Temperature: --");
-    detailHumidity.setText("💧 Humidity: --");
+    nodesList.setItems(observableNodes);
 
-    heaterToggle.setSelected(false);
-    heaterToggle.setText("OFF");
+    nodesList.setCellFactory(list -> new NodeCell(
+      this,
+      nodes,
+      uiControlsPerNode,
+      actuatorPendingValues,
+      nodesList,
+      client
+    ));
 
-    fanToggle.setSelected(true);
-    fanToggle.setText("ON");
+    EventBus.subscribe(packetListener);
+
+    // Ensure capabilities refresh every time scene is opened
+    Platform.runLater(() -> {
+      if (AppContext.getControllerId() != null) {
+        refreshCapabilities();
+      }
+    });
   }
 
+  /**
+   * Request an auto-refresh but debounce to avoid multiple calls during one switch.
+   * This runs on JavaFX thread when actually performing refresh operations.
+   */
+  private void scheduleAutoRefresh() {
+    long now = System.currentTimeMillis();
+    if (now - lastAutoRefresh < AUTO_REFRESH_COOLDOWN_MS) {
+      // too soon - skip duplicate
+      return;
+    }
+    lastAutoRefresh = now;
 
-    /* ─────────────────────────────────────────────
-                    BACKEND REAL-TIME UPDATE
-       ───────────────────────────────────────────── */
+    // run on FX thread (safe) with small delay to allow layout to settle
+    Platform.runLater(() -> {
+      try {
+        // small pause gives SceneManager time to finish swap if needed
+        Thread.sleep(30);
+      } catch (InterruptedException ignored) {}
+      // Only refresh if we still have a client and the nodes list is visible/attached
+      if (client != null && nodesList.getScene() != null && nodesList.isVisible()) {
+        refreshCapabilities();
+      }
+    });
+  }
 
-  private void updateNode(String json) {
-    try {
-      JSONObject obj = new JSONObject(json);
+  @FXML
+  public void refreshCapabilities() {
+    nodes.clear();
+    observableNodes.clear();
+    uiControlsPerNode.clear();
+    actuatorPendingValues.clear();
 
-      String id = obj.optString("temp_id", null);
+    if (AppContext.getControllerId() != null)
+      client.sendCapabilitiesQuery();
+  }
+
+  @FXML
+  private void goToPopulate() {
+    SceneManager.switchScene("populate");
+  }
+
+  public void unsubscribeNode(int nodeId) {
+    nodes.remove(nodeId);
+    observableNodes.removeIf(n -> n.nodeId() == nodeId);
+    uiControlsPerNode.remove(nodeId);
+    actuatorPendingValues.keySet().removeIf(k -> k.startsWith(nodeId + ":"));
+    client.sendUnsubscribe(nodeId);
+  }
+
+  private void handlePacket(SmartFarmingProtocol packet) {
+    switch (packet.getHeader().getMessageType()) {
+      case MessageTypes.ANNOUNCE_ACK -> handleAnnounceAck(packet);
+      case MessageTypes.CAPABILITIES_LIST -> handleCapabilities(packet);
+      case MessageTypes.DATA_REPORT -> handleDataReport(packet);
+    }
+  }
+
+  private void handleAnnounceAck(SmartFarmingProtocol packet) {
+    Header header = packet.getHeader();
+    AppContext.setControllerId(header.getTargetId());
+    client.sendCapabilitiesQuery();
+  }
+
+  private void handleCapabilities(SmartFarmingProtocol packet) {
+    if (!(packet.getBody() instanceof CapabilitiesListBody capBody)) return;
+
+    capBody.nodes().forEach(nodeDesc -> {
+      Integer id = nodeDesc.nodeId();
       if (id == null) return;
 
-      String temp = obj.optString("temperature", "--");
-      String hum = obj.optString("humidity", "--");
+      nodes.putIfAbsent(id, new NodeEntry(id, null));
 
-      for (NodeItem item : sampleData) {
-        if (item.getId().equals(id)) {
-          item.setStatus("Online");
-          item.setSensorType("Temperature/Humidity");
-          item.setInfo("T: " + temp + "°C, H: " + hum + "%");
+      Platform.runLater(() -> {
+        NodeEntry entry = nodes.get(id);
+        if (!observableNodes.contains(entry))
+          observableNodes.add(entry);
+      });
 
-          // Update visible details
-          NodeItem selected = nodesTable.getSelectionModel().getSelectedItem();
-          if (selected != null && selected.getId().equals(id)) {
-            detailTemp.setText("🌡 Temperature: " + temp + "°C");
-            detailHumidity.setText("💧 Humidity: " + hum + "%");
-          }
-        }
+      client.sendSubscribe(id);
+    });
+  }
+
+  private void handleDataReport(SmartFarmingProtocol packet) {
+    if (uiFreeze) {
+      bufferedPacket = packet;
+      return;
+    }
+
+    if (!(packet.getBody() instanceof DataReportBody report)) return;
+
+    int nodeId = packet.getHeader().getSourceId();
+
+    Platform.runLater(() -> {
+      NodeEntry entry = nodes.get(nodeId);
+
+      if (entry == null) {
+        entry = new NodeEntry(nodeId, report);
+        nodes.put(nodeId, entry);
+        observableNodes.add(entry);
+      } else {
+        entry.setData(report);
       }
 
-    } catch (Exception e) {
-      System.err.println("❌ Failed to update node: " + json);
-    }
+      updateControlsWithReport(nodeId, report);
+    });
   }
 
+  public void updateControlsWithReport(int nodeId, DataReportBody report) {
+    Map<String, ActuatorControlUI> controls = uiControlsPerNode.get(nodeId);
+    if (controls == null) return;
 
-    /* ─────────────────────────────────────────────
-                    ACTUATOR BUTTONS
-       ───────────────────────────────────────────── */
+    Map<String, DataReportBody.ActuatorState> reported = new HashMap<>();
+    if (report.actuators() != null)
+      report.actuators().forEach(a -> reported.put(a.id(), a));
 
-  @FXML
-  private void onToggleHeater(ActionEvent event) {
-    boolean on = heaterToggle.isSelected();
-    heaterToggle.setText(on ? "ON" : "OFF");
+    controls.forEach((id, ui) -> {
+      DataReportBody.ActuatorState r = reported.get(id);
+      if (r == null) return;
 
-    heaterToggle.getStyleClass().removeIf(s -> s.equals("toggle-on") || s.equals("toggle-off"));
-    heaterToggle.getStyleClass().add(on ? "toggle-on" : "toggle-off");
+      ui.updateValueLabel(r);
+
+      String key = nodeId + ":" + id;
+      if (!actuatorPendingValues.containsKey(key) && !ui.isEditing())
+        ui.applyReportedValue(r);
+    });
+
+    nodesList.refresh();
   }
 
-  @FXML
-  private void onToggleFan(ActionEvent event) {
-    boolean on = fanToggle.isSelected();
-    fanToggle.setText(on ? "ON" : "OFF");
+  public boolean getUiFreeze() { return uiFreeze; }
+  public SmartFarmingProtocol getBufferedPacket() { return bufferedPacket; }
+  public void setUiFreeze(boolean f) { uiFreeze = f; }
+  public void setBufferedPacket(SmartFarmingProtocol p) { bufferedPacket = p; }
 
-    fanToggle.getStyleClass().removeIf(s -> s.equals("toggle-on") || s.equals("toggle-off"));
-    fanToggle.getStyleClass().add(on ? "toggle-on" : "toggle-off");
-  }
-
-
-    /* ─────────────────────────────────────────────
-                    REFRESH BUTTON
-       ───────────────────────────────────────────── */
-
-  @FXML
-  private void onRefresh(ActionEvent event) {
-    NodeItem sel = nodesTable.getSelectionModel().getSelectedItem();
-    if (sel != null) {
-      detailTemp.setText(detailTemp.getText() + " · refreshed");
-      refreshBtn.setDisable(true);
-
-      new Thread(() -> {
-        try { Thread.sleep(500); } catch (InterruptedException ignored) {}
-        Platform.runLater(() -> refreshBtn.setDisable(false));
-      }).start();
-    }
-  }
-
-
-    /* ─────────────────────────────────────────────
-                LOAD OTHER SCREENS INTO CENTER
-       ───────────────────────────────────────────── */
-
-  @FXML
-  private void onViewSelected(ActionEvent event) {
-    NodeItem sel = nodesTable.getSelectionModel().getSelectedItem();
-    if (sel != null) {
-      loadViewIntoCenter("/ntnu/smartFarm/gui/views/nodeDetails.fxml");
-    } else {
-      new Alert(Alert.AlertType.INFORMATION, "Select a node first.", ButtonType.OK).showAndWait();
-    }
-  }
-
-  private void loadViewIntoCenter(String fxmlResourcePath) {
-    try {
-      URL resource = getClass().getResource(fxmlResourcePath);
-      if (resource == null) {
-        System.err.println("FXML not found: " + fxmlResourcePath);
-        return;
-      }
-      Parent view = FXMLLoader.load(resource);
-      BorderPane main = (BorderPane) pageTitle.getScene().getRoot();
-      main.setCenter(view);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+  @Override
+  public void onUnload() {
+    EventBus.unsubscribe(packetListener);
   }
 }

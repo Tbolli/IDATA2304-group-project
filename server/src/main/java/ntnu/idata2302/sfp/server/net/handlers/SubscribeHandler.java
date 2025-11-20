@@ -5,6 +5,7 @@ import ntnu.idata2302.sfp.library.body.subscribe.SubscribeAckBody;
 import ntnu.idata2302.sfp.library.body.subscribe.SubscribeBody;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
+import ntnu.idata2302.sfp.server.entity.Subscription;
 import ntnu.idata2302.sfp.server.net.ServerContext;
 import ntnu.idata2302.sfp.server.factory.HeaderFactory;
 
@@ -19,10 +20,15 @@ public class SubscribeHandler implements MessageHandler{
   public void handle(SmartFarmingProtocol message, Socket client, ServerContext context) throws IOException {
     Header reqHeader = message.getHeader();
     SubscribeBody reqBody = (SubscribeBody) message.getBody();
-    int subId = counter.getAndIncrement();
+    int cpId = reqHeader.getSourceId();
+
+    Subscription subscription = new Subscription(
+      cpId,
+      reqBody.sensorNodeId()
+    );
 
     // Set subscriptions
-    context.setSubscriptions(subId, reqBody.nodes());
+    context.setSubscription(subscription);
 
     // Response - Header
     Header resHeader = HeaderFactory.serverHeader(MessageTypes.SUBSCRIBE_ACK,reqHeader.getSourceId());
@@ -30,7 +36,6 @@ public class SubscribeHandler implements MessageHandler{
     // Response - Body
     SubscribeAckBody resBody = new SubscribeAckBody(
       reqBody.requestId(),
-      subId,
       1
     );
 

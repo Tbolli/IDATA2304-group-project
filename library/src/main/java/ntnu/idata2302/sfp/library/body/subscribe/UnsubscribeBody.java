@@ -6,16 +6,16 @@ import ntnu.idata2302.sfp.library.codec.CborCodec;
 /**
  * Immutable body representing an unsubscribe request.
  *
- * <p>Contains the client-provided request identifier and the subscription id
- * that the client wishes to unsubscribe from. Instances can be serialized to
+ * <p>Contains the client-provided request identifier, controlPanelId, and sensorNodeId.
+ * Instances can be serialized to
  * and deserialized from CBOR using {@link CborCodec}.</p>
  *
  * @param requestId      client-provided identifier for this request
- * @param subscriptionId identifier of the subscription to cancel
+ * @param sensorNodeId   identifier of the sensorNode
  */
 public record UnsubscribeBody(
     int requestId,
-    int subscriptionId
+    int sensorNodeId
 ) implements Body {
 
   /**

@@ -70,7 +70,7 @@ public class SmartFarmingProtocol {
     header.setPayloadLength(bodyBytes.length);
 
     // 3. Encode header
-    byte[] headerBytes = HeaderCodec.encodeHeader(header);
+    byte[] headerBytes = header.toBytes();
 
     // 4. Join header and body
     byte[] packet = new byte[headerBytes.length + bodyBytes.length];

@@ -57,7 +57,7 @@ public class PacketHandler {
   /**
    * Handle an {@link MessageTypes#ANNOUNCE_ACK} packet.
    *
-   * <p>The handler extracts the header and an acknowledgement body and updates the
+   * <p>The handler extracts the header and updates the
    * client context with the assigned node id. The method assumes the packet
    * conforms to the protocol (i.e. body is an {@link AnnounceAckBody}).</p>
    *
@@ -67,8 +67,6 @@ public class PacketHandler {
   private static void AnnounceAckHandle(SensorNodeContext client,
                                         SmartFarmingProtocol packet) {
     Header header = packet.getHeader();
-    AnnounceAckBody body = (AnnounceAckBody) packet.getBody();
-
     // Set id for sensor node
     client.setId(header.getTargetId());
   }
