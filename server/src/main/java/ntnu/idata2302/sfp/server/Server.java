@@ -1,18 +1,30 @@
 package ntnu.idata2302.sfp.server;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.EOFException;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
 import java.security.KeyStore;
-import javax.net.ssl.*;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManagerFactory;
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
 import ntnu.idata2302.sfp.server.net.MessageDispatcher;
 import ntnu.idata2302.sfp.server.net.ServerContext;
-import ntnu.idata2302.sfp.server.net.handlers.*;
+import ntnu.idata2302.sfp.server.net.handlers.AnnounceHandler;
+import ntnu.idata2302.sfp.server.net.handlers.CapabilitiesHandler;
+import ntnu.idata2302.sfp.server.net.handlers.DataReportHandler;
+import ntnu.idata2302.sfp.server.net.handlers.ForwardPacketHandler;
+import ntnu.idata2302.sfp.server.net.handlers.SubscribeHandler;
+import ntnu.idata2302.sfp.server.net.handlers.UnSubscribeHandler;
+
 
 
 /**
@@ -138,8 +150,11 @@ public class Server {
       try {
         socket.close();
       } catch (IOException ignored) {
+        // Socket already closed or closing; safe to ignore.
+
       }
-      System.out.println("Connection closed: " + socket.getInetAddress().getHostAddress() + ", removing node.");
+      System.out.println("Connection closed: "
+            + socket.getInetAddress().getHostAddress() + ", removing node.");
       context.unregisterNode(socket);
     }
   }
