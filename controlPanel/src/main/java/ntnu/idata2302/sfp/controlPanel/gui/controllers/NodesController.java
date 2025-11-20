@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import ntnu.idata2302.sfp.controlPanel.gui.SceneManager;
 import ntnu.idata2302.sfp.controlPanel.gui.components.ActuatorControlUI;
@@ -13,9 +14,7 @@ import ntnu.idata2302.sfp.controlPanel.net.AppContext;
 import ntnu.idata2302.sfp.controlPanel.net.EventBus;
 import ntnu.idata2302.sfp.controlPanel.net.SfpClient;
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
-import ntnu.idata2302.sfp.library.body.Body;
 import ntnu.idata2302.sfp.library.body.capabilities.CapabilitiesListBody;
-import ntnu.idata2302.sfp.library.body.command.CommandBody;
 import ntnu.idata2302.sfp.library.body.data.DataReportBody;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
@@ -24,6 +23,13 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+/**
+ * Controller for the Nodes view. In addition to existing responsibilities this
+ * class now auto-refreshes capabilities whenever the view becomes visible again.
+ *
+ * It uses multiple listeners (scene, parent, visible) and a small debounce
+ * to ensure a single refresh is triggered when the user switches back to this view.
+ */
 public class NodesController implements Unloadable {
 
   private SfpClient client;
@@ -34,18 +40,18 @@ public class NodesController implements Unloadable {
   private final Map<Integer, NodeEntry> nodes = new ConcurrentHashMap<>();
   private final ObservableList<NodeEntry> observableNodes = FXCollections.observableArrayList();
 
-  /** Pending user edits */
   final Map<String, Double> actuatorPendingValues = new ConcurrentHashMap<>();
-
-  /** Freeze UI updates during slider/toggle editing */
   volatile boolean uiFreeze = false;
   SmartFarmingProtocol bufferedPacket = null;
 
-  /** Stable UI per actuator */
-  final Map<Integer, Map<String, ActuatorControlUI>> uiControlsPerNode =
-    new ConcurrentHashMap<>();
+  final Map<Integer, Map<String, ActuatorControlUI>> uiControlsPerNode = new ConcurrentHashMap<>();
 
   private final Consumer<SmartFarmingProtocol> packetListener = this::handlePacket;
+
+  /** debounce: last time we triggered an auto-refresh */
+  private volatile long lastAutoRefresh = 0L;
+  /** minimum milliseconds between auto-refresh calls to avoid duplicates */
+  private static final long AUTO_REFRESH_COOLDOWN_MS = 400;
 
   @FXML
   public void initialize() {
@@ -56,21 +62,51 @@ public class NodesController implements Unloadable {
     }
 
     connectionLabel.setText("Connected to " + client.getHost() + ":" + client.getPort());
+
     nodesList.setItems(observableNodes);
 
-    // Pass all required references to NodeCell
-    nodesList.setCellFactory(list ->
-      new NodeCell(
-        this,
-        nodes,
-        uiControlsPerNode,
-        actuatorPendingValues,
-        nodesList,
-        client
-      )
-    );
+    nodesList.setCellFactory(list -> new NodeCell(
+      this,
+      nodes,
+      uiControlsPerNode,
+      actuatorPendingValues,
+      nodesList,
+      client
+    ));
 
     EventBus.subscribe(packetListener);
+
+    // Ensure capabilities refresh every time scene is opened
+    Platform.runLater(() -> {
+      if (AppContext.getControllerId() != null) {
+        refreshCapabilities();
+      }
+    });
+  }
+
+  /**
+   * Request an auto-refresh but debounce to avoid multiple calls during one switch.
+   * This runs on JavaFX thread when actually performing refresh operations.
+   */
+  private void scheduleAutoRefresh() {
+    long now = System.currentTimeMillis();
+    if (now - lastAutoRefresh < AUTO_REFRESH_COOLDOWN_MS) {
+      // too soon - skip duplicate
+      return;
+    }
+    lastAutoRefresh = now;
+
+    // run on FX thread (safe) with small delay to allow layout to settle
+    Platform.runLater(() -> {
+      try {
+        // small pause gives SceneManager time to finish swap if needed
+        Thread.sleep(30);
+      } catch (InterruptedException ignored) {}
+      // Only refresh if we still have a client and the nodes list is visible/attached
+      if (client != null && nodesList.getScene() != null && nodesList.isVisible()) {
+        refreshCapabilities();
+      }
+    });
   }
 
   @FXML
@@ -80,23 +116,21 @@ public class NodesController implements Unloadable {
     uiControlsPerNode.clear();
     actuatorPendingValues.clear();
 
-    if (AppContext.getControllerId() != null) {
+    if (AppContext.getControllerId() != null)
       client.sendCapabilitiesQuery();
-    }
+  }
+
+  @FXML
+  private void goToPopulate() {
+    SceneManager.switchScene("populate");
   }
 
   public void unsubscribeNode(int nodeId) {
     nodes.remove(nodeId);
     observableNodes.removeIf(n -> n.nodeId() == nodeId);
     uiControlsPerNode.remove(nodeId);
-
     actuatorPendingValues.keySet().removeIf(k -> k.startsWith(nodeId + ":"));
     client.sendUnsubscribe(nodeId);
-  }
-
-  @FXML
-  private void openDataLog() {
-    SceneManager.switchScene("dataLog");
   }
 
   private void handlePacket(SmartFarmingProtocol packet) {
@@ -121,9 +155,11 @@ public class NodesController implements Unloadable {
       if (id == null) return;
 
       nodes.putIfAbsent(id, new NodeEntry(id, null));
+
       Platform.runLater(() -> {
-        observableNodes.removeIf(n -> n.nodeId() == id);
-        observableNodes.add(nodes.get(id));
+        NodeEntry entry = nodes.get(id);
+        if (!observableNodes.contains(entry))
+          observableNodes.add(entry);
       });
 
       client.sendSubscribe(id);
@@ -139,12 +175,18 @@ public class NodesController implements Unloadable {
     if (!(packet.getBody() instanceof DataReportBody report)) return;
 
     int nodeId = packet.getHeader().getSourceId();
-    NodeEntry updated = new NodeEntry(nodeId, report);
-    nodes.put(nodeId, updated);
 
     Platform.runLater(() -> {
-      observableNodes.removeIf(n -> n.nodeId() == nodeId);
-      observableNodes.add(updated);
+      NodeEntry entry = nodes.get(nodeId);
+
+      if (entry == null) {
+        entry = new NodeEntry(nodeId, report);
+        nodes.put(nodeId, entry);
+        observableNodes.add(entry);
+      } else {
+        entry.setData(report);
+      }
+
       updateControlsWithReport(nodeId, report);
     });
   }
@@ -154,9 +196,8 @@ public class NodesController implements Unloadable {
     if (controls == null) return;
 
     Map<String, DataReportBody.ActuatorState> reported = new HashMap<>();
-    if (report.actuators() != null) {
+    if (report.actuators() != null)
       report.actuators().forEach(a -> reported.put(a.id(), a));
-    }
 
     controls.forEach((id, ui) -> {
       DataReportBody.ActuatorState r = reported.get(id);
@@ -165,30 +206,17 @@ public class NodesController implements Unloadable {
       ui.updateValueLabel(r);
 
       String key = nodeId + ":" + id;
-      if (actuatorPendingValues.containsKey(key)) return;
-      if (ui.isEditing()) return;
-
-      ui.applyReportedValue(r);
+      if (!actuatorPendingValues.containsKey(key) && !ui.isEditing())
+        ui.applyReportedValue(r);
     });
 
     nodesList.refresh();
   }
 
-  public boolean getUiFreeze(){
-    return uiFreeze;
-  }
-
-  public SmartFarmingProtocol getBufferedPacket() {
-    return bufferedPacket;
-  }
-
-  public void setUiFreeze(boolean uiFreeze) {
-    this.uiFreeze = uiFreeze;
-  }
-
-  public void setBufferedPacket(SmartFarmingProtocol packet) {
-    this.bufferedPacket = packet;
-  }
+  public boolean getUiFreeze() { return uiFreeze; }
+  public SmartFarmingProtocol getBufferedPacket() { return bufferedPacket; }
+  public void setUiFreeze(boolean f) { uiFreeze = f; }
+  public void setBufferedPacket(SmartFarmingProtocol p) { bufferedPacket = p; }
 
   @Override
   public void onUnload() {

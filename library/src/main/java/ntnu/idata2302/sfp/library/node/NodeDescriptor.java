@@ -23,6 +23,7 @@ import java.util.List;
  * @param supportsAggregates {@code Boolean} flag indicating if the node supports aggregate data;
  *                           may be {@code null} if unknown
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record NodeDescriptor(
     Integer nodeId,
     int nodeType,
@@ -57,6 +58,7 @@ public record NodeDescriptor(
    * @param unit     human\-readable unit for the actuator value
    *                 (maybe {@code null} if unspecified)
    */
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   public record ActuatorDescriptor(String id, double value, Double minValue, Double maxValue,
                                    String unit) {
   }

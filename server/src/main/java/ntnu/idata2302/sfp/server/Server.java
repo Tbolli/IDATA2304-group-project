@@ -123,8 +123,6 @@ public class Server {
 
         // Parse full SFP message
         SmartFarmingProtocol packet = SmartFarmingProtocol.fromBytes(header, bodyBytes);
-        System.out.println(packet.getHeader().getMessageType()); // TODO remove
-
 
         // dispatch the packet
         dispatcher.dispatch(packet, socket, context);
@@ -133,8 +131,6 @@ public class Server {
     } catch (EOFException e) {
       System.out.println(
           "Client disconnected normally: " + socket.getInetAddress().getHostAddress());
-    } catch (IOException e) {
-      System.out.println("I/O error: " + e.getMessage());
     } catch (Exception e) {
       System.out.println("Unexpected error: " + e.getMessage());
       e.printStackTrace();
@@ -143,7 +139,8 @@ public class Server {
         socket.close();
       } catch (IOException ignored) {
       }
-      System.out.println("Connection closed: " + socket.getInetAddress().getHostAddress());
+      System.out.println("Connection closed: " + socket.getInetAddress().getHostAddress() + ", removing node.");
+      context.unregisterNode(socket);
     }
   }
 

@@ -23,22 +23,29 @@
                 </ImageView>
             </StackPane>
 
-            <Button styleClass="sidebar-btn-active" text="Nodes"/>
-            <Button onAction="#openDataLog" styleClass="sidebar-btn" text="DataLog"/>
+            <Button text="Nodes"
+                    styleClass="sidebar-btn-active"/>
+
+            <Button text="Populate"
+                    onAction="#goToPopulate"
+                    styleClass="sidebar-btn"/>
         </VBox>
     </left>
+
 
     <!-- MAIN CONTENT -->
     <center>
         <AnchorPane>
 
+            <!-- Connection label -->
             <Label fx:id="connectionLabel"
-                   styleClass="connection-title"
+                   styleClass="section-title"
                    AnchorPane.leftAnchor="30"
                    AnchorPane.topAnchor="30"/>
 
+            <!-- Section title -->
             <Label text="Nodes"
-                   styleClass="section-title"
+                   styleClass="sub-title"
                    AnchorPane.leftAnchor="30"
                    AnchorPane.topAnchor="80"/>
 
@@ -52,10 +59,11 @@
             <!-- Nodes List -->
             <ListView fx:id="nodesList"
                       styleClass="nodes-list"
-                      AnchorPane.topAnchor="120"
+                      AnchorPane.topAnchor="130"
                       AnchorPane.leftAnchor="30"
                       AnchorPane.rightAnchor="40"
                       AnchorPane.bottomAnchor="40"/>
+
         </AnchorPane>
     </center>
 </BorderPane>

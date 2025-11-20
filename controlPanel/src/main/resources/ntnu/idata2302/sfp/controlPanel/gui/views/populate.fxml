@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.text.TextFlow?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ntnu.idata2302.sfp.controlPanel.gui.controllers.PopulateController"
+            prefWidth="1440" prefHeight="900"
+            style="-fx-background-color: #D8F3DC;"
+            stylesheets="@../styles/populate.css, @../styles/sidebar.css">
+
+    <!-- ===================== SIDEBAR ===================== -->
+    <left>
+        <VBox alignment="TOP_CENTER"
+              spacing="25"
+              prefWidth="200"
+              styleClass="sidebar">
+
+            <StackPane alignment="CENTER" styleClass="sidebar-logo">
+                <ImageView fitHeight="180" preserveRatio="true">
+                    <Image url="@/ntnu/idata2302/sfp/controlPanel/images/SMF_Logo.png"/>
+                </ImageView>
+            </StackPane>
+
+            <Button text="Nodes" onAction="#goToNodes" styleClass="sidebar-btn"/>
+            <Button text="Populate" styleClass="sidebar-btn-active"/>
+        </VBox>
+    </left>
+
+
+    <!-- ===================== MAIN CONTENT ===================== -->
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color:transparent;">
+            <VBox spacing="30" style="-fx-padding: 30 260 50 260; -fx-background-color:transparent;">
+
+                <!-- PAGE TITLE -->
+                <Label text="Populate Sensor Node" styleClass="section-title"/>
+
+                <!-- ===== PRESET SECTION ===== -->
+                <HBox spacing="20" alignment="CENTER_LEFT">
+                    <Label text="Preset:" styleClass="sub-title"/>
+
+                    <ComboBox fx:id="presetSelector"
+                              prefWidth="260"/>
+
+                    <Button text="Load Preset"
+                            onAction="#loadPreset"
+                            styleClass="spawn-btn"
+                            prefWidth="130"/>
+                </HBox>
+
+                <!-- ===== SYSTEM ARGS ===== -->
+                <VBox spacing="10">
+                    <Label text="System Arguments" styleClass="sub-title"/>
+
+                    <TextArea fx:id="systemArgs"
+                              editable="false"
+                              wrapText="true"
+                              prefHeight="110"
+                              styleClass="system-box"/>
+                </VBox>
+
+                <!-- ===== CUSTOM ARGS ===== -->
+                <VBox spacing="10">
+                    <Label text="Custom Command Arguments" styleClass="sub-title"/>
+
+                    <TextArea fx:id="customArgs"
+                              wrapText="true"
+                              prefHeight="180"
+                              styleClass="custom-box"/>
+
+                    <HBox spacing="40" alignment="CENTER_LEFT">
+                        <CheckBox fx:id="checkImages"     text="Supports Images"/>
+                        <CheckBox fx:id="checkAggregates" text="Supports Aggregates"/>
+                    </HBox>
+                </VBox>
+
+                <!-- ===== HELP SECTION ===== -->
+                <VBox spacing="10">
+                    <Label text="How to Write Command Arguments:" styleClass="sub-title"/>
+
+                    <TextFlow fx:id="helpBox"
+                              prefHeight="150"
+                              styleClass="help-box"/>
+                </VBox>
+
+                <!-- ===== SPAWN BUTTONS ===== -->
+                <VBox spacing="10" alignment="CENTER_LEFT">
+
+                    <Button text="Spawn Sensor Node"
+                            onAction="#spawnNode"
+                            styleClass="spawn-btn"
+                            prefWidth="200"/>
+
+                    <Button text="Terminate All"
+                            onAction="#terminateAllNodes"
+                            styleClass="terminate-btn"
+                            prefWidth="200"/>
+
+                </VBox>
+
+                <!-- ===== SPAWN LOG ===== -->
+                <VBox spacing="10">
+                    <Label text="Spawn Log" styleClass="sub-title"/>
+
+                    <TextArea fx:id="spawnLog"
+                              editable="false"
+                              wrapText="true"
+                              prefHeight="240"
+                              styleClass="spawn-log"/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

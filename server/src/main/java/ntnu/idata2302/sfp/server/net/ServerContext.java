@@ -55,12 +55,22 @@ public class ServerContext {
   /**
    * Unregister a node and remove its socket association.
    *
-   * @param nodeId the logical node id to remove
+   * @param socket the socket of the client
    */
-  public void unregisterNode(int nodeId) {
+  public void unregisterNode(Socket socket) {
+    Integer nodeId = socketRegistry.entrySet().stream()
+      .filter(e -> e.getValue().equals(socket))
+      .map(Map.Entry::getKey)
+      .findFirst()
+      .orElse(null);
+
+    if(nodeId == null)
+      return;
+
+    removeAllSubscriptions(nodeId);
     socketRegistry.remove(nodeId);
     nodeRegistry.remove(nodeId);
-    System.out.println("Node " + nodeId + " disconnected");
+    System.out.println("Node: #" + nodeId + " removed from sever ");
   }
 
   /**
@@ -123,6 +133,10 @@ public class ServerContext {
    */
   public void removeSubscription(int cpId,int snId) {
     subscriptions.removeIf(s -> s.getSnId() == snId && s.getCpId() == cpId);
+  }
+
+  public void removeAllSubscriptions(int id) {
+    subscriptions.removeIf(s -> s.getSnId() == id || s.getCpId() == id);
   }
 
   /**

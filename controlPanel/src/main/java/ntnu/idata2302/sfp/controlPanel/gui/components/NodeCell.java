@@ -46,6 +46,18 @@ public class NodeCell extends ListCell<NodeEntry> {
       return;
     }
 
+    // Ensure we listen for data changes so the cell re-renders when a report arrives
+    entry.dataProperty().addListener((obs, oldV, newV) -> Platform.runLater(() -> {
+      // only rebuild UI if item still associated with this cell
+      if (getItem() == entry) {
+        setGraphic(buildCell(entry));
+      }
+    }));
+
+    setGraphic(buildCell(entry));
+  }
+
+  private VBox buildCell(NodeEntry entry) {
     VBox card = new VBox(12);
     card.getStyleClass().add("node-card");
 
@@ -58,11 +70,10 @@ public class NodeCell extends ListCell<NodeEntry> {
     sensLabel.getStyleClass().add("small-section-label");
     sensorsBox.getChildren().add(sensLabel);
 
-    if (entry.data() != null && entry.data().sensors() != null) {
-      entry.data().sensors().forEach(s -> {
+    if (entry.getData() != null && entry.getData().sensors() != null) {
+      entry.getData().sensors().forEach(s -> {
         String v = s.value() != null ? String.format("%.2f", s.value()) : "N/A";
-        Label l = new Label("• " + s.id() + " = " + v +
-          (s.unit() != null ? " " + s.unit() : ""));
+        Label l = new Label("• " + s.id() + " = " + v + (s.unit() != null ? " " + s.unit() : ""));
         l.getStyleClass().add("sensor-item");
         sensorsBox.getChildren().add(l);
       });
@@ -77,10 +88,19 @@ public class NodeCell extends ListCell<NodeEntry> {
     ensureUiControls(entry);
 
     Map<String, ActuatorControlUI> map = uiControlsPerNode.get(entry.nodeId());
-    if (map != null && entry.data() != null && entry.data().actuators() != null) {
-      for (var a : entry.data().actuators()) {
-        ActuatorControlUI ui = map.get(a.id());
+
+    // If there is a current report with actuator list: add those in report order.
+    if (entry.getData() != null && entry.getData().actuators() != null) {
+      for (var a : entry.getData().actuators()) {
+        ActuatorControlUI ui = map != null ? map.get(a.id()) : null;
         if (ui != null) actuatorsBox.getChildren().add(ui.getRow());
+      }
+    } else {
+      // No actuators in latest report → display existing stable controls (if any)
+      if (map != null) {
+        for (var ui : map.values()) {
+          actuatorsBox.getChildren().add(ui.getRow());
+        }
       }
     }
 
@@ -105,15 +125,10 @@ public class NodeCell extends ListCell<NodeEntry> {
     buttons.getChildren().addAll(submitAll, cancelAll, unsub);
 
     // LAYOUT -------------------------------------------------
-    HBox row = new HBox(20,
-      sensorsBox,
-      new Separator(Orientation.VERTICAL),
-      actuatorsBox,
-      buttons
-    );
+    HBox row = new HBox(20, sensorsBox, new Separator(Orientation.VERTICAL), actuatorsBox, buttons);
 
     card.getChildren().addAll(header, row);
-    setGraphic(card);
+    return card;
   }
 
   private void submitAll(int nodeId) {
@@ -151,28 +166,29 @@ public class NodeCell extends ListCell<NodeEntry> {
     int nodeId = entry.nodeId();
     uiControlsPerNode.computeIfAbsent(nodeId, k -> new LinkedHashMap<>());
 
-    if (entry.data() == null || entry.data().actuators() == null) return;
-
     Map<String, ActuatorControlUI> map = uiControlsPerNode.get(nodeId);
 
-    for (var a : entry.data().actuators()) {
-      map.computeIfAbsent(a.id(), id ->
-        new ActuatorControlUI(
-          controller,
-          nodesList,
-          uiControlsPerNode,
-          actuatorPendingValues,
-          nodes,
-          nodeId,
-          a
-        )
-      );
-    }
+    // If the current report has actuator descriptions, ensure UI controls exist for them.
+    if (entry.getData() != null && entry.getData().actuators() != null) {
+      for (var a : entry.getData().actuators()) {
+        map.computeIfAbsent(a.id(), id ->
+          new ActuatorControlUI(
+            controller,
+            nodesList,
+            uiControlsPerNode,
+            actuatorPendingValues,
+            nodes,
+            nodeId,
+            a
+          )
+        );
+      }
 
-    // remove controls no longer in report
-    Set<String> idsNow = new HashSet<>();
-    entry.data().actuators().forEach(a -> idsNow.add(a.id()));
-    map.keySet().removeIf(k -> !idsNow.contains(k));
+      // remove controls no longer in report
+      Set<String> idsNow = new HashSet<>();
+      entry.getData().actuators().forEach(a -> idsNow.add(a.id()));
+      map.keySet().removeIf(k -> !idsNow.contains(k));
+    }
+    // If there is no actuator list in the report, we keep existing controls intact.
   }
 }
-

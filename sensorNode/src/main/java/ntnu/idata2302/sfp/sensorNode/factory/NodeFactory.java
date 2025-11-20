@@ -1,6 +1,8 @@
 package ntnu.idata2302.sfp.sensorNode.factory;
 
 import java.util.List;
+
+import ntnu.idata2302.sfp.library.node.NodeDescriptor;
 import ntnu.idata2302.sfp.sensorNode.core.Actuator;
 import ntnu.idata2302.sfp.sensorNode.core.Sensor;
 import ntnu.idata2302.sfp.sensorNode.core.SensorNode;
@@ -74,5 +76,65 @@ public final class NodeFactory {
     );
 
     return new SensorNode(sensors, actuators, false, false);
+  }
+
+  public static SensorNode fromDescriptor(NodeDescriptor desc) {
+
+    // -----------------------------
+    // Convert sensors
+    // -----------------------------
+    List<Sensor> sensors = desc.sensors().stream()
+      .map(s -> new Sensor(
+        s.id(),
+        s.minValue() == null ? 0 : s.minValue(),
+        s.maxValue() == null ? 100 : s.maxValue(),
+        s.unit()
+      ))
+      .toList();
+
+    // -----------------------------
+    // Convert actuators
+    // -----------------------------
+    List<Actuator> actuators = desc.actuators().stream()
+      .map(a -> {
+
+        ActuatorType type;
+
+        try {
+          // interpret descriptor.id() as display name of the enum
+          type = ActuatorType.fromDisplayName(a.id());
+        } catch (IllegalArgumentException e) {
+          System.err.println("Unknown actuator name '" + a.id() +
+            "'. Falling back to FAN.");
+          type = ActuatorType.FAN; // safe fallback
+        }
+
+        // If actuator has min + max → range actuator (Slider)
+        if (a.minValue() != null && a.maxValue() != null) {
+          return new Actuator(
+            type,
+            a.minValue(),
+            a.maxValue()
+          );
+
+        } else {
+          // Otherwise treat it as a simple state actuator
+          return new Actuator(
+            type,
+            a.value()
+          );
+        }
+      })
+      .toList();
+
+    // -----------------------------
+    // Build final SensorNode
+    // -----------------------------
+    boolean supportsImages = desc.supportsImages() != null && desc.supportsImages();
+    boolean supportsAggregates = desc.supportsAggregates() != null && desc.supportsAggregates();
+
+    System.out.println(new SensorNode(sensors, actuators, supportsImages, supportsAggregates));
+
+    return new SensorNode(sensors, actuators, supportsImages, supportsAggregates);
   }
 }

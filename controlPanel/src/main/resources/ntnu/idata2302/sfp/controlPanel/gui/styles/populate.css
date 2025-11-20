@@ -1,0 +1,64 @@
+.section-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1B4332;
+}
+
+.sub-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1B4332;
+}
+
+/* System readonly box */
+.system-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #88c9a1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 10;
+}
+
+/* Editable box */
+.custom-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #57cc99;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 10;
+}
+
+.spawn-log {
+    -fx-background-color: #eef7ee;
+    -fx-border-color: #88c9a1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 10;
+}
+
+.spawn-btn {
+    -fx-background-color: #52B788;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-background-radius: 10;
+    -fx-padding: 10 18;
+}
+
+.help-box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #b6dfc6;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 10;
+}
+
+.terminate-btn {
+    -fx-background-color: #d9534f;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+}
+
+.terminate-btn:hover {
+    -fx-background-color: #c9302c;
+}

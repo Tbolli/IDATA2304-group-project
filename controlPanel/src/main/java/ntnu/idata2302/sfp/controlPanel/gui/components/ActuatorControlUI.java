@@ -1,6 +1,5 @@
 package ntnu.idata2302.sfp.controlPanel.gui.components;
 
-
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -30,10 +29,7 @@ public class ActuatorControlUI {
   private final Label valueLabel;
 
   private final javafx.scene.control.ListView<NodeEntry> nodesList;
-
   private volatile boolean editing = false;
-
-  SmartFarmingProtocol bufferedPacket = null;
 
   public ActuatorControlUI(
     NodesController controller,
@@ -53,24 +49,25 @@ public class ActuatorControlUI {
     this.nodeId = nodeId;
     this.actuatorId = reported.id();
 
-    this.row = new HBox(14);
+    row = new HBox(14);
     row.setStyle("-fx-padding:6;");
 
-    this.nameLabel = new Label(reported.id());
+    nameLabel = new Label(reported.id());
     nameLabel.setPrefWidth(120);
     nameLabel.getStyleClass().add("actuator-name");
 
-    this.valueLabel = new Label();
+    valueLabel = new Label();
     valueLabel.setPrefWidth(90);
     valueLabel.getStyleClass().add("reported-label");
 
-    // CREATE CONTROL (same logic as original)
+    // CONTROL CREATION ---------------------------------------------
     if ("state".equalsIgnoreCase(reported.unit())) {
       ToggleButton toggle = new ToggleButton();
 
       String key = nodeId + ":" + actuatorId;
       Double pending = actuatorPendingValues.get(key);
-      boolean on = pending != null ? pending >= 0.5 :
+      boolean on = pending != null ?
+        pending >= 0.5 :
         (reported.value() != null && reported.value() >= 0.5);
 
       toggle.setSelected(on);
@@ -85,13 +82,15 @@ public class ActuatorControlUI {
         toggle.setText(newState ? "ON" : "OFF");
         toggle.getStyleClass().removeAll("toggle-on", "toggle-off");
         toggle.getStyleClass().add(newState ? "toggle-on" : "toggle-off");
+
         actuatorPendingValues.put(key, newState ? 1.0 : 0.0);
         Platform.runLater(nodesList::refresh);
       });
 
-      this.control = toggle;
+      control = toggle;
 
     } else {
+
       double min = reported.minValue() != null ? reported.minValue() : 0;
       double max = reported.maxValue() != null ? reported.maxValue() : 100;
 
@@ -122,11 +121,10 @@ public class ActuatorControlUI {
       slider.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> setEditing(true));
       slider.addEventHandler(MouseEvent.MOUSE_RELEASED, e -> setEditing(false));
 
-      this.control = slider;
+      control = slider;
     }
 
     updateValueLabel(reported);
-
     row.getChildren().addAll(nameLabel, control, valueLabel);
   }
 
@@ -145,8 +143,11 @@ public class ActuatorControlUI {
     if (!v && controller.getBufferedPacket() != null) {
       SmartFarmingProtocol pkt = controller.getBufferedPacket();
       controller.setBufferedPacket(null);
-      Platform.runLater(() -> controller.updateControlsWithReport(nodeId,
-        (DataReportBody) pkt.getBody()));
+
+      Platform.runLater(() ->
+        controller.updateControlsWithReport(nodeId,
+          (DataReportBody) pkt.getBody())
+      );
     }
   }
 
@@ -156,9 +157,10 @@ public class ActuatorControlUI {
 
   public void revertPending() {
     actuatorPendingValues.remove(nodeId + ":" + actuatorId);
+
     NodeEntry entry = nodes.get(nodeId);
-    if (entry != null && entry.data() != null && entry.data().actuators() != null) {
-      for (var a : entry.data().actuators()) {
+    if (entry != null && entry.getData() != null && entry.getData().actuators() != null) {
+      for (var a : entry.getData().actuators()) {
         if (a.id().equals(actuatorId)) {
           applyReportedValue(a);
           updateValueLabel(a);

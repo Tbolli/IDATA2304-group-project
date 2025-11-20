@@ -65,6 +65,16 @@
     -fx-text-fill: #6d6d6d;
 }
 
+.section-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.sub-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
 /* ============================================================
    SLIDER — Clean & Non-intrusive
    ============================================================ */
