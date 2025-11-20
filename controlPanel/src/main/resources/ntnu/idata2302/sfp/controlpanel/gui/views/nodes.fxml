@@ -7,8 +7,8 @@
 
 <BorderPane prefHeight="900" prefWidth="1440" style="-fx-background-color: #D8F3DC;"
             xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="ntnu.idata2302.sfp.controlPanel.gui.controllers.NodesController"
-            stylesheets="@/ntnu/idata2302/sfp/controlPanel/gui/styles/nodes.css, @/ntnu/idata2302/sfp/controlPanel/gui/styles/sidebar.css">
+            fx:controller="ntnu.idata2302.sfp.controlpanel.gui.controllers.NodesController"
+            stylesheets="@/ntnu/idata2302/sfp/controlpanel/gui/styles/nodes.css, @/ntnu/idata2302/sfp/controlpanel/gui/styles/sidebar.css">
 
     <!-- SIDEBAR -->
     <left>
@@ -19,7 +19,7 @@
 
             <StackPane alignment="CENTER" styleClass="sidebar-logo">
                 <ImageView fitHeight="200" preserveRatio="true">
-                    <Image url="@/ntnu/idata2302/sfp/controlPanel/images/SMF_Logo.png"/>
+                    <Image url="@/ntnu/idata2302/sfp/controlpanel/images/SMF_Logo.png"/>
                 </ImageView>
             </StackPane>
 

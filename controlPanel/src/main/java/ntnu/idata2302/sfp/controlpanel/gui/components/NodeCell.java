@@ -1,14 +1,13 @@
-package ntnu.idata2302.sfp.controlPanel.gui.components;
+package ntnu.idata2302.sfp.controlpanel.gui.components;
 
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import ntnu.idata2302.sfp.controlPanel.gui.controllers.NodesController;
-import ntnu.idata2302.sfp.controlPanel.gui.model.NodeEntry;
-import ntnu.idata2302.sfp.controlPanel.net.SfpClient;
+import ntnu.idata2302.sfp.controlpanel.gui.controllers.NodesController;
+import ntnu.idata2302.sfp.controlpanel.gui.model.NodeEntry;
+import ntnu.idata2302.sfp.controlpanel.net.SfpClient;
 import ntnu.idata2302.sfp.library.body.command.CommandBody;
-import ntnu.idata2302.sfp.library.body.data.DataReportBody;
 
 import java.util.*;
 

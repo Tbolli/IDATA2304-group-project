@@ -1,13 +1,12 @@
-package ntnu.idata2302.sfp.controlPanel.gui.controllers;
+package ntnu.idata2302.sfp.controlpanel.gui.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.input.KeyCode;
-import ntnu.idata2302.sfp.controlPanel.gui.SceneManager;
-import ntnu.idata2302.sfp.controlPanel.net.AppContext;
-import ntnu.idata2302.sfp.controlPanel.net.SfpClient;
+import ntnu.idata2302.sfp.controlpanel.gui.SceneManager;
+import ntnu.idata2302.sfp.controlpanel.net.AppContext;
+import ntnu.idata2302.sfp.controlpanel.net.SfpClient;
 
 import java.io.IOException;
 import java.util.Objects;

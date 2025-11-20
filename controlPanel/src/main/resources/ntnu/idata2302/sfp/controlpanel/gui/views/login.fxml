@@ -8,7 +8,7 @@
 
 <BorderPane prefHeight="1024" prefWidth="1440" style="-fx-background-color: #D8F3DC;"
             xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="ntnu.idata2302.sfp.controlPanel.gui.controllers.LoginController">
+            fx:controller="ntnu.idata2302.sfp.controlpanel.gui.controllers.LoginController">
 
     <center>
         <StackPane style="-fx-background-color: #F6F0F0;">

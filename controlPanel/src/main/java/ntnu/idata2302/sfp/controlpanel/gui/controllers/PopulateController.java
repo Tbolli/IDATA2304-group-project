@@ -1,10 +1,10 @@
-package ntnu.idata2302.sfp.controlPanel.gui.controllers;
+package ntnu.idata2302.sfp.controlpanel.gui.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import ntnu.idata2302.sfp.controlPanel.gui.SceneManager;
+import ntnu.idata2302.sfp.controlpanel.gui.SceneManager;
 
 import java.io.File;
 import java.util.ArrayList;

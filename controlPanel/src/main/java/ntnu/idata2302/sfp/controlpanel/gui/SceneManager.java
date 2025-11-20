@@ -1,4 +1,4 @@
-package ntnu.idata2302.sfp.controlPanel.gui;
+package ntnu.idata2302.sfp.controlpanel.gui;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import ntnu.idata2302.sfp.controlPanel.gui.controllers.Unloadable;
+import ntnu.idata2302.sfp.controlpanel.gui.controllers.Unloadable;
 
 /**
  * Utility for managing scenes in the control panel GUI.
@@ -82,7 +82,7 @@ public class SceneManager {
       Scene scene = sceneCache.get(viewName);
       if (scene == null) {
         FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource(
-            "/ntnu/idata2302/sfp/controlPanel/gui/views/" + viewName + ".fxml"));
+            "/ntnu/idata2302/sfp/controlpanel/gui/views/" + viewName + ".fxml"));
         Parent root = loader.load();
         scene = new Scene(root);
         sceneCache.put(viewName, scene);
@@ -90,7 +90,7 @@ public class SceneManager {
 
 
       String style = Objects.requireNonNull(
-              SceneManager.class.getResource("/ntnu/idata2302/sfp/controlPanel/gui/styles/app.css"))
+              SceneManager.class.getResource("/ntnu/idata2302/sfp/controlpanel/gui/styles/app.css"))
           .toExternalForm();
       if (!scene.getStylesheets().contains(style)) {
         scene.getStylesheets().add(style);

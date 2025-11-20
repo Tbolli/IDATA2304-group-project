@@ -1,4 +1,4 @@
-package ntnu.idata2302.sfp.controlPanel.factory;
+package ntnu.idata2302.sfp.controlpanel.factory;
 
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
 import ntnu.idata2302.sfp.library.body.announce.AnnounceBody;
@@ -11,7 +11,6 @@ import ntnu.idata2302.sfp.library.header.MessageTypes;
 import ntnu.idata2302.sfp.library.node.NodeDescriptor;
 import ntnu.idata2302.sfp.library.node.NodeIds;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 

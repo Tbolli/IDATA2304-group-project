@@ -1,4 +1,4 @@
-package ntnu.idata2302.sfp.controlPanel.gui.components;
+package ntnu.idata2302.sfp.controlpanel.gui.components;
 
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -7,8 +7,8 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import ntnu.idata2302.sfp.controlPanel.gui.controllers.NodesController;
-import ntnu.idata2302.sfp.controlPanel.gui.model.NodeEntry;
+import ntnu.idata2302.sfp.controlpanel.gui.controllers.NodesController;
+import ntnu.idata2302.sfp.controlpanel.gui.model.NodeEntry;
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
 import ntnu.idata2302.sfp.library.body.data.DataReportBody;
 

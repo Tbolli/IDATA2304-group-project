@@ -8,7 +8,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/17.0.12"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="ntnu.idata2302.sfp.controlPanel.gui.controllers.PopulateController"
+            fx:controller="ntnu.idata2302.sfp.controlpanel.gui.controllers.PopulateController"
             prefWidth="1440" prefHeight="900"
             style="-fx-background-color: #D8F3DC;"
             stylesheets="@../styles/populate.css, @../styles/sidebar.css">
@@ -22,7 +22,7 @@
 
             <StackPane alignment="CENTER" styleClass="sidebar-logo">
                 <ImageView fitHeight="180" preserveRatio="true">
-                    <Image url="@/ntnu/idata2302/sfp/controlPanel/images/SMF_Logo.png"/>
+                    <Image url="@/ntnu/idata2302/sfp/controlpanel/images/SMF_Logo.png"/>
                 </ImageView>
             </StackPane>
 

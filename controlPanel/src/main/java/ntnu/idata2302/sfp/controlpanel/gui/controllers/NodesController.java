@@ -1,18 +1,17 @@
-package ntnu.idata2302.sfp.controlPanel.gui.controllers;
+package ntnu.idata2302.sfp.controlpanel.gui.controllers;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import ntnu.idata2302.sfp.controlPanel.gui.SceneManager;
-import ntnu.idata2302.sfp.controlPanel.gui.components.ActuatorControlUI;
-import ntnu.idata2302.sfp.controlPanel.gui.components.NodeCell;
-import ntnu.idata2302.sfp.controlPanel.gui.model.NodeEntry;
-import ntnu.idata2302.sfp.controlPanel.net.AppContext;
-import ntnu.idata2302.sfp.controlPanel.net.EventBus;
-import ntnu.idata2302.sfp.controlPanel.net.SfpClient;
+import ntnu.idata2302.sfp.controlpanel.gui.SceneManager;
+import ntnu.idata2302.sfp.controlpanel.gui.components.ActuatorControlUI;
+import ntnu.idata2302.sfp.controlpanel.gui.components.NodeCell;
+import ntnu.idata2302.sfp.controlpanel.gui.model.NodeEntry;
+import ntnu.idata2302.sfp.controlpanel.net.AppContext;
+import ntnu.idata2302.sfp.controlpanel.net.EventBus;
+import ntnu.idata2302.sfp.controlpanel.net.SfpClient;
 import ntnu.idata2302.sfp.library.SmartFarmingProtocol;
 import ntnu.idata2302.sfp.library.body.capabilities.CapabilitiesListBody;
 import ntnu.idata2302.sfp.library.body.data.DataReportBody;

@@ -1,4 +1,4 @@
-package ntnu.idata2302.sfp.controlPanel.gui.controllers;
+package ntnu.idata2302.sfp.controlpanel.gui.controllers;
 
 /**
  * Marker interface for controllers that need cleanup when a scene is unloaded.

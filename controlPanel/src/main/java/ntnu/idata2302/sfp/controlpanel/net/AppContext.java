@@ -1,4 +1,4 @@
-package ntnu.idata2302.sfp.controlPanel.net;
+package ntnu.idata2302.sfp.controlpanel.net;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

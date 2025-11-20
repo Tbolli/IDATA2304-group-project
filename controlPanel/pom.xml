@@ -57,7 +57,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>ntnu.idata2302.sfp.controlPanel.gui.MainApp</mainClass>
+                    <mainClass>ntnu.idata2302.sfp.controlpanel.gui.MainApp</mainClass>
                 </configuration>
             </plugin>
         </plugins>

@@ -1,4 +1,4 @@
-package ntnu.idata2302.sfp.controlPanel.gui;
+package ntnu.idata2302.sfp.controlpanel.gui;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
