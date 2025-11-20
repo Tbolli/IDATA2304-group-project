@@ -21,8 +21,8 @@ import ntnu.idata2302.sfp.sensornode.factory.PacketFactory;
  * <p>Current supported message types:
  * <ul>
  *   <li>{@link MessageTypes#ANNOUNCE_ACK} — handled by
- *   {@link #AnnounceAckHandle(SensorNodeContext, SmartFarmingProtocol)}</li>
- *   <li>{@link MessageTypes#COMMAND} — handled by {@link #CommandHandle(SensorNodeContext,
+ *   {@link #announceAckHandle(SensorNodeContext, SmartFarmingProtocol)}</li>
+ *   <li>{@link MessageTypes#COMMAND} — handled by {@link #commandHandle(SensorNodeContext,
  *   SmartFarmingProtocol)}</li>
  * </ul>
  * </p>
@@ -49,8 +49,10 @@ public class PacketHandler {
     System.out.println("Handling packet: " + type.toString());
 
     switch (type) {
-      case ANNOUNCE_ACK -> PacketHandler.AnnounceAckHandle(client, packet);
-      case COMMAND -> PacketHandler.CommandHandle(client, packet);
+      case ANNOUNCE_ACK -> PacketHandler.announceAckHandle(client, packet);
+      case COMMAND -> PacketHandler.commandHandle(client, packet);
+
+      default -> System.out.println("Unhandled message type: " + type);
     }
   }
 
@@ -64,7 +66,7 @@ public class PacketHandler {
    * @param client the {@link SensorNodeContext} whose id will be set
    * @param packet the {@link SmartFarmingProtocol} containing the ANNOUNCE_ACK
    */
-  private static void AnnounceAckHandle(SensorNodeContext client,
+  private static void announceAckHandle(SensorNodeContext client,
                                         SmartFarmingProtocol packet) {
     Header header = packet.getHeader();
     // Set id for sensor node
@@ -95,7 +97,7 @@ public class PacketHandler {
    *              providing access to the local node and send operations
    * @param packet the incoming {@link SmartFarmingProtocol} containing a {@link CommandBody}
    */
-  private static void CommandHandle(SensorNodeContext client, SmartFarmingProtocol packet) {
+  private static void commandHandle(SensorNodeContext client, SmartFarmingProtocol packet) {
     Header header = packet.getHeader();
     CommandBody body = (CommandBody) packet.getBody();
 
