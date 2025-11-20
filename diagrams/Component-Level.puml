@@ -1,0 +1,48 @@
+@startuml
+title Component-Level Architecture
+
+package "Sensor Node" {
+    [Sensor Simulation Loop]
+    [Actuator Logic]
+    [CBOR Encoder/Decoder]
+    [Message Builder]
+    [TCP/TLS Client]
+
+    [Sensor Simulation Loop] --> [Message Builder]
+    [Actuator Logic] --> [Message Builder]
+    [Message Builder] --> [CBOR Encoder/Decoder]
+    [CBOR Encoder/Decoder] --> [TCP/TLS Client]
+}
+
+package "Control Panel" {
+    [User Interface]
+    [Event System]
+    [CBOR Encoder/Decoder CP]
+    [Message Builder CP]
+    [TCP/TLS Client CP]
+
+    [User Interface] --> [Event System]
+    [Event System] --> [Message Builder CP]
+    [Message Builder CP] --> [CBOR Encoder/Decoder CP]
+    [CBOR Encoder/Decoder CP] --> [TCP/TLS Client CP]
+}
+
+package "Server / Broker" {
+    [TCP Listener]
+    [Connection Handler]
+    [CBOR Encoder/Decoder S]
+    [Message Parser]
+    [Message Router]
+    [Capabilities Registry]
+    [Subscription Table]
+    [Session Manager]
+
+    [TCP Listener] --> [Connection Handler]
+    [Connection Handler] --> [Message Parser]
+    [Message Parser] --> [Message Router]
+    [Message Router] --> [Capabilities Registry]
+    [Message Router] --> [Subscription Table]
+    [Message Router] --> [Session Manager]
+}
+
+@enduml

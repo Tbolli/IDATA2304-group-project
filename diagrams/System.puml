@@ -1,0 +1,43 @@
+@startuml
+title Smart Farming Protocol – System Architecture Overview
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam arrowColor #444
+skinparam actorStyle awesome
+
+' ---------------------------------------------------------
+' High-Level Nodes
+' ---------------------------------------------------------
+package "Smart Farming System" {
+
+    node "Sensor Node (SN)" as SN1 {
+        component "Sensor Emulator" as SEm
+        component "Actuator Controller" as ACt
+        component "Image Provider" as Img
+        component "Protocol Library" as LibSN
+    }
+
+    node "Control Panel (CP)" as CP1 {
+        component "UI Layer" as UI
+        component "Event Handler" as EH
+        component "Protocol Library" as LibCP
+    }
+
+    node "Server / Broker" as Server {
+        component "TCP/TLS Listener" as Listener
+        component "Message Router" as Router
+        component "Capabilities Registry" as CapReg
+        component "Subscription Table" as SubTable
+        component "Session Manager" as Sessions
+        component "Protocol Library" as LibSrv
+    }
+}
+
+' ---------------------------------------------------------
+' Communications (TCP/TLS)
+' ---------------------------------------------------------
+SN1 -[#blue]> Server : Persistent TCP/TLS Session
+CP1 -[#blue]> Server : Persistent TCP/TLS Session
+
+@enduml

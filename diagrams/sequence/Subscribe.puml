@@ -1,0 +1,16 @@
+@startuml
+title Subscription & Data Report Flow
+
+actor CP
+participant Server
+participant SN
+
+CP -> Server: SUBSCRIBE(SN ID)
+Server -> CP: SUBSCRIBE_ACK
+
+loop every X seconds
+    SN -> Server: DATA_REPORT
+    Server -> CP: DATA_REPORT (forwarded)
+end
+
+@enduml

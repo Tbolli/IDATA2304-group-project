@@ -1,0 +1,14 @@
+@startuml
+title CAPABILITIES_QUERY Flow
+
+actor CP
+participant Server
+participant SN
+
+SN -> Server: ANNOUNCE
+Server -> SN: ANNOUNCE_ACK
+
+CP -> Server: CAPABILITIES_QUERY
+Server -> CP: CAPABILITIES_LIST
+
+@enduml

@@ -1,0 +1,22 @@
+@startuml
+title Server Internal Architecture
+
+package Server {
+    [TCP Listener]
+    [Connection Manager]
+    [CBOR Parser]
+    [Message Router]
+    [Capabilities Store]
+    [Subscription Registry]
+    [Active Sessions]
+}
+
+[TCP Listener] --> [Connection Manager]
+[Connection Manager] --> [CBOR Parser]
+[CBOR Parser] --> [Message Router]
+
+[Message Router] --> [Capabilities Store]
+[Message Router] --> [Subscription Registry]
+[Message Router] --> [Active Sessions]
+
+@enduml

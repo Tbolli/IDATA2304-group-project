@@ -1,0 +1,44 @@
+@startuml
+title Message Model (Header + Bodies)
+
+class MessageHeader {
+    +protocolName (3 bytes)
+    +version : byte
+    +type : byte
+    +sourceId : uint32
+    +targetId : uint32
+    +payloadLength : uint32
+    +messageId : UUID
+}
+
+class DataReportBody
+class DataRequestBody
+class CommandBody
+class CommandAckBody
+class AnnounceBody
+class AnnounceAckBody
+class CapabilitiesQueryBody
+class CapabilitiesListBody
+class ImageMetadataBody
+class ImageChunkBody
+class ImageTransferAckBody
+class SubscribeBody
+class SubscribeAckBody
+class ErrorBody
+
+MessageHeader --> DataReportBody
+MessageHeader --> DataRequestBody
+MessageHeader --> CommandBody
+MessageHeader --> CommandAckBody
+MessageHeader --> AnnounceBody
+MessageHeader --> AnnounceAckBody
+MessageHeader --> CapabilitiesQueryBody
+MessageHeader --> CapabilitiesListBody
+MessageHeader --> ImageMetadataBody
+MessageHeader --> ImageChunkBody
+MessageHeader --> ImageTransferAckBody
+MessageHeader --> SubscribeBody
+MessageHeader --> SubscribeAckBody
+MessageHeader --> ErrorBody
+
+@enduml

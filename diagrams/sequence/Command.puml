@@ -1,0 +1,13 @@
+@startuml
+title COMMAND Flow (Actuator Update)
+
+actor CP
+participant Server
+participant SN
+
+CP -> Server: COMMAND(fan=50%)
+Server -> SN: COMMAND(fan=50%)
+SN -> Server: COMMAND_ACK
+Server -> CP: COMMAND_ACK (forwarded)
+
+@enduml
