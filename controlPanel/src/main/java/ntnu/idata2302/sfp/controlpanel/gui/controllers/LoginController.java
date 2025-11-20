@@ -1,5 +1,7 @@
 package ntnu.idata2302.sfp.controlpanel.gui.controllers;
 
+import java.io.IOException;
+import java.util.Objects;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -8,12 +10,35 @@ import ntnu.idata2302.sfp.controlpanel.gui.SceneManager;
 import ntnu.idata2302.sfp.controlpanel.net.AppContext;
 import ntnu.idata2302.sfp.controlpanel.net.SfpClient;
 
-import java.io.IOException;
-import java.util.Objects;
+
+/**
+ * Controller for the login view. Handles IP address input by splitting the
+ * address into four separate fields and managing user-friendly navigation
+ * between them.
+ *
+ * <p>Also manages connecting to a Smart Farming Protocol server and forwarding
+ * the user to the Nodes view on successful connection.</p>
+ */
 
 public class LoginController {
-  @FXML private TextField ip1, ip2, ip3, ip4;
+  @FXML
+  private TextField ip1;
+
+  @FXML
+  private TextField ip2;
+
+  @FXML
+  private TextField ip3;
+
+  @FXML
+  private TextField ip4;
+
   @FXML private Label feedbackLabel;
+
+  /**
+   * Initializes the controller by attaching validation and auto-navigation
+   * logic to the four IP address fields.
+   */
 
   @FXML
   public void initialize() {
@@ -22,6 +47,19 @@ public class LoginController {
     setupField(ip3, ip4);
     setupField(ip4, null);
   }
+
+  /**
+   * Configures an IP segment text field with.
+   * <ul>
+   *   <li>Digit-only input filtering</li>
+   *   <li>Automatic limiting to 3 characters</li>
+   *   <li>Auto-advance to the next field</li>
+   *   <li>Auto-backspace navigation to the previous field</li>
+   * </ul>
+   *
+   * @param current the TextField being configured
+   * @param next    the next TextField in the IP sequence, or {@code null} if last
+   */
 
   private void setupField(TextField current, TextField next) {
     // allow only numbers and max 3 chars
@@ -53,12 +91,31 @@ public class LoginController {
     });
   }
 
+  /**
+   * Returns the previous IP segment field based on the given field.
+   *
+   * @param field one of the four IP TextField components
+   * @return the preceding field, or {@code null} if none exists
+   */
+
   private TextField getPrevious(TextField field) {
-    if (field == ip2) return ip1;
-    if (field == ip3) return ip2;
-    if (field == ip4) return ip3;
+    if (field == ip2) {
+      return ip1;
+    }
+    if (field == ip3) {
+      return ip2;
+    }
+    if (field == ip4) {
+      return ip3;
+    }
     return null;
   }
+
+  /**
+   * Fills all IP fields with the loopback address (127.0.0.1).
+   *
+   * <p>Convenient for local development and testing.</p>
+   */
 
   @FXML
   private void setLocalHost() {
@@ -68,9 +125,19 @@ public class LoginController {
     ip4.setText("1");
   }
 
+  /**
+   * Attempts to connect to the Smart Farming Protocol server using the
+   * IP address assembled from the four input fields.
+   *
+   * <p>On success, the SfpClient is stored in {@link AppContext} and the
+   * scene switches to the "nodes" view.
+   * On failure, an error message is displayed to the user.</p>
+   */
+
   @FXML
   private void connectToServer() {
-    String ip = String.format("%s.%s.%s.%s", ip1.getText(), ip2.getText(), ip3.getText(), ip4.getText());
+    String ip = String.format("%s.%s.%s.%s", ip1.getText(),
+         ip2.getText(), ip3.getText(), ip4.getText());
     SfpClient client = new SfpClient(ip, 5050);
     try {
       client.connect();
