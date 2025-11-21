@@ -4,6 +4,8 @@ A Smart Farming monitoring system built for the **IDATA2304** course.
 It simulates real greenhouse environments where distributed sensor nodes send data to a central server and control panel.  
 The system collects, processes, and displays real-time data, including temperature, humidity, and actuator status.
 
+**Note:** The project’s Git repository uses the name idata2304, whereas the Java source code follows the package naming idata2302. This mismatch is expected.
+
 ---
 
 ## 📌 Table of Contents
