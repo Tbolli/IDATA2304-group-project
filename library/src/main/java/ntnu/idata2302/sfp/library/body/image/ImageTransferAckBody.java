@@ -8,6 +8,7 @@ import ntnu.idata2302.sfp.library.codec.CborCodec;
  *
  * <p>Holds the identifier of the transferred image and a numeric status code
  * describing the result of the transfer (for example, 0 = success, non-zero = error).</p>
+ *
  * @param imageId identifier of the image this acknowledgement refers to
  * @param status  numeric status code for the transfer result
  */

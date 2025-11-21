@@ -1,7 +1,6 @@
 package ntnu.idata2302.sfp.library.node;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import java.util.List;
 
 /**
