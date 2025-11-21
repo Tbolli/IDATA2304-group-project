@@ -1,51 +1,93 @@
-# Smart Farming System – Group Project (IDATA2304)
+# 🌾 Smart Farming Control System – IDATA2304 Group Project
 
-This project is a Smart Farming monitoring system developed as part of the IDATA2304 course.  
-It includes a custom communication protocol, server logic, and a GUI dashboard.  
-The goal is to simulate a real-world agriculture monitoring solution, where data is collected, processed, and visualized.
-
----
-
-## Table of Contents
-1. Project Overview
-2.  Group Contributions    
-3. How to Run the Project  
+A Smart Farming monitoring system built for the **IDATA2304** course.  
+It simulates real greenhouse environments where distributed sensor nodes send data to a central server and control panel.  
+The system collects, processes, and displays real-time data, including temperature, humidity, and actuator status.
 
 ---
 
-## 1. Project Overview
+## 📌 Table of Contents
+1. 📝 Project Overview  
+2. 👥 Group Contributions  
+3. 📂 Project Modules  
+4. ⚙️ How to Download  
+5. 🚀 How to Build & Run  
+---
 
-The Smart Farming System is designed to communicate with greenhouse “nodes” that send temperature, humidity, and actuator data to the control panel.  
-Control Panel sends the data forward to the client 
+## 📝 1. Project Overview
 
-The project includes:
-- A custom communication protocol (designed by the group)
-- A  TCP server to handle node messages
-- A JavaFX GUI to visualize node data
-- Node simulators for sending sensor data
-- a control panel to hold the server and client together. 
-- Documentation and sprint reports
+The Smart Farming System is designed to simulate a real farming environment using nodes that send sensor data to a central control system.
 
-## 2. How to run the project 
+### Main Features:
+- 🌐 Custom communication protocol (group-designed)
+- 🖧 TCP server for node communication
+- 💻 JavaFX dashboard for real-time visualization
+- 📡 Node simulators sending sensor data (temperature, humidity, actuators)
+- 🔌 Control Panel connecting server and client together
+- 📑 Documentation and sprint reports included
 
-A) To run the application, you need to use Maven. You can follow one of these methods:
+---
 
-### Method 1: Using Maven in the IDE
+## 📂 3. Project Modules
 
-1. Press on **Maven** in your IDE.
-2. Navigate to **Plugins**.
-3. Scroll down and find **JavaFX**, then click on it.
-4. Press the second button: **JavaFX:run**.
+| Module            | Description |
+|-------------------|-------------|
+| `sfp-library`     | Shared utilities, data models, protocol formats |
+| `sfp-server`      | Handles socket communication between nodes and control panel |
+| `sfp-sensorNode`  | Sensor simulator sending JSON data |
+| `sfp-controlPanel`| JavaFX GUI for real-time monitoring and control |
 
-### Method 2: Using the Terminal
+---
 
-1. Open the terminal.
-2. Run the following command:
-   ```bash
-   mvn javafx:run
+## 📥 4. How to Download the Project
 
-B) Run the server 
+### 🔹 Option 1 – Clone using HTTPS
 
-c) Run the controlPanel 
+git clone https://github.com/Tbolli/IDATA2304-group-project.git
 
-D) 
+🔹 Option 2 – Clone using SSH
+
+git clone git@github.com:Tbolli/IDATA2304-group-project.git
+
+🔹 Option 3 – Download ZIP
+
+💾 Open GitHub → Code → Download ZIP → Extract to your desired location
+
+## 🛠 5. How to Build & Run
+
+📌 Step 1 – Install sfp-library
+
+cd sfp-library
+
+mvn install
+
+📌 Step 2 – Install parent project (sfp-project)
+
+cd ../sfp-project
+
+mvn install
+
+📌 Step 3 – Build the Control Panel (GUI)
+
+cd ../sfp-controlPanel
+
+mvn clean install
+
+---
+
+▶️ Running the Server
+
+ Open the sfp-server module and run:
+
+Server.java
+
+---
+
+▶️ Running the GUI (Control Panel)
+
+In Maven sidebar:
+
+➡️ sfp-controlPanel  
+➡️ Plugins  
+➡️ javafx  
+➡️ javafx: run
