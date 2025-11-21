@@ -1,16 +1,36 @@
 package ntnu.idata2302.sfp.controlPanel.gui.components;
 
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.Separator;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import ntnu.idata2302.sfp.controlPanel.gui.controllers.NodesController;
 import ntnu.idata2302.sfp.controlPanel.gui.model.NodeEntry;
 import ntnu.idata2302.sfp.controlPanel.net.SfpClient;
 import ntnu.idata2302.sfp.library.body.command.CommandBody;
-import ntnu.idata2302.sfp.library.body.data.DataReportBody;
 
-import java.util.*;
+/**
+ * Custom ListCell responsible for rendering a sensor node entry in the node list.
+ *
+ * <p>The cell shows:</p>
+ * <ul>
+ *   <li>Sensor values</li>
+ *   <li>Actuator controls (sliders, buttons, etc.)</li>
+ *   <li>Submit / Cancel / Unsubscribe actions</li>
+ * </ul>
+ *
+ * <p>The UI is rebuilt whenever new DataReportBody values are received.</p>
+ */
 
 public class NodeCell extends ListCell<NodeEntry> {
 
@@ -21,13 +41,24 @@ public class NodeCell extends ListCell<NodeEntry> {
   private final ListView<NodeEntry> nodesList;
   private final SfpClient client;
 
+  /**
+   * Constructs a NodeCell with access to the controller, model maps, and networking components.
+   *
+   * @param controller the owning controller
+   * @param nodes map of node IDs to NodeEntry instances
+   * @param uiControlsPerNode per-node actuator control map
+   * @param actuatorPendingValues pending actuator values waiting to be submitted
+   * @param nodesList the ListView that owns this cell
+   * @param client the SFP client used to send commands
+   */
+
   public NodeCell(
-    NodesController controller,
-    Map<Integer, NodeEntry> nodes,
-    Map<Integer, Map<String, ActuatorControlUI>> uiControlsPerNode,
-    Map<String, Double> actuatorPendingValues,
-    ListView<NodeEntry> nodesList,
-    SfpClient client
+        NodesController controller,
+        Map<Integer, NodeEntry> nodes,
+        Map<Integer, Map<String, ActuatorControlUI>> uiControlsPerNode,
+        Map<String, Double> actuatorPendingValues,
+        ListView<NodeEntry> nodesList,
+        SfpClient client
   ) {
     this.controller = controller;
     this.nodes = nodes;
@@ -36,6 +67,13 @@ public class NodeCell extends ListCell<NodeEntry> {
     this.nodesList = nodesList;
     this.client = client;
   }
+
+  /**
+   * Updates the cell's item and rebuilds the UI when the data changes.
+   *
+   * @param entry the NodeEntry to display
+   * @param empty whether the cell is empty
+   */
 
   @Override
   protected void updateItem(NodeEntry entry, boolean empty) {
@@ -56,6 +94,13 @@ public class NodeCell extends ListCell<NodeEntry> {
 
     setGraphic(buildCell(entry));
   }
+
+  /**
+   * Builds the UI components for the cell based on the NodeEntry data.
+   *
+   * @param entry the NodeEntry to build the UI for
+   * @return a VBox containing the cell's UI
+   */
 
   private VBox buildCell(NodeEntry entry) {
     VBox card = new VBox(12);
@@ -112,8 +157,8 @@ public class NodeCell extends ListCell<NodeEntry> {
     Button unsub = new Button("Unsubscribe");
 
     boolean pending =
-      actuatorPendingValues.keySet().stream()
-        .anyMatch(k -> k.startsWith(entry.nodeId() + ":"));
+         actuatorPendingValues.keySet().stream()
+           .anyMatch(k -> k.startsWith(entry.nodeId() + ":"));
 
     submitAll.setDisable(!pending);
     cancelAll.setDisable(!pending);
@@ -131,11 +176,17 @@ public class NodeCell extends ListCell<NodeEntry> {
     return card;
   }
 
+  /**
+   * Submits all pending actuator values for the specified node.
+   *
+   * @param nodeId the ID of the node to submit values for
+   */
+
   private void submitAll(int nodeId) {
     String prefix = nodeId + ":";
 
     List<CommandBody.CommandPart> parts =
-      actuatorPendingValues.entrySet().stream()
+         actuatorPendingValues.entrySet().stream()
         .filter(e -> e.getKey().startsWith(prefix))
         .map(e -> new CommandBody.CommandPart(
           e.getKey().substring(prefix.length()),     // actuatorId
@@ -152,6 +203,12 @@ public class NodeCell extends ListCell<NodeEntry> {
     nodesList.refresh();
   }
 
+  /**
+   * Cancels all pending actuator value changes for the specified node.
+   *
+   * @param nodeId the ID of the node to cancel changes for
+   */
+
   private void cancelAll(int nodeId) {
     String prefix = nodeId + ":";
     actuatorPendingValues.keySet().removeIf(k -> k.startsWith(prefix));
@@ -161,6 +218,12 @@ public class NodeCell extends ListCell<NodeEntry> {
 
     nodesList.refresh();
   }
+
+  /**
+   * Ensures that UI controls exist for all actuators reported by the node.
+   *
+   * @param entry the NodeEntry containing the latest data report
+   */
 
   private void ensureUiControls(NodeEntry entry) {
     int nodeId = entry.nodeId();
