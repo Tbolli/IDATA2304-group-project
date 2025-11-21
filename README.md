@@ -10,8 +10,8 @@ The system collects, processes, and displays real-time data, including temperatu
 1. 📝 Project Overview  
 2. 👥 Group Contributions  
 3. 📂 Project Modules  
-4. ⚙️ How to Download  
-5. 🚀 How to Build & Run  
+4. ⚙️ How to Download with Maven 
+5. 🚀 How to Build & Run with Maven 
 ---
 
 ## 📝 1. Project Overview
@@ -53,27 +53,51 @@ git clone git@github.com:Tbolli/IDATA2304-group-project.git
 
 💾 Open GitHub → Code → Download ZIP → Extract to your desired location
 
-## 🛠 5. How to Build & Run
+## 🛠 5. How to Build & Run (with images)
+---
+
+go to maven 
+
+
+<img width="85" height="95" alt="Image" src="https://github.com/user-attachments/assets/eef213b4-ce27-403c-aba3-3639ad5bdc6e" />
+
+
+---
 
 📌 Step 1 – Install sfp-library
 
+<img width="415" height="386" alt="image" src="https://github.com/user-attachments/assets/84402120-c3c3-41bb-ba91-f51afe8d52fa" />
+
+
+pick 
 cd sfp-library
 
-mvn install
+and find mvn install below lifecycel
+
+
+<img width="370" height="338" alt="image" src="https://github.com/user-attachments/assets/53f6c0a7-24f5-4fa4-9e23-29afc61d14ed" />
+
+
+---
 
 📌 Step 2 – Install parent project (sfp-project)
 
-cd ../sfp-project
+Same thing you can do with sfp-project 
 
-mvn install
+cd ../sfp-project    mvn install
+
+<img width="400" height="341" alt="image" src="https://github.com/user-attachments/assets/db4f53a2-f6cf-430a-9c28-1d45b0ec577f" />
+
+---
 
 📌 Step 3 – Build the Control Panel (GUI)
 
-cd ../sfp-controlPanel
+cd ../sfp-controlPanel   mvn clean install
 
-mvn clean install
+<img width="407" height="344" alt="image" src="https://github.com/user-attachments/assets/dfcd84e3-18d9-4514-ba7a-d232493d76d5" />
 
----
+----
+
 
 ▶️ Running the Server
 
@@ -81,13 +105,22 @@ mvn clean install
 
 Server.java
 
+
+<img width="522" height="571" alt="image" src="https://github.com/user-attachments/assets/7ace130a-4546-4689-b9a7-1c42f51973d3" />
+
 ---
 
 ▶️ Running the GUI (Control Panel)
 
-In Maven sidebar:
+In the Maven sidebar:
 
 ➡️ sfp-controlPanel  
 ➡️ Plugins  
 ➡️ javafx  
 ➡️ javafx: run
+
+
+<img width="400" height="360" alt="image" src="https://github.com/user-attachments/assets/c5940feb-d5bd-42fd-ba6c-a5434c586492" />
+
+
+---
