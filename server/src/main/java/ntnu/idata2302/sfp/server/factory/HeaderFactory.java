@@ -1,10 +1,10 @@
 package ntnu.idata2302.sfp.server.factory;
 
+import java.util.UUID;
 import ntnu.idata2302.sfp.library.header.Header;
 import ntnu.idata2302.sfp.library.header.MessageTypes;
 import ntnu.idata2302.sfp.library.node.NodeIds;
 
-import java.util.UUID;
 
 /**
  * Utility class for constructing standardized server-side protocol headers.
@@ -30,13 +30,13 @@ public class HeaderFactory {
    */
   public static Header serverHeader(MessageTypes type, int targetId) {
     return new Header(
-      new byte[]{ 'S', 'F', 'P' },   // Protocol signature
-      (byte) 1,                      // Default server protocol version
-      type,                          // Message type being sent
-      NodeIds.SERVER,                // Source = server
-      targetId,                      // Target = client node
-      0,                             // Payload length (assigned during encoding)
-      UUID.randomUUID()              // Unique message identifier
+           new byte[]{ 'S', 'F', 'P' },   // Protocol signature
+           (byte) 1,                      // Default server protocol version
+             type,                          // Message type being sent
+             NodeIds.SERVER,                // Source = server
+              targetId,                      // Target = client node
+               0,                             // Payload length (assigned during encoding)
+               UUID.randomUUID()              // Unique message identifier
     );
   }
 
@@ -53,13 +53,13 @@ public class HeaderFactory {
    */
   public static Header serverHeader(int version, MessageTypes type, int targetId) {
     return new Header(
-      new byte[]{ 'S', 'F', 'P' },   // Protocol signature
-      (byte) version,                // Custom protocol version
-      type,                          // Message type
-      NodeIds.SERVER,                // Source = server
-      targetId,                      // Destination
-      0,                             // Updated when packet is encoded
-      UUID.randomUUID()              // Unique message identifier
+            new byte[]{ 'S', 'F', 'P' },   // Protocol signature
+           (byte) version,                // Custom protocol version
+            type,                          // Message type
+            NodeIds.SERVER,                // Source = server
+             targetId,                      // Destination
+               0,                             // Updated when packet is encoded
+                  UUID.randomUUID()              // Unique message identifier
     );
   }
 }

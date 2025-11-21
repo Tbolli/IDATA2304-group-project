@@ -111,7 +111,7 @@ public class SceneManager {
    *
    * @param str the input string; may be {@code null} or empty
    * @return the input string with the first character upper-cased, or the original
-   * value if it is {@code null} or empty
+   *        value if it is {@code null} or empty
    */
   private static String capitalize(String str) {
     if (str == null || str.isEmpty()) {
