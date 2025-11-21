@@ -15,8 +15,7 @@ import ntnu.idata2302.sfp.server.net.ServerContext;
 /**
  * Handles CAPABILITIES_QUERY messages sent by control-panel or sensor nodes.
  *
- * <p>
- * When a node requests the list of known node descriptors, this handler:
+ * <p>When a node requests the list of known node descriptors, this handler:
  * <ul>
  *   <li>Reads the incoming CAPABILITIES_QUERY request</li>
  *   <li>Collects all registered node descriptors from the server context</li>
@@ -30,8 +29,7 @@ public class CapabilitiesHandler implements MessageHandler {
   /**
    * Processes an incoming CAPABILITIES_QUERY message.
    *
-   * <p>
-   * This method extracts the request information, creates a response header and body
+   * <p>This method extracts the request information, creates a response header and body
    * containing the current list of registered node descriptors, and sends a
    * CAPABILITIES_LIST packet back to the requesting client.
    *

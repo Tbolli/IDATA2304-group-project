@@ -10,8 +10,7 @@ import ntnu.idata2302.sfp.server.net.ServerContext;
 /**
  * Handles forwarding of packets that are intended for other nodes.
  *
- * <p>
- * This handler inspects incoming messages and:
+ * <p>This handler inspects incoming messages and:
  * <ul>
  *   <li>Logs a warning if a COMMAND or COMMAND_ACK is incorrectly addressed to the server</li>
  *   <li>Logs details of ERROR packets addressed to the server</li>
@@ -26,8 +25,7 @@ public class ForwardPacketHandler implements MessageHandler {
   /**
    * Processes and routes an incoming protocol message.
    *
-   * <p>
-   * Depending on the message type and its target, this method:
+   * <p>Depending on the message type and its target, this method:
    * <ul>
    *   <li>Warns if a COMMAND or COMMAND_ACK is mistakenly addressed to the server</li>
    *   <li>Logs ERROR packets that target the server</li>

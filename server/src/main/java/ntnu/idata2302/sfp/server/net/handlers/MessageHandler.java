@@ -7,8 +7,7 @@ import ntnu.idata2302.sfp.server.net.ServerContext;
 /**
  * Represents a generic handler for processing incoming SmartFarmingProtocol packets.
  *
- * <p>
- * Each concrete implementation defines logic for a specific message type,
+ * <p>Each concrete implementation defines logic for a specific message type,
  * such as ANNOUNCE, DATA_REPORT, CAPABILITIES_QUERY, or forwarding packets.
  * Handlers are invoked by the server's MessageDispatcher when a packet arrives.
  */
@@ -18,8 +17,7 @@ public interface MessageHandler {
   /**
    * Processes an incoming protocol message from a connected node.
    *
-   * <p>
-   * Implementations may parse the message, update server state, respond to the
+   * <p>Implementations may parse the message, update server state, respond to the
    * client, forward packets, or trigger other actions depending on the protocol type.
    *
    * @param message the parsed SmartFarmingProtocol packet received from the client

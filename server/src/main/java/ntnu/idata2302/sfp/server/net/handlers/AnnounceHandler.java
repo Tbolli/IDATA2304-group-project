@@ -15,8 +15,7 @@ import ntnu.idata2302.sfp.server.util.IdAllocator;
 /**
  * Handles ANNOUNCE messages sent by sensor or control-panel nodes.
  *
- * <p>
- * When a new node connects and announces itself, this handler:
+ * <p>When a new node connects and announces itself, this handler:
  * <ul>
  *   <li>Extracts the node's descriptor from the ANNOUNCE message</li>
  *   <li>Allocates and assigns a unique node ID</li>

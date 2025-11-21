@@ -14,8 +14,7 @@ import ntnu.idata2302.sfp.server.net.ServerContext;
 /**
  * Handles UNSUBSCRIBE messages sent by control-panel nodes.
  *
- * <p>
- * When a control-panel requests to stop receiving updates from a specific
+ * <p>When a control-panel requests to stop receiving updates from a specific
  * sensor node, this handler:
  * <ul>
  *   <li>Extracts the unsubscribe request</li>
@@ -31,8 +30,7 @@ public class UnSubscribeHandler implements MessageHandler {
   /**
    * Processes an UNSUBSCRIBE request from a control-panel node.
    *
-   * <p>
-   * The method removes the subscription linking the requesting control-panel
+   * <p>The method removes the subscription linking the requesting control-panel
    * node with the specified sensor node, and replies with an
    * UNSUBSCRIBE_ACK message confirming successful removal.
    *

@@ -18,8 +18,7 @@ import ntnu.idata2302.sfp.server.net.ServerContext;
 /**
  * Handles SUBSCRIBE messages sent by control-panel nodes.
  *
- * <p>
- * When a control-panel requests to subscribe to updates from a specific
+ * <p>When a control-panel requests to subscribe to updates from a specific
  * sensor node, this handler:
  * <ul>
  *   <li>Extracts the subscription request</li>
@@ -35,8 +34,7 @@ public class SubscribeHandler implements MessageHandler {
   /**
    * Processes an incoming SUBSCRIBE request from a control-panel node.
    *
-   * <p>
-   * The method creates a new Subscription linking the requesting control-panel
+   * <p>The method creates a new Subscription linking the requesting control-panel
    * with the target sensor node, stores it in the server context, and replies
    * with a SUBSCRIBE_ACK message indicating success.
    *

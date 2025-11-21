@@ -8,8 +8,7 @@ import ntnu.idata2302.sfp.server.net.ServerContext;
 /**
  * Handles incoming DATA_REPORT messages from sensor nodes.
  *
- * <p>
- * When a sensor node reports new sensor or actuator state data,
+ * <p>When a sensor node reports new sensor or actuator state data,
  * this handler forwards that report to all control-panel nodes
  * subscribed to the reporting sensor node.
  * </p>
