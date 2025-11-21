@@ -89,9 +89,7 @@ public class Sensor {
 
     // Smooth noise progression for natural changes
     noiseOffset += 0.05;
-    double smoothNoise =
-        Math.sin(noiseOffset) * 0.5 +
-            Math.sin(noiseOffset * 0.37) * 0.2;
+
 
     // Determine an update step based on range or magnitude
     double step;
@@ -102,6 +100,9 @@ public class Sensor {
       step = magnitude * 0.04;
     }
 
+    double smoothNoise =
+         Math.sin(noiseOffset) * 0.5
+            + Math.sin(noiseOffset * 0.37) * 0.2;
     // Slight drifting behavior over time
     drift += (Math.random() - 0.5) * 0.005;
     drift = Math.max(-0.1, Math.min(0.1, drift));
@@ -114,25 +115,61 @@ public class Sensor {
     setValue(newValue);
   }
 
+  /**
+   * Returns the current sensor reading.
+   *
+   * @return the latest value produced by the sensor
+   */
+
   public double getValue() {
     return currentValue;
   }
+
+  /**
+   * Returns the name/identifier of this sensor.
+   *
+   * @return the sensor's name
+   */
 
   public String getName() {
     return name;
   }
 
+
+  /**
+   * Returns the unit used by this sensor's readings.
+   *
+   * @return the measurement unit (e.g., "°C", "%", "lux")
+   */
+
   public String getUnit() {
     return unit;
   }
+
+  /**
+   * Returns the minimum allowed sensor value, or null if the sensor is unranged.
+   *
+   * @return the lower bound, or null
+   */
 
   public Double getMinValue() {
     return minValue;
   }
 
+  /**
+   * Returns the maximum allowed sensor value, or null if the sensor is unranged.
+   *
+   * @return the upper bound, or null
+   */
+
   public Double getMaxValue() {
     return maxValue;
   }
+
+  /**
+   * Returns a human-readable representation of the sensor, including
+   * its name, current value, and measurement unit.
+   */
 
   @Override
   public String toString() {
