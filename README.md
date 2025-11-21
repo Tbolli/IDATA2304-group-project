@@ -66,7 +66,8 @@ go to maven
 
 📌 Step 1 – Install sfp-library
 
-<img width="415" height="386" alt="image" src="https://github.com/user-attachments/assets/84402120-c3c3-41bb-ba91-f51afe8d52fa" />
+<img width="487" height="412" alt="image" src="https://github.com/user-attachments/assets/007da551-baf3-4017-b81d-4d1662fc1982" />
+
 
 
 pick 
@@ -75,7 +76,8 @@ cd sfp-library
 and find mvn install below lifecycel
 
 
-<img width="370" height="338" alt="image" src="https://github.com/user-attachments/assets/53f6c0a7-24f5-4fa4-9e23-29afc61d14ed" />
+<img width="571" height="338" alt="image" src="https://github.com/user-attachments/assets/8cf6e79b-0365-4ddc-86c3-6c779a187cac" />
+
 
 
 ---
